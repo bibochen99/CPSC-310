@@ -1,0 +1,27 @@
+
+{
+  "title": "simple_query_insightError_forgetString_L11",
+  "input": {
+    "WHERE": {
+      "AND":[
+        {"LT": {
+        "courses_avg": 50
+      }},
+        {"IS":{
+          "courses_id":100
+        }}
+      ]
+
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_dept",
+        "courses_avg",
+        "courses_id"
+      ],
+      "ORDER": "courses_avg"
+    }
+  },
+  "errorExpected": true,
+  "with": "InsightError"
+}

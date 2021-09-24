@@ -1,0 +1,24 @@
+
+{
+  "title": "IS_simple_query6.json.json.json.json",
+  "input": {
+    "WHERE": {
+      "IS": {
+        "courses_title": "intro *to *"
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_dept",
+        "courses_instructor",
+        "courses_id",
+        "courses_title",
+        "courses_uuid"
+      ]
+    }
+  },
+  "errorExpected": true,
+  "with":"InsightError"
+}
+
+

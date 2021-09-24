@@ -1,0 +1,21 @@
+
+{
+  "title": "Order_invalid_key in orderby_query2.json.json",
+  "input": {
+    "WHERE": {
+      "GT": {
+        "courses_avg": 97
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_dept",
+        ""
+      ],
+      "ORDER": ""
+    }
+  },
+  "errorExpected": true,
+  "with":"InsightError"
+}
+
