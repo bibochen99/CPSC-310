@@ -1,0 +1,14 @@
+
+{
+  "title": "HasNo_option_Query.json",
+  "input": {
+    "WHERE":{
+      "GT":{
+        "courses_avg":97
+      }
+    }
+  },
+  "errorExpected": true,
+  "with":"InsightError"
+}
+

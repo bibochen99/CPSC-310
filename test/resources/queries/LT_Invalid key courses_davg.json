@@ -1,0 +1,24 @@
+
+{
+  "title": "LT_Invalid key courses_davg.json.json",
+  "input": {
+    "WHERE": {
+
+      "LT": {
+        "courses_davg": 50
+      }
+
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_dept",
+        "courses_avg",
+        "courses_id"
+      ],
+      "ORDER": "courses_avg"
+    }
+  },
+  "errorExpected": true,
+  "with":"InsightError"
+}
+

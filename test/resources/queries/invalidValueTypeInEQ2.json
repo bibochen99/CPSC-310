@@ -1,0 +1,30 @@
+{
+  "errorMsg": "Invalid key type in EQ",
+  "title": "Invalid value type in EQ2",
+  "input": {
+    "WHERE": {
+      "AND": [
+        {
+          "EQ": {
+            "courses_id": "50"
+          }
+        },
+        {
+          "IS": {
+            "courses_id": "100"
+          }
+        }
+      ]
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_dept",
+        "courses_avg",
+        "courses_id"
+      ],
+      "ORDER": "courses_id"
+    }
+  },
+  "errorExpected": true,
+  "with": "InsightError"
+}

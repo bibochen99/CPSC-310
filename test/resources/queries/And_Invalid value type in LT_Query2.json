@@ -1,0 +1,30 @@
+{
+  "title": "And_Invalid value type in LT_Query.json",
+  "input":{
+    "WHERE": {
+      "AND": [
+        {
+          "LT": {
+            "courses_avg": 50
+          }
+        },
+        {
+          "IS": {
+            "courses_id": "0"
+          }
+        }
+      ]
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_dept",
+        "courses_avg",
+        "courses_id"
+      ],
+      "ORDER": "courses_avg"
+    }
+  }
+,
+  "errorExpected": true,
+  "with": "InsightError"
+}
