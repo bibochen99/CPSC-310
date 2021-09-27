@@ -1,0 +1,22 @@
+{
+  "errorMsg": "The result is too big. Only queries with a maximum of 5000 results are supported.",
+  "title": "query_GT_pass",
+  "input": {
+    "WHERE": {
+      "GT": {
+        "courses_pass": 150
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_dept",
+        "courses_id",
+        "courses_avg",
+        "courses_uuid"
+      ],
+      "ORDER": "courses_id"
+    }
+  },
+  "errorExpected": true,
+  "with": "ResultTooLargeError"
+}

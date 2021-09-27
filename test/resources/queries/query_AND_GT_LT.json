@@ -1,0 +1,79 @@
+{
+  "title": "query_AND_GT_LT",
+  "input": {
+    "WHERE": {
+      "AND": [
+        {
+          "GT": {
+            "courses_avg": 90
+          }
+        },
+        {
+          "LT": {
+            "courses_avg": 90.05
+          }
+        }
+      ]
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_id",
+        "courses_avg",
+        "courses_uuid",
+        "courses_dept"
+      ],
+      "ORDER": "courses_id"
+    }
+  },
+  "errorExpected": false,
+  "with": [
+    {
+      "courses_id": "329",
+      "courses_avg": 90.02,
+      "courses_uuid": "19184",
+      "courses_dept": "adhe"
+    },
+    {
+      "courses_id": "426",
+      "courses_avg": 90.02,
+      "courses_uuid": "70436",
+      "courses_dept": "cnps"
+    },
+    {
+      "courses_id": "431",
+      "courses_avg": 90.03,
+      "courses_uuid": "6313",
+      "courses_dept": "epse"
+    },
+    {
+      "courses_id": "462",
+      "courses_avg": 90.03,
+      "courses_uuid": "4914",
+      "courses_dept": "dhyg"
+    },
+    {
+      "courses_id": "499",
+      "courses_avg": 90.02,
+      "courses_uuid": "9329",
+      "courses_dept": "phar"
+    },
+    {
+      "courses_id": "516",
+      "courses_avg": 90.03,
+      "courses_uuid": "94695",
+      "courses_dept": "phth"
+    },
+    {
+      "courses_id": "516",
+      "courses_avg": 90.03,
+      "courses_uuid": "94694",
+      "courses_dept": "phth"
+    },
+    {
+      "courses_id": "531",
+      "courses_avg": 90.03,
+      "courses_uuid": "92131",
+      "courses_dept": "etec"
+    }
+  ]
+}
