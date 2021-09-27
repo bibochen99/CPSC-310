@@ -1,0 +1,21 @@
+{
+  "errorMsg": "Invalid key courses_years in GT",
+  "title": "query_GT_year_fail",
+  "input": {
+    "WHERE": {
+      "GT": {
+        "courses_years": 2000
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_dept",
+        "courses_id",
+        "courses_avg",
+        "courses_uuid"
+      ]
+    }
+  },
+  "errorExpected": true,
+  "with": "InsightError"
+}

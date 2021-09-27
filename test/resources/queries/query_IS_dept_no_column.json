@@ -1,0 +1,16 @@
+{
+  "errorMsg": "COLUMNS must be a non-empty array",
+  "title": "query_IS_dept_no_column",
+  "input": {
+    "WHERE": {
+      "IS": {
+        "courses_dept": "cs"
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": []
+    }
+  },
+  "errorExpected": true,
+  "with": "InsightError"
+}

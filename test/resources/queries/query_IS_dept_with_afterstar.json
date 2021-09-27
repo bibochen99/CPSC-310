@@ -1,0 +1,21 @@
+{
+  "title": "query_IS_dept_with_afterstar",
+  "input": {
+    "WHERE": {
+      "IS": {
+        "courses_dept": "cs*"
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_id",
+        "courses_avg",
+        "courses_uuid",
+        "courses_dept"
+      ],
+      "ORDER": "courses_avg"
+    }
+  },
+  "errorExpected": false,
+  "with": []
+}

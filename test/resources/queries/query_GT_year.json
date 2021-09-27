@@ -1,0 +1,20 @@
+{
+  "title": "query_GT_year",
+  "input": {
+    "WHERE": {
+      "GT": {
+        "courses_year": 2016
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_dept",
+        "courses_id",
+        "courses_avg",
+        "courses_uuid"
+      ]
+    }
+  },
+  "errorExpected": false,
+  "with": []
+}
