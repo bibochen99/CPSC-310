@@ -1,0 +1,21 @@
+{
+  "errorMsg": "The result is too big. Only queries with a maximum of 5000 results are supported.",
+  "title": "query_EQ_fail_Large",
+  "input": {
+    "WHERE": {
+      "EQ": {
+        "courses_fail": 0
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_id",
+        "courses_avg",
+        "courses_uuid"
+      ],
+      "ORDER": "courses_uuid"
+    }
+  },
+  "errorExpected": true,
+  "with": "ResultTooLargeError"
+}

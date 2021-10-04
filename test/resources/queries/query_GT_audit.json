@@ -1,0 +1,20 @@
+{
+  "title": "query_GT_audit",
+  "input": {
+    "WHERE": {
+      "GT": {
+        "courses_audit": 70
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_dept",
+        "courses_id",
+        "courses_avg"
+      ],
+      "ORDER": "courses_avg"
+    }
+  },
+  "errorExpected": false,
+  "with": []
+}

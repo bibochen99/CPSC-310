@@ -315,3 +315,241 @@ describe("Roy's Test", function () {
 
 
 });
+
+describe("Bibo's Test", function (){
+	describe("InsightFacade",function () {
+		const course: string = "test/resources/archives/courses.zip";
+		const txt: string = "test/resources/archives/course_txt.zip";
+		const emptyR: string = "test/resources/archives/courses_empty.rar";
+		const emptyZ: string = "test/resources/archives/courses_empty.zip";
+		const invalid: string = "test/resources/archives/courses_one_invalid.zip";
+		const emptyO: string = "test/resources/archives/courses_one_empty.zip";
+		const courseP: string = "test/resources/archives/courses_pdf.zip";
+		const courseZ: string = "test/resources/archives/courses_zip.zip";
+		const course310: string = "test/resources/archives/cpsc310.zip";
+		const coursePDF: string = "test/resources/archives/courses.pdf";
+		const courseRAR: string = "test/resources/archives/courses.rar";
+		const invalidRAR: string = "test/resources/archives/courses_one_invalid.rar";
+		const coursePic: string = "test/resources/archives/course_picture.zip";
+		const courseTXTNO: string = "test/resources/archives/course_txt_nomeaning.zip";
+
+
+		const empty: string = "";
+		let courses = fs.readFileSync(course).toString("base64");
+		let coursesTXT = fs.readFileSync(txt).toString("base64");
+		let emptyRR = fs.readFileSync(emptyR).toString("base64");
+		let emptyZZ = fs.readFileSync(emptyZ).toString("base64");
+		let invalidd = fs.readFileSync(invalid).toString("base64");
+		let empty00 = fs.readFileSync(emptyO).toString("base64");
+		let coursePP = fs.readFileSync(courseP).toString("base64");
+		let courseZZ = fs.readFileSync(courseZ).toString("base64");
+		let courses310 = fs.readFileSync(course310).toString("base64");
+		let coursePDFF = fs.readFileSync(coursePDF).toString("base64");
+		let courseRARR = fs.readFileSync(courseRAR).toString("base64");
+		let invalidRARR = fs.readFileSync(invalidRAR).toString("base64");
+		let coursePIC = fs.readFileSync(coursePic).toString("base64");
+		let courseTXT = fs.readFileSync(courseTXTNO).toString("base64");
+
+
+		describe("List Datasets", function () {
+			let facade: InsightFacade;
+
+			beforeEach(function () {
+				fs.removeSync("data");
+				facade = new InsightFacade();
+			});
+
+			it("Should list no dataset", function () {
+				return facade.listDatasets().then((insightDatasets: InsightDataset[]) => {
+					expect(insightDatasets).to.deep.equal([]);
+				});
+			});
+
+			it("Should list one dataset", function () {
+				return facade.addDataset("COURSES", courses, InsightDatasetKind.Courses)
+					.then((addData) => facade.listDatasets()
+						.then((insightDatasets) => {
+							expect(insightDatasets).to.deep.equal([{
+								id: "COURSES",
+								kind: InsightDatasetKind.Courses,
+								numRows: 64612
+							}]);
+						}));
+			});
+
+			it("Should list multiple datasets", function () {
+				return facade.addDataset("COURSES", courses, InsightDatasetKind.Courses)
+					.then((addData) => {
+						return facade.addDataset("COURSES1", courses, InsightDatasetKind.Courses);
+					})
+					.then((addData) => facade.listDatasets()
+						.then((insightDatasets) => {
+							expect(insightDatasets).to.deep.equal([
+								{
+									id: "COURSES",
+									kind: InsightDatasetKind.Courses,
+									numRows: 64612
+								},
+								{
+									id: "COURSES1",
+									kind: InsightDatasetKind.Courses,
+									numRows: 64612
+								}]);
+							expect(insightDatasets).to.have.length(2);
+						}));
+			});
+		});
+
+		describe("Add Datasets", function () {
+			let facade: InsightFacade;
+
+			beforeEach(function () {
+				fs.removeSync("data");
+				facade = new InsightFacade();
+			});
+
+
+			it("Add one dataset", function () {
+				return facade.addDataset("COURSES", courses, InsightDatasetKind.Courses)
+					.then((addData) => {
+						expect(addData).to.deep.equal(["COURSES"]);
+						expect(addData).to.have.length(1);
+					});
+			});
+
+			it("Add dataset with two same id", function () {
+				const id: string = "courses";
+				return facade.addDataset(id, courses, InsightDatasetKind.Courses)
+					.then(async (addData) => {
+						// return facade.addDataset(id,courses,InsightDatasetKind.Courses);})
+						//     .then((addData1)=>{
+						//         expect(addData1).to.be.rejectedWith(InsightError);
+						try {
+							await facade.addDataset(id, courses, InsightDatasetKind.Courses);
+							expect.fail("Should have rejected!");
+						} catch (err) {
+							expect(err).to.be.instanceof(InsightError);
+						}
+					});
+			});
+
+			it("Add dataset with invalid id(underscore)", function () {
+				const result = facade.addDataset("c_ou_rse", courses, InsightDatasetKind.Courses);
+				return expect(result).eventually.to.be.rejectedWith(InsightError);
+			});
+
+			it("Add dataset with invalid pure whitespace", function () {
+				const result = facade.addDataset(" ", courses, InsightDatasetKind.Courses);
+				return expect(result).eventually.to.be.rejectedWith(InsightError);
+			});
+
+			it("Add dataset with invalid content", function () {
+				const result = facade.addDataset("course", "123", InsightDatasetKind.Courses);
+				return expect(result).eventually.to.be.rejectedWith(InsightError);
+			});
+
+			it("Add dataset with txt file in zip (e)", function () {
+				const result = facade.addDataset("course", coursesTXT, InsightDatasetKind.Courses);
+				return expect(result).eventually.to.be.rejectedWith(InsightError);
+			});
+
+			it("Add dataset with rar file", function () {
+				const result = facade.addDataset("course", emptyRR, InsightDatasetKind.Courses);
+				return expect(result).eventually.to.be.rejectedWith(InsightError);
+			});
+
+			it("Add dataset with empty file in zip", function () {
+				const result = facade.addDataset("course", emptyZZ, InsightDatasetKind.Courses);
+				return expect(result).eventually.to.be.rejectedWith(InsightError);
+			});
+
+			it("Add dataset with one file but only empty array", function () {
+				const result = facade.addDataset("course", emptyZZ, InsightDatasetKind.Courses);
+				return expect(result).eventually.to.be.rejectedWith(InsightError);
+			});
+
+			it("Add dataset with one file but only invalid file", function () {
+				const result = facade.addDataset("course", invalidd, InsightDatasetKind.Courses);
+				return expect(result).eventually.to.be.rejectedWith(InsightError);
+			});
+
+			it("Add dataset with pdf in zip", function () {
+				const result = facade.addDataset("course", coursePP, InsightDatasetKind.Courses);
+				return expect(result).eventually.to.be.rejectedWith(InsightError);
+			});
+
+			it("Add dataset with zip in zip", function () {
+				const result = facade.addDataset("course", courseZZ, InsightDatasetKind.Courses);
+				return expect(result).eventually.to.be.rejectedWith(InsightError);
+			});
+
+			it("Add dataset with one file named CPSC310 ZIP", function () {
+				const result = facade.addDataset("course", courses310, InsightDatasetKind.Courses);
+				return expect(result).eventually.to.be.rejectedWith(InsightError);
+			});
+
+			it("Add dataset with pdf file", function () {
+				const result = facade.addDataset("course", coursePDFF, InsightDatasetKind.Rooms);
+				return expect(result).eventually.to.be.rejectedWith(InsightError);
+			});
+
+			it("Add dataset with valid data in rar file", function () {
+				const result = facade.addDataset("course", courseRARR, InsightDatasetKind.Rooms);
+				return expect(result).eventually.to.be.rejectedWith(InsightError);
+			});
+			it("Add dataset with invalid file in rar file", function () {
+				const result = facade.addDataset("course", invalidRARR, InsightDatasetKind.Rooms);
+				return expect(result).eventually.to.be.rejectedWith(InsightError);
+			});
+
+			it("Add dataset with no meaning txt zip file", function () {
+				const result = facade.addDataset("course", coursePIC, InsightDatasetKind.Rooms);
+				return expect(result).eventually.to.be.rejectedWith(InsightError);
+			});
+			it("Add dataset with a picture in zip file", function () {
+				const result = facade.addDataset("course", courseTXT, InsightDatasetKind.Rooms);
+				return expect(result).eventually.to.be.rejectedWith(InsightError);
+			});
+
+
+		});
+
+		describe("Remove Datasets", function () {
+			let facade: InsightFacade;
+
+			beforeEach(function () {
+				fs.removeSync("data");
+				facade = new InsightFacade();
+			});
+
+			it("Remove Dataset Successfully", function () {
+				return facade.addDataset("COURSES", courses, InsightDatasetKind.Courses)
+					.then((addData) => {
+						expect(addData).to.deep.equal(["COURSES"]);
+						expect(addData).to.have.length(1);
+						return facade.removeDataset("COURSES")
+							.then((remove) => {
+								expect(remove).to.deep.equal("COURSES");
+							});
+					});
+			});
+
+			it("Remove Dataset with invalid id(whitespace)", function () {
+				const remove = facade.removeDataset(" ");
+				return expect(remove).eventually.to.be.rejectedWith(InsightError);
+			});
+
+			it("Remove Dataset with invalid id(underscorse)", function () {
+				const remove = facade.removeDataset("COU_RSE");
+				return expect(remove).eventually.to.be.rejectedWith(InsightError);
+			});
+
+			it("Remove Dataset with valid id but Dataset is empty", function () {
+				const remove = facade.removeDataset("COU");
+				return expect(remove).eventually.to.be.rejectedWith(NotFoundError);
+			});
+		});
+	});
+});
+
+
