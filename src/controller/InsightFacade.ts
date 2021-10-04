@@ -32,6 +32,7 @@ export default class InsightFacade implements IInsightFacade {
 			jsZip.loadAsync(content, {base64: true}).then((zip) => {
 				let resultCourseName: any[] = this.createUsefulFile(zip);
 				Promise.all(resultCourseName).then((file)=>{
+					console.log(resultCourseName);
 					if(file.length === 0 ){
 						return Promise.reject(new InsightError("length of 0 in zip"));
 					}
@@ -46,7 +47,7 @@ export default class InsightFacade implements IInsightFacade {
 				});
 			});
 			let keys: string[] = this.myMap.keys();
-			return resolve(keys);
+			resolve(keys);
 		});
 
 	}
@@ -62,11 +63,9 @@ export default class InsightFacade implements IInsightFacade {
 					} catch (err) {
 						return null;
 					}
+				}).then(() => {
+					resultCourse.push(currFile);
 				});
-			if (currFile !== null){
-				console.log(currFile);
-				resultCourse.push(currFile);
-			}
 		}
 		return resultCourse;
 	}
