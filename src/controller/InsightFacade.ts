@@ -1,8 +1,10 @@
+
 import {IInsightFacade, InsightDataset, InsightDatasetKind, InsightError} from "./IInsightFacade";
 import * as fs from "fs-extra";
 import Subject from "./Subject";
 import JSZip = require("jszip");
 import Log from "@ubccpsc310/folder-test/build/Log";
+
 
 const persistDir = "./data";
 const courseZip: string = "test/resources/archives/courses.zip";
@@ -123,17 +125,198 @@ export default class InsightFacade implements IInsightFacade {
 		}
 		return true;
 
+
+	}
+
+
+	// return true if same id from list dataset
+	private sameID(id: string) {
+		return false;
+	}
+
+	private addDataToDisk() {
+		if (!(fs.existsSync(persistDir))) {
+			fs.mkdir(persistDir, (err) => {
+				if (err) {
+					return console.error(err);
+				}
+				console.log("Directory created successfully!");
+			});
+		}
+	}
+
+	private validIdCheck(id: string): boolean {
+		if ((id === "") || (id.includes("_"))) {
+			return false;
+		}
+		return true;
+
 	}
 
 	public removeDataset(id: string): Promise<string> {
 		return Promise.reject("Not implemented.");
 	}
 
+	public listDatasets(): Promise<InsightDataset[]> {
+
+		return new Promise<InsightDataset[]>((resolve, reject) => {
+			resolve(this.myDataset);
+
+		});
+	}
+
+
 	public performQuery(query: any): Promise<any[]> {
+		return new Promise<string[]>((resolve, reject) => {
+
+			this.readDisk();
+			if(this.invalidQuery(query)){
+				return Promise.reject(new InsightError("query is not valid."));
+			}else if(this.referencesMultipleDatasets()){
+				return Promise.reject(new InsightError("references Multiple Datasets."));
+			}else if (this.queryTooLong()){
+				return Promise.reject(new InsightError("query result are longer than 5000."));
+			}
+
+
+		});
+
 		return Promise.reject("Not implemented.");
 	}
 
-	public listDatasets(): Promise<InsightDataset[]> {
-		return Promise.reject("Not implemented.");
+
+	// should read file from disk for query
+	private possibleQueryKey: any[] = ["WHERE", "OPTIONS"];
+	private possibleInputKey: any[] = [ "title", "input", "errorExpected", "with" ];
+	private readDisk() {
+		fs.readdirSync(persistDir).forEach(function (file) {
+			try{
+				let fileName = fs.readFileSync(persistDir + file,"utf8");
+				let jsonObject = JSON.parse(fileName);
+			} catch (e) {
+				console.log("cannot read from disk");
+			}
+
+		});
+
+	}
+
+	private queryTooLong() {
+		return false;
+	}
+
+	private invalidQuery(query: any) {
+		let queryObject = JSON.parse(query);
+		let queryKeys: any [];
+		queryKeys = Object.keys(queryObject);// [ 'WHERE', 'OPTIONS' ]
+		// let keyInWhere = queryKeys["WHERE"];
+		// let d = queryObject["WHERE"];
+		for(let queryKey of queryKeys){
+			if(queryKey.includes(this.possibleQueryKey)){
+				return true;
+			}else{
+				console.log("Key is not [ 'WHERE', 'OPTIONS' ]");
+				return false;
+			}
+		}
+
+		if(!(this.checkValidWhere(query))){
+			return false;
+		}
+		if(!(this.checkValidInsideWhere(query))){
+			return false;
+		}
+
+		if(!("OPTIONS" in queryObject)){
+			console.log("Missing OPTIONS");
+			return false;
+		}
+		if(queryObject["OPTIONS"] === null){
+			console.log("OPTIONS has null");
+			return false;
+		}
+		if(!(typeof queryObject["OPTIONS"] === "object")){
+			console.log("OPTIONS is not object");
+			return false;
+		}
+		if(!(this.checkValidInsideOption(query))){
+			return false;
+		}
+		return false;
+	}
+
+	private checkValidInsideWhere(query: any) {
+		let queryObject = JSON.parse(query);
+		let queryKeys: any [];
+		let whereQuery = queryObject["WHERE"];
+		queryKeys = Object.keys(queryObject);// [ 'WHERE', 'OPTIONS' ]
+		// inside where
+		let insideWhereKey = Object.keys(whereQuery);
+
+		if(insideWhereKey.length > 1){
+			console.log("WHERE has more object inside");
+			return false;
+		}
+
+
+		let key = Object.keys(insideWhereKey);
+		let filter = key[0];
+		let filterList = ["AND","OR","NOT","IS","EQ","LT","GT","NOT"];
+		if(key.length === 0){
+			// console.log("nothing inside the WHERE");
+			return true;
+		}
+		if(!(filterList.includes(filter))){
+			console.log("invalid filter name");
+			return false;
+		}
+		// for (let eachFilter of Object.entries(whereQuery)) {
+		// 	let key = Object.keys(d)[0];
+		// 	console.log(filterList.includes(key));
+		// }
+
+		// if(filter === "AND" || filter === "OR"){
+		// 	let temQuery = whereQuery[filter];
+		//
+		// 	if(!(this.checkValidInsideWhere(temQuery))){
+		// 		return false;
+		// 	}
+		//
+		// }
+	}
+
+
+	private referencesMultipleDatasets() {
+		return false;
+	}
+
+	private checkValidWhere(query: any) {
+		let queryObject = JSON.parse(query);
+		let queryKeys: any [];
+		queryKeys = Object.keys(queryObject);// [ 'WHERE', 'OPTIONS' ]
+		if(queryKeys.length !== 2){
+			console.log("Query Key are not 2");
+			return false;
+		}
+		if(!("WHERE" in queryObject)){
+			console.log("Missing WHERE");
+			return false;
+
+		}
+		if(queryObject["WHERE"] === null){
+			console.log("WHERE has null");
+			return false;
+		}
+
+		if(!(typeof queryObject["WHERE"] === "object")){
+			console.log("WHERE is not object");
+			return false;
+		}
+	}
+
+	private checkValidInsideOption(query: any) {
+		return false;
 	}
 }
+
+
