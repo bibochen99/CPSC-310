@@ -134,40 +134,13 @@ export default class InsightFacade implements IInsightFacade {
 	}
 
 
-	// return true if same id from list dataset
-	private sameID(id: string) {
-		return false;
-	}
-
-	private addDataToDisk() {
-		if (!(fs.existsSync(persistDir))) {
-			fs.mkdir(persistDir, (err) => {
-				if (err) {
-					return console.error(err);
-				}
-				console.log("Directory created successfully!");
-			});
-		}
-	}
-
-	private validIdCheck(id: string): boolean {
-		if ((id === "") || (id.includes("_"))) {
-			return false;
-		}
-		return true;
-
-	}
-
 	public removeDataset(id: string): Promise<string> {
 		return Promise.reject("Not implemented.");
 	}
 
 	public listDatasets(): Promise<InsightDataset[]> {
 
-		return new Promise<InsightDataset[]>((resolve, reject) => {
-			resolve(this.myDataset);
-
-		});
+		return Promise.reject("Not implemented.");
 	}
 
 
