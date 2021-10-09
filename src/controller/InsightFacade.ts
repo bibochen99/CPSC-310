@@ -9,6 +9,7 @@ import {rejects} from "assert";
 import QueryHelper from "./QueryHelper";
 import ConverDatasetWithID from "./ConverDatasetWithID";
 import {Subject} from "./Subject";
+import OptionHelper from "./OptionHelper";
 
 
 const persistDir = "./data";
@@ -182,15 +183,18 @@ export default class InsightFacade implements IInsightFacade {
 			}
 			// get result here
 			// this.getResult();
-
+			let optionals: OptionHelper;
+			optionals = new OptionHelper();
 
 			if (qh.queryTooLong(result[0])){
 				return reject(new InsightError("query result are longer than 5000."));
+			}else if(!optionals.check(query,result[0])){
+				return reject(new InsightError("not pass option"));
 			}else {
 				try{
 					result = qh.applyOptional(query,result[0]);
 				}catch(e){
-					return reject(new InsightError("data not ready"));
+					return reject(new InsightError("not valid"));
 				}
 			}
 
@@ -207,9 +211,9 @@ export default class InsightFacade implements IInsightFacade {
 	// private possibleInputKey: any[] = [ "title", "input", "errorExpected", "with" ];
 	//
 	private readDisk(loadedData: any) {
-		fs.readdirSync("./Data").forEach(function (file) {
+		fs.readdirSync("./data").forEach(function (file) {
 			try{
-				let fileName = fs.readFileSync("./fakeData/" + file,"utf8");
+				let fileName = fs.readFileSync("./data/" + file,"utf8");
 				let obj = JSON.parse(fileName);
 				loadedData = obj;
 			} catch (e) {
