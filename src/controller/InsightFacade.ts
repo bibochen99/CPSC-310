@@ -141,7 +141,16 @@ export default class InsightFacade implements IInsightFacade {
 //
 		return Promise.reject("Not implemented.");
 	}
-
+	private addDataToDisk() {
+		if (!(fs.existsSync(persistDir))) {
+			fs.mkdir(persistDir, (err) => {
+				if (err) {
+					return console.error(err);
+				}
+				console.log("Directory created successfully!");
+			});
+		}
+	}
 
 	public removeDataset(id: string): Promise<string> {
 		return Promise.reject("Not implemented.");
