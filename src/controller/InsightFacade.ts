@@ -1,10 +1,17 @@
+
 import {IInsightFacade, InsightDataset, InsightDatasetKind, InsightError, NotFoundError} from "./IInsightFacade";
+
 import * as fs from "fs-extra";
 
 import JSZip = require("jszip");
 import Log from "@ubccpsc310/folder-test/build/Log";
+import Filter from "./Filter";
+import {rejects} from "assert";
+import QueryHelper from "./QueryHelper";
+import ConverDatasetWithID from "./ConverDatasetWithID";
 import {Subject} from "./Subject";
 import {Add} from "./Add";
+
 
 const persistDir = "./data";
 const courseZip: string = "test/resources/archives/courses.zip";
@@ -15,11 +22,16 @@ const courseZip: string = "test/resources/archives/courses.zip";
  */
 export default class InsightFacade implements IInsightFacade {
 	public myMap: any;
+
 	public addData = new Add();
 	public dataSets: any[] = [];
+
 	constructor() {
 		console.trace("InsightFacadeImpl::init()");
 		this.myMap = new Map();
+		this.addedDataset = [];
+		this.temp = [];
+
 	}
 
 	public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
@@ -81,13 +93,82 @@ export default class InsightFacade implements IInsightFacade {
 			resolve(id);
 
 		});
-	}
 
-	public performQuery(query: any): Promise<any[]> {
-		return Promise.reject("Not implemented.");
 	}
 
 	public listDatasets(): Promise<InsightDataset[]> {
-		return Promise.resolve(this.dataSets);
+
+		return Promise.reject("Not implemented.");
 	}
+
+
+
+	public performQuery(query: any): Promise<any[]> {
+		// console.log(query);
+		return new Promise<string[]>((resolve, reject) => {
+			let qh: QueryHelper;
+			let converter: ConverDatasetWithID;
+			let loadedData: any = [];
+			let id: string;
+			loadedData = this.readDisk(loadedData);
+			converter = new ConverDatasetWithID();
+			id = "courses";
+			let newDataset: any = converter.addIDtoDataset(loadedData,id);
+			qh = new QueryHelper(newDataset);
+			let result: any;
+
+			if(qh.invalidQuery(query)){
+				return reject(new InsightError("query is not valid."));
+			}else if(qh.referencesMultipleDatasets()){
+				return reject(new InsightError("references Multiple Datasets."));
+			}
+
+			// this.getQueryRequestKey(query);
+			try{
+				result = qh.getQueryRequestKey2(query,loadedData);
+			}catch(e){
+				return reject(new InsightError("data not ready"));
+			}
+			// get result here
+			// this.getResult();
+
+
+			if (qh.queryTooLong(result[0])){
+				return reject(new InsightError("query result are longer than 5000."));
+			}else {
+				try{
+					result = qh.applyOptional(query,result[0]);
+				}catch(e){
+					return reject(new InsightError("data not ready"));
+				}
+			}
+
+			// console.log(this.liftoffFilter);
+			resolve(result);
+		});
+
+
+	}
+
+	//
+	// // should read file from disk for query
+	// private possibleQueryKey: any[] = ["WHERE", "OPTIONS"];
+	// private possibleInputKey: any[] = [ "title", "input", "errorExpected", "with" ];
+	//
+	private readDisk(loadedData: any) {
+		fs.readdirSync("./Data").forEach(function (file) {
+			try{
+				let fileName = fs.readFileSync("./fakeData/" + file,"utf8");
+				let obj = JSON.parse(fileName);
+				loadedData = obj;
+			} catch (e) {
+				console.log("cannot read from disk");
+			}
+
+		});
+		return loadedData;
+
+	}
+
 }
+
