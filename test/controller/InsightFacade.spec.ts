@@ -54,7 +54,7 @@ describe("InsightFacade_given", function () {
 			// This section resets the data directory (removing any cached data)
 			// This runs after each test, which should make each test independent from the previous one
 			console.info(`AfterTest: ${this.currentTest?.title}`);
-			fs.removeSync(persistDir);
+			// fs.removeSync(persistDir);
 		});
 
 		// This is a unit test. You should create more like this!
@@ -378,6 +378,7 @@ describe("Bibo's Test", function (){
 			});
 
 			it("Should list multiple datasets", function () {
+				this.timeout(5000);
 				return facade.addDataset("COURSES", courses, InsightDatasetKind.Courses)
 					.then((addData) => {
 						return facade.addDataset("COURSES1", courses, InsightDatasetKind.Courses);
@@ -523,6 +524,7 @@ describe("Bibo's Test", function (){
 			});
 
 			it("Remove Dataset Successfully", function () {
+				this.timeout(10000);
 				return facade.addDataset("COURSES", courses, InsightDatasetKind.Courses)
 					.then((addData) => {
 						expect(addData).to.deep.equal(["COURSES"]);
