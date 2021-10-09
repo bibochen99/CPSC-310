@@ -1,18 +1,11 @@
-
 import {IInsightFacade, InsightDataset, InsightDatasetKind, InsightError, NotFoundError} from "./IInsightFacade";
-
 import * as fs from "fs-extra";
 
 import JSZip = require("jszip");
 import Log from "@ubccpsc310/folder-test/build/Log";
-import Filter from "./Filter";
-import {rejects} from "assert";
-import QueryHelper from "./QueryHelper";
-import ConverDatasetWithID from "./ConverDatasetWithID";
 import {Subject} from "./Subject";
 import OptionHelper from "./OptionHelper";
 import {Add} from "./Add";
-
 
 const persistDir = "./data";
 const courseZip: string = "test/resources/archives/courses.zip";
@@ -24,17 +17,18 @@ const courseZip: string = "test/resources/archives/courses.zip";
 export default class InsightFacade implements IInsightFacade {
 	public myMap: any;
 
-	public addData = new Add();
-	public dataSets: any[] = [];
 	public addedDataset: any[];
 	public temp: any[];
+	public addData;
+	public dataSets: any[];
 
 	constructor() {
 		console.trace("InsightFacadeImpl::init()");
 		this.myMap = new Map();
-		this.addedDataset = [];
-		this.temp = [];
-
+		this.addData = new Add();
+		this.dataSets = [];
+    this.addedDataset = [];
+    this.temp = [];
 	}
 
 	public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
@@ -89,22 +83,18 @@ export default class InsightFacade implements IInsightFacade {
 			});
 			try {
 				fs.unlinkSync(persistDir + "/" + id + ".json");
-				console.log("successfully deleted /tmp/hello");
+				console.log("successfully deleted");
 			} catch (error) {
 				console.error("there was an error: cannot remove");
 			}
 			resolve(id);
 
 		});
-
 	}
 
-	public listDatasets(): Promise<InsightDataset[]> {
-
-		return Promise.reject("Not implemented.");
-	}
-
-
+  public listDatasets(): Promise<InsightDataset[]> {
+		return Promise.resolve(this.dataSets);
+  }
 	public performQuery(query: any): Promise<any[]> {
 		// console.log(query);
 		return new Promise<string[]>((resolve, reject) => {
@@ -172,8 +162,5 @@ export default class InsightFacade implements IInsightFacade {
 
 		});
 		return loadedData;
-
 	}
-
 }
-
