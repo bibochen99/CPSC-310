@@ -1,4 +1,11 @@
-import {IInsightFacade, InsightDataset, InsightDatasetKind, InsightError, NotFoundError} from "./IInsightFacade";
+import {
+	IInsightFacade,
+	InsightDataset,
+	InsightDatasetKind,
+	InsightError,
+	NotFoundError,
+	ResultTooLargeError
+} from "./IInsightFacade";
 import * as fs from "fs-extra";
 
 import JSZip = require("jszip");
@@ -110,10 +117,16 @@ export default class InsightFacade implements IInsightFacade {
 			let newDataset: any = converter.addIDtoDataset(loadedData,id);
 			qh = new QueryHelper(newDataset);
 			let result: any;
+			// get result here
+			// this.getResult();
+			let optionals: OptionHelper;
+			optionals = new OptionHelper();
 
-			if(qh.invalidQuery(query)){
+			if(!qh.invalidQuery(query)){
 				return reject(new InsightError("query is not valid."));
-			}else if(qh.referencesMultipleDatasets()){
+			}else if(!optionals.check(query)){
+				return reject(new InsightError("not pass option"));
+			}else if(qh.referencesMultipleDatasets(query)){
 				return reject(new InsightError("references Multiple Datasets."));
 			}
 
@@ -121,17 +134,12 @@ export default class InsightFacade implements IInsightFacade {
 			try{
 				result = qh.getQueryRequestKey2(query,loadedData);
 			}catch(e){
-				return reject(new InsightError("data not ready"));
+				return reject(new InsightError(e));
 			}
-			// get result here
-			// this.getResult();
-			let optionals: OptionHelper;
-			optionals = new OptionHelper();
+
 
 			if (qh.queryTooLong(result[0])){
-				return reject(new InsightError("query result are longer than 5000."));
-			}else if(!optionals.check(query,result[0])){
-				return reject(new InsightError("not pass option"));
+				reject(new ResultTooLargeError("More that 5000 results"));
 			}else {
 				try{
 					result = qh.applyOptional(query,result[0]);
