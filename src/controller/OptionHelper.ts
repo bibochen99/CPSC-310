@@ -17,6 +17,7 @@ export default class OptionHelper {
 
 		}
 
+
 		return false;
 	}
 }
