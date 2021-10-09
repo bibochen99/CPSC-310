@@ -1,9 +1,10 @@
-import {IInsightFacade, InsightDataset, InsightDatasetKind, InsightError} from "./IInsightFacade";
+import {IInsightFacade, InsightDataset, InsightDatasetKind, InsightError, NotFoundError} from "./IInsightFacade";
 import * as fs from "fs-extra";
 
 import JSZip = require("jszip");
 import Log from "@ubccpsc310/folder-test/build/Log";
 import {Subject} from "./Subject";
+import {Add} from "./Add";
 
 const persistDir = "./data";
 const courseZip: string = "test/resources/archives/courses.zip";
@@ -14,6 +15,8 @@ const courseZip: string = "test/resources/archives/courses.zip";
  */
 export default class InsightFacade implements IInsightFacade {
 	public myMap: any;
+	public addData = new Add();
+	public dataSets: any[] = [];
 	constructor() {
 		console.trace("InsightFacadeImpl::init()");
 		this.myMap = new Map();
@@ -21,9 +24,9 @@ export default class InsightFacade implements IInsightFacade {
 
 	public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
 		return new Promise<string[]>((resolve, reject) => {
-			if (!(this.validIdCheck(id))) {
+			if (!(this.addData.validIdCheck(id))) {
 				return reject(new InsightError("Id is not valid."));
-			} else if (this.sameID(id)) {
+			} else if (this.addData.sameID(this.myMap,id)) {
 				return reject(new InsightError("This Id already add."));
 			} else if (kind === InsightDatasetKind.Rooms) {
 				return reject(new InsightError("Room is Invalid in C1."));
@@ -32,18 +35,19 @@ export default class InsightFacade implements IInsightFacade {
 			let resultDataset: any[] = [];
 			let resultCourseName: any[];
 			jsZip.loadAsync(content, {base64: true}).then((zip) => {
-				resultCourseName = this.createUsefulFile(zip);
+				resultCourseName = this.addData.createUsefulFile(zip);
 				Promise.all(resultCourseName).then((file)=>{
 					if(file.length === 0 ){
 						return Promise.reject(new InsightError("length of 0 in zip"));
 					}
-					this.createJSON(file, resultDataset);
-					this.addDataToDisk();
+					this.addData.createJSON(file, resultDataset);
+					this.addData.addDataToDisk(persistDir);
 					try{
-						fs.writeFileSync(persistDir + id, JSON.stringify(resultDataset));
+						fs.writeFileSync(persistDir + "/" + id + ".json", JSON.stringify(resultDataset));
 					} catch (err) {
 						throw new InsightError("Cannot write to disk");
 					}
+					this.addData.addNewData(id,kind,resultDataset,this.dataSets);
 					this.myMap.set(id,resultDataset);
 					let keys: string[] = Array.from(this.myMap.keys());
 					return resolve(keys);
@@ -54,84 +58,22 @@ export default class InsightFacade implements IInsightFacade {
 		});
 
 	}
-
-
-	private createUsefulFile(zip: JSZip): any [] {
-		let resultCourse: any[] = [];
-		for (let file in zip.files) {
-			let currFile: any = zip.files[file].async("text")
-				.then((data: any) => {
-					try {
-						return JSON.parse(data);
-					} catch (err) {
-						return null;
-					}
-				});
-			resultCourse.push(currFile);
-		}
-		return resultCourse;
-	}
-
-	private createJSON(file: unknown[], resultDataset: any[]) {
-		file.forEach((jsonFile: any) => {
-			if (jsonFile != null) {
-				for (let eachSubject of jsonFile["result"]) {
-					if (eachSubject.Subject !== undefined && eachSubject.Course !== undefined &&
-						eachSubject.Avg !== undefined && eachSubject.Professor !== undefined
-						&& eachSubject.Title !== undefined
-						&& eachSubject.Pass !== undefined && eachSubject.Fail !== undefined
-						&& eachSubject.Audit !== undefined
-						&& eachSubject.id !== undefined && eachSubject.Year !== undefined) {
-
-						if (eachSubject.Section === "overall") {
-							eachSubject.Year = 1900;
-						}
-						let sectionObject = {} as Subject;
-						sectionObject.dept = eachSubject.Subject.toString();
-						sectionObject.id = eachSubject.Course.toString();
-						sectionObject.avg = parseFloat(eachSubject.Avg);
-						sectionObject.instructor = eachSubject.Professor.toString();
-						sectionObject.title = eachSubject.Title.toString();
-						sectionObject.pass = parseInt(eachSubject.Pass, 10);
-						sectionObject.fail = parseInt(eachSubject.Fail, 10);
-						sectionObject.audit = parseInt(eachSubject.Audit, 10);
-						sectionObject.uuid = eachSubject.id.toString();
-						sectionObject.year = parseInt(eachSubject.Year, 10);
-						resultDataset.push(sectionObject);
-					}
-				}
-			}
-		});
-	}
 // return true if same id from list dataset
-	private sameID(id: string) {
-		if (this.myMap.has(id)){
-			return true;
-		}
-		return false;
-	}
-
-	private addDataToDisk() {
-		if (!(fs.existsSync(persistDir))) {
-			fs.mkdir(persistDir, (err) => {
-				if (err) {
-					return console.error(err);
-				}
-				console.log("Directory created successfully!");
-			});
-		}
-	}
-
-	private validIdCheck(id: string): boolean {
-		if ((id === "") || (id.includes("_"))) {
-			return false;
-		}
-		return true;
-
-	}
-
 	public removeDataset(id: string): Promise<string> {
-		return Promise.reject("Not implemented.");
+		return new Promise<string>((resolve, reject) => {
+			if (!(this.addData.validIdCheck(id))) {
+				return reject(new InsightError("Id is not valid."));
+			} else if (!this.addData.sameID(this.myMap, id)) {
+				return reject(new NotFoundError("This Id dose not exist."));
+			}
+			this.myMap.delete(id);
+			this.dataSets.forEach((data: InsightDataset, loc)=>{
+				if (data.id === id){
+					this.dataSets.splice(loc);
+				}
+			});
+
+		});
 	}
 
 	public performQuery(query: any): Promise<any[]> {
@@ -139,6 +81,6 @@ export default class InsightFacade implements IInsightFacade {
 	}
 
 	public listDatasets(): Promise<InsightDataset[]> {
-		return Promise.reject("Not implemented.");
+		return Promise.resolve(this.dataSets);
 	}
 }
