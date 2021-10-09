@@ -1,13 +1,14 @@
 
 import {IInsightFacade, InsightDataset, InsightDatasetKind, InsightError} from "./IInsightFacade";
 import * as fs from "fs-extra";
-import Subject from "./Subject";
+
 import JSZip = require("jszip");
 import Log from "@ubccpsc310/folder-test/build/Log";
 import Filter from "./Filter";
 import {rejects} from "assert";
 import QueryHelper from "./QueryHelper";
 import ConverDatasetWithID from "./ConverDatasetWithID";
+import {Subject} from "./Subject";
 
 
 const persistDir = "./data";
@@ -19,128 +20,109 @@ const courseZip: string = "test/resources/archives/courses.zip";
  */
 export default class InsightFacade implements IInsightFacade {
 	public myMap: any;
-	public liftoffFilter: Filter[];
 	public addedDataset: any[];
 	public temp: any[];
 
 	constructor() {
 		console.trace("InsightFacadeImpl::init()");
 		this.myMap = new Map();
-		this.liftoffFilter = [];
 		this.addedDataset = [];
 		this.temp = [];
 
 	}
 
 	public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
-// 		return new Promise<string[]>((resolve, reject) => {
-// 			if (!(this.validIdCheck(id))) {
-// 				return reject(new InsightError("Id is not valid."));
-// 			} else if (this.sameID(id)) {
-// 				return reject(new InsightError("This Id already add."));
-// 			} else if (kind === InsightDatasetKind.Rooms) {
-// 				return reject(new InsightError("Room is Invalid in C1."));
-// 			}
-// 			let jsZip = new JSZip();
-// 			let resultDataset: any[];
-// 			jsZip.loadAsync(content, {base64: true}).then((zip) => {
-// 				let resultCourseName: any[] = this.createUsefulFile(zip);
-// 				Promise.all(resultCourseName).then((file)=>{
-//
-//
-// 					console.log(resultCourseName);
-// 					if(file.length === 0 ){
-// 						return Promise.reject(new InsightError("length of 0 in zip"));
-// 					}
-// 					this.createJSON(file, resultDataset);
-// 					this.addDataToDisk();
-// 					try{
-// 						fs.writeFileSync(persistDir + id, JSON.stringify(resultDataset));
-// 					} catch (err) {
-// 						throw new InsightError("Cannot write to disk");
-// 					}
-// 					this.myMap.set(id,resultDataset);
-// 				});
-// 			});
-// 			let keys: string[] = this.myMap.keys();
-// 			resolve(keys);
-// 		});
-//
-// 	}
-//
-//
-// 	private createUsefulFile(zip: JSZip): any [] {
-// 		let resultCourse: any[] = [];
-// 		for (let file in zip.files) {
-// 			let currFile: any = zip.files[file].async("text")
-// 				.then((data: any) => {
-// 					try {
-// 						JSON.parse(data);
-// 					} catch (err) {
-// 						return null;
-// 					}
-// 				}).then(() => {
-// 					resultCourse.push(currFile);
-// 				});
-// 		}
-// 		return resultCourse;
-// 	}
-//
-// 	private createJSON(file: unknown[], resultDataset: any[]) {
-// 		file.forEach((jsonFile: any) => {
-// 			if (jsonFile !== null) {
-// 				for (let eachSubject of jsonFile["result"]) {
-// 					if (eachSubject.Subject !== undefined && eachSubject.Course !== undefined &&
-// 						eachSubject.Avg !== undefined && eachSubject.Professor !== undefined
-// 						&& eachSubject.Title !== undefined
-// 						&& eachSubject.Pass !== undefined && eachSubject.Fail !== undefined
-// 						&& eachSubject.Audit !== undefined
-// 						&& eachSubject.id !== undefined  && eachSubject.Year !== undefined) {
-//
-// 						if (eachSubject.Section === "overall") {
-// 							eachSubject.Year = 1900;
-// 						}
-// 						let sectionObject: Subject = new Subject(eachSubject.Subject.toString(),
-// 							eachSubject.Course.toString(), parseFloat(eachSubject.Avg),
-// 							eachSubject.Professor.toString(), eachSubject.Title.toString(),
-// 							parseInt(eachSubject.Pass, 10),
-// 							parseInt(eachSubject.Fail, 10),
-// 							parseInt(eachSubject.Audit, 10),
-// 							eachSubject.id.toString(),
-// 							parseInt(eachSubject.Year, 10));
-// 						resultDataset.push(sectionObject);
-// 					}
-// 				}
-// 			}
-// 		});
-// 	}
-// // return true if same id from list dataset
-// 	private sameID(id: string) {
-// 		if (this.myMap.has(id)){
-// 			return true;
-// 		}
-// 		return false;
-// 	}
-//
-// 	private addDataToDisk() {
-// 		if (!(fs.existsSync(persistDir))) {
-// 			fs.mkdir(persistDir, (err) => {
-// 				if (err) {
-// 					return console.error(err);
-// 				}
-// 				console.log("Directory created successfully!");
-// 			});
-// 		}
-// 	}
-//
-// 	private validIdCheck(id: string): boolean {
-// 		if ((id === "") || (id.includes("_"))) {
-// 			return false;
-// 		}
-// 		return true;
-//
-		return Promise.reject("Not implemented.");
+		return new Promise<string[]>((resolve, reject) => {
+			if (!(this.validIdCheck(id))) {
+				return reject(new InsightError("Id is not valid."));
+			} else if (this.sameID(id)) {
+				return reject(new InsightError("This Id already add."));
+			} else if (kind === InsightDatasetKind.Rooms) {
+				return reject(new InsightError("Room is Invalid in C1."));
+			}
+			let jsZip = new JSZip();
+			let resultDataset: any[] = [];
+			let resultCourseName: any[];
+			jsZip.loadAsync(content, {base64: true}).then((zip) => {
+				resultCourseName = this.createUsefulFile(zip);
+				Promise.all(resultCourseName).then((file)=>{
+					if(file.length === 0 ){
+						return Promise.reject(new InsightError("length of 0 in zip"));
+					}
+					this.createJSON(file, resultDataset);
+					this.addDataToDisk();
+					try{
+						fs.writeFileSync(persistDir + id, JSON.stringify(resultDataset));
+					} catch (err) {
+						throw new InsightError("Cannot write to disk");
+					}
+					this.myMap.set(id,resultDataset);
+					let keys: string[] = Array.from(this.myMap.keys());
+					return resolve(keys);
+				}).catch((error)=>{
+					return reject(new InsightError("Invalid error"));
+				});
+			});
+		});
+
 	}
+
+
+	private createUsefulFile(zip: JSZip): any [] {
+		let resultCourse: any[] = [];
+		for (let file in zip.files) {
+			let currFile: any = zip.files[file].async("text")
+				.then((data: any) => {
+					try {
+						return JSON.parse(data);
+					} catch (err) {
+						return null;
+					}
+				});
+			resultCourse.push(currFile);
+		}
+		return resultCourse;
+	}
+
+	private createJSON(file: unknown[], resultDataset: any[]) {
+		file.forEach((jsonFile: any) => {
+			if (jsonFile != null) {
+				for (let eachSubject of jsonFile["result"]) {
+					if (eachSubject.Subject !== undefined && eachSubject.Course !== undefined &&
+						eachSubject.Avg !== undefined && eachSubject.Professor !== undefined
+						&& eachSubject.Title !== undefined
+						&& eachSubject.Pass !== undefined && eachSubject.Fail !== undefined
+						&& eachSubject.Audit !== undefined
+						&& eachSubject.id !== undefined && eachSubject.Year !== undefined) {
+
+						if (eachSubject.Section === "overall") {
+							eachSubject.Year = 1900;
+						}
+						let sectionObject = {} as Subject;
+						sectionObject.dept = eachSubject.Subject.toString();
+						sectionObject.id = eachSubject.Course.toString();
+						sectionObject.avg = parseFloat(eachSubject.Avg);
+						sectionObject.instructor = eachSubject.Professor.toString();
+						sectionObject.title = eachSubject.Title.toString();
+						sectionObject.pass = parseInt(eachSubject.Pass, 10);
+						sectionObject.fail = parseInt(eachSubject.Fail, 10);
+						sectionObject.audit = parseInt(eachSubject.Audit, 10);
+						sectionObject.uuid = eachSubject.id.toString();
+						sectionObject.year = parseInt(eachSubject.Year, 10);
+						resultDataset.push(sectionObject);
+					}
+				}
+			}
+		});
+	}
+// return true if same id from list dataset
+	private sameID(id: string) {
+		if (this.myMap.has(id)){
+			return true;
+		}
+		return false;
+	}
+
 	private addDataToDisk() {
 		if (!(fs.existsSync(persistDir))) {
 			fs.mkdir(persistDir, (err) => {
@@ -151,6 +133,16 @@ export default class InsightFacade implements IInsightFacade {
 			});
 		}
 	}
+
+	private validIdCheck(id: string): boolean {
+		if ((id === "") || (id.includes("_"))) {
+			return false;
+		}
+		return true;
+
+
+	}
+
 
 	public removeDataset(id: string): Promise<string> {
 		return Promise.reject("Not implemented.");
