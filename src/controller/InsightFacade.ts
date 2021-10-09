@@ -207,9 +207,8 @@ export default class InsightFacade implements IInsightFacade {
 	// private possibleInputKey: any[] = [ "title", "input", "errorExpected", "with" ];
 	//
 	private readDisk(loadedData: any) {
-		fs.readdirSync("./fakeData").forEach(function (file) {
+		fs.readdirSync("./Data").forEach(function (file) {
 			try{
-
 				let fileName = fs.readFileSync("./fakeData/" + file,"utf8");
 				let obj = JSON.parse(fileName);
 				loadedData = obj;
