@@ -14,7 +14,6 @@ import OptionHelper from "./OptionHelper";
 import {Add} from "./Add";
 
 
-
 const persistDir = "./data";
 const courseZip: string = "test/resources/archives/courses.zip";
 /**
@@ -27,6 +26,8 @@ export default class InsightFacade implements IInsightFacade {
 
 	public addData = new Add();
 	public dataSets: any[] = [];
+	public addedDataset: any[];
+	public temp: any[];
 
 	constructor() {
 		console.trace("InsightFacadeImpl::init()");
@@ -102,7 +103,6 @@ export default class InsightFacade implements IInsightFacade {
 
 		return Promise.reject("Not implemented.");
 	}
-
 
 
 	public performQuery(query: any): Promise<any[]> {
