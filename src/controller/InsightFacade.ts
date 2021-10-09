@@ -72,6 +72,13 @@ export default class InsightFacade implements IInsightFacade {
 					this.dataSets.splice(loc);
 				}
 			});
+			try {
+				fs.unlinkSync(persistDir + "/" + id + ".json");
+				console.log("successfully deleted /tmp/hello");
+			} catch (error) {
+				console.error("there was an error: cannot remove");
+			}
+			resolve(id);
 
 		});
 	}

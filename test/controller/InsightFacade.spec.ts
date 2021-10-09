@@ -524,6 +524,7 @@ describe("Bibo's Test", function (){
 			});
 
 			it("Remove Dataset Successfully", function () {
+				this.timeout(10000);
 				return facade.addDataset("COURSES", courses, InsightDatasetKind.Courses)
 					.then((addData) => {
 						expect(addData).to.deep.equal(["COURSES"]);
