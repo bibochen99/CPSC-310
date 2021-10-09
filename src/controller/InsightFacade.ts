@@ -6,6 +6,8 @@ import Log from "@ubccpsc310/folder-test/build/Log";
 import {Subject} from "./Subject";
 import OptionHelper from "./OptionHelper";
 import {Add} from "./Add";
+import QueryHelper from "./QueryHelper";
+import ConverDatasetWithID from "./ConverDatasetWithID";
 
 const persistDir = "./data";
 const courseZip: string = "test/resources/archives/courses.zip";
@@ -27,8 +29,8 @@ export default class InsightFacade implements IInsightFacade {
 		this.myMap = new Map();
 		this.addData = new Add();
 		this.dataSets = [];
-    this.addedDataset = [];
-    this.temp = [];
+		this.addedDataset = [];
+		this.temp = [];
 	}
 
 	public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
@@ -92,9 +94,9 @@ export default class InsightFacade implements IInsightFacade {
 		});
 	}
 
-  public listDatasets(): Promise<InsightDataset[]> {
+	public listDatasets(): Promise<InsightDataset[]> {
 		return Promise.resolve(this.dataSets);
-  }
+	}
 	public performQuery(query: any): Promise<any[]> {
 		// console.log(query);
 		return new Promise<string[]>((resolve, reject) => {
