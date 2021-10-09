@@ -25,6 +25,6 @@
     }
   }
 ,
-  "errorExpected": true,
-  "with": "InsightError"
+  "errorExpected": false,
+  "with": []
 }

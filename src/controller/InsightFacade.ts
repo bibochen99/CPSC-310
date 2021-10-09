@@ -4,6 +4,7 @@ import * as fs from "fs-extra";
 import JSZip = require("jszip");
 import Log from "@ubccpsc310/folder-test/build/Log";
 import {Subject} from "./Subject";
+import OptionHelper from "./OptionHelper";
 import {Add} from "./Add";
 
 const persistDir = "./data";
@@ -85,11 +86,75 @@ export default class InsightFacade implements IInsightFacade {
 		});
 	}
 
+  public listDatasets(): Promise<InsightDataset[]> {
+		return Promise.resolve(this.dataSets);
+  }
 	public performQuery(query: any): Promise<any[]> {
-		return Promise.reject("Not implemented.");
+		// console.log(query);
+		return new Promise<string[]>((resolve, reject) => {
+			let qh: QueryHelper;
+			let converter: ConverDatasetWithID;
+			let loadedData: any = [];
+			let id: string;
+			loadedData = this.readDisk(loadedData);
+			converter = new ConverDatasetWithID();
+			id = "courses";
+			let newDataset: any = converter.addIDtoDataset(loadedData,id);
+			qh = new QueryHelper(newDataset);
+			let result: any;
+
+			if(qh.invalidQuery(query)){
+				return reject(new InsightError("query is not valid."));
+			}else if(qh.referencesMultipleDatasets()){
+				return reject(new InsightError("references Multiple Datasets."));
+			}
+
+			// this.getQueryRequestKey(query);
+			try{
+				result = qh.getQueryRequestKey2(query,loadedData);
+			}catch(e){
+				return reject(new InsightError("data not ready"));
+			}
+			// get result here
+			// this.getResult();
+			let optionals: OptionHelper;
+			optionals = new OptionHelper();
+
+			if (qh.queryTooLong(result[0])){
+				return reject(new InsightError("query result are longer than 5000."));
+			}else if(!optionals.check(query,result[0])){
+				return reject(new InsightError("not pass option"));
+			}else {
+				try{
+					result = qh.applyOptional(query,result[0]);
+				}catch(e){
+					return reject(new InsightError("not valid"));
+				}
+			}
+
+			// console.log(this.liftoffFilter);
+			resolve(result);
+		});
+
+
 	}
 
-	public listDatasets(): Promise<InsightDataset[]> {
-		return Promise.resolve(this.dataSets);
+	//
+	// // should read file from disk for query
+	// private possibleQueryKey: any[] = ["WHERE", "OPTIONS"];
+	// private possibleInputKey: any[] = [ "title", "input", "errorExpected", "with" ];
+	//
+	private readDisk(loadedData: any) {
+		fs.readdirSync("./data").forEach(function (file) {
+			try{
+				let fileName = fs.readFileSync("./data/" + file,"utf8");
+				let obj = JSON.parse(fileName);
+				loadedData = obj;
+			} catch (e) {
+				console.log("cannot read from disk");
+			}
+
+		});
+		return loadedData;
 	}
 }

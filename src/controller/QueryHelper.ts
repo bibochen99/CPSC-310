@@ -3,6 +3,7 @@
 import * as fs from "fs-extra";
 import {InsightError} from "./IInsightFacade";
 import FilterHelper from "./FilterHelper";
+import OptionHelper from "./OptionHelper";
 
 export default class QueryHelper {
 	private possibleQueryKey: any[] = ["WHERE", "OPTIONS"];
