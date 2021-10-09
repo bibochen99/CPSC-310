@@ -18,6 +18,6 @@ export default class OptionHelper {
 		}
 
 
-		return false;
+		return true;
 	}
 }

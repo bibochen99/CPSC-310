@@ -126,7 +126,7 @@ export default class QueryHelper {
 	// }
 
 		if(Object.prototype.hasOwnProperty.call(inside, "AND")){
-			this.loopIntoWhere(inside.AND, result,this.temp);
+			this.loopIntoWhere(inside.AND, result,temp);
 			let otherTemp = this.filterHelper.applyAndFilter(this.temp);
 			result = [];
 			result.push(otherTemp);
@@ -137,20 +137,30 @@ export default class QueryHelper {
 			result = [];
 			result.push(otherTemp);
 			this.temp = result;
+
+			// this.loopIntoWhere(inside.OR, result,temp);
+			// let otherTemp = this.filterHelper.applyOrFilter(this.temp);
+			// result = [];
+			// result.push(otherTemp);
+			// this.temp = result;
 		} else if(Object.prototype.hasOwnProperty.call(inside, "IS")){
 
 			this.temp = this.filterHelper.applyISFilter(inside.IS,result);
 
 		} else if(Object.prototype.hasOwnProperty.call(inside, "NOT")){
-			this.loopIntoWhere(inside.NOT, result,this.temp);
+			let cast: any[] = [];
+			cast.push(inside.NOT);
+			this.loopIntoWhere(cast, result,temp);
 			let otherTemp = this.filterHelper.applyNOTFilter(this.temp);
 			result = [];
 			result.push(otherTemp);
 			this.temp = result;
+
+
 		} else if(Object.prototype.hasOwnProperty.call(inside, "EQ")){
-			console.log("145");
+			// console.log("145");
 			this.temp = this.filterHelper.applyEQFilter(inside.EQ,result);
-			console.log("146");
+			// console.log("146");
 		} else if(Object.prototype.hasOwnProperty.call(inside, "GT")){
 			this.temp = this.filterHelper.applyGTFilter(inside.GT,result);
 		} else if(Object.prototype.hasOwnProperty.call(inside, "LT")){
@@ -178,14 +188,26 @@ export default class QueryHelper {
 				result = [];
 				result.push(otherTemp);
 				this.temp = result;
+
+
 			} else if(Object.prototype.hasOwnProperty.call(nestedValue, "IS")){
 				this.filterHelper.applyISFilter(nestedValue.IS,result);
 			} else if(Object.prototype.hasOwnProperty.call(nestedValue, "NOT")){
-				this.loopIntoWhere(nestedValue.NOT, result,temp);
-				let otherTemp = this.filterHelper.applyNOTFilter(temp);
+				// // console.log("193");
+				// this.loopIntoWhere(nestedValue.NOT, result,temp);
+				// let otherTemp = this.filterHelper.applyNOTFilter(temp);
+				// result = [];
+				// result.push(otherTemp);
+				// this.temp = result;
+
+				let cast: any[] = [];
+				cast.push(nestedValue.NOT);
+				this.loopIntoWhere(cast, result,temp);
+				let otherTemp = this.filterHelper.applyNOTFilter(this.temp);
 				result = [];
 				result.push(otherTemp);
 				this.temp = result;
+
 			} else if(Object.prototype.hasOwnProperty.call(nestedValue, "EQ")){
 				this.filterHelper.applyEQFilter(nestedValue.EQ,result);
 			} else if(Object.prototype.hasOwnProperty.call(nestedValue, "GT")){
