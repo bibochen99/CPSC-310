@@ -15,11 +15,13 @@ const courseZip: string = "test/resources/archives/courses.zip";
  */
 export default class InsightFacade implements IInsightFacade {
 	public myMap: any;
-	public addData = new Add();
-	public dataSets: any[] = [];
+	public addData;
+	public dataSets: any[];
 	constructor() {
 		console.trace("InsightFacadeImpl::init()");
 		this.myMap = new Map();
+		this.addData = new Add();
+		this.dataSets = [];
 	}
 
 	public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
