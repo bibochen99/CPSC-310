@@ -11,7 +11,6 @@ import ConverDatasetWithID from "./ConverDatasetWithID";
 import {Subject} from "./Subject";
 
 
-
 const persistDir = "./data";
 const courseZip: string = "test/resources/archives/courses.zip";
 /**
@@ -123,7 +122,19 @@ export default class InsightFacade implements IInsightFacade {
 		}
 		return false;
 	}
-  private validIdCheck(id: string): boolean {
+
+	private addDataToDisk() {
+		if (!(fs.existsSync(persistDir))) {
+			fs.mkdir(persistDir, (err) => {
+				if (err) {
+					return console.error(err);
+				}
+				console.log("Directory created successfully!");
+			});
+		}
+	}
+
+	private validIdCheck(id: string): boolean {
 		if ((id === "") || (id.includes("_"))) {
 			return false;
 		}
@@ -131,11 +142,6 @@ export default class InsightFacade implements IInsightFacade {
 
 
 	}
-
-
-	
-
-	
 
 
 	public removeDataset(id: string): Promise<string> {
