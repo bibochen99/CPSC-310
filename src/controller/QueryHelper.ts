@@ -120,7 +120,7 @@ export default class QueryHelper {
 		let dataset: any[] = loadedData;
 		let result: any[] = [];
 		let temp: any[] = [];
-	// TODO: move to checking
+
 	// if(Object.keys(inside).length !== 1){
 	// 	throw new InsightError("should only have 1 key inside where");
 	// }
