@@ -12,14 +12,6 @@ export default class FilterHelper {
 		this.addedDataset = loadedData;
 	}
 	public applyISFilter(IS: any,result: any[]) {
-		// function filtering(item) {
-		// 	if(IS.key === item.IS.key){
-		// 		return true;
-		// 	} else{
-		// 		return false;
-		// 	}
-		// }
-		// let key = Object.keys(IS)[0];
 		let resultSoFar: any[] = [];
 		let string = Object.keys(IS)[0];// course_avg
 		let iS = string.split("_")[1];
@@ -30,12 +22,15 @@ export default class FilterHelper {
 		}else if(typeof stringValue !== "string") {
 			throw new InsightError("not string value.");
 		} else{
-			// let temResult: any[] = this.addedDataset.filter((d)=>d.IS.key === IS.value);
-			// result.push(temResult);
 
-			for (let each of this.addedDataset){
-				if(each[string].includes(stringValue)){
-					resultSoFar.push(each);
+			if(stringValue.includes("*")){
+				this.extracted(stringValue, string, resultSoFar);
+
+			}else{
+				for (let each of this.addedDataset){
+					if(each[string] === stringValue){
+						resultSoFar.push(each);
+					}
 				}
 			}
 		}
@@ -44,6 +39,49 @@ export default class FilterHelper {
 		return result;
 	}
 
+
+	private extracted(stringValue: string, string: string, resultSoFar: any[]) {
+
+		if (stringValue.substr(0, 1) === "*" && (stringValue.substr(-1) === "*")) {
+			let sub = stringValue.substr(1, stringValue.length - 2);
+			if (sub.includes("*")) {
+				throw new InsightError("not valid *.");
+			}
+			for (let each of this.addedDataset) {
+				// console.log(each[string]);
+				if (each[string].includes(sub)) {
+					resultSoFar.push(each);
+				}
+			}
+		} else if (stringValue.substr(0, 1) === "*") {
+			let sub = stringValue.substr(1);
+			if (sub.includes("*")) {
+				throw new InsightError("not valid *.");
+			}
+			for (let each of this.addedDataset) {
+				let subkey = each[string].substr((each[string].length - sub.length), each[string].length);
+				if (subkey === sub) {
+					resultSoFar.push(each);
+				}
+			}
+		} else if (stringValue.substr(-1) === "*") {
+
+
+			let sub = stringValue.substr(0, stringValue.length - 1);
+			if (sub.includes("*")) {
+				throw new InsightError("not valid *.");
+			}
+			for (let each of this.addedDataset) {
+				let subkey = each[string].substr(0, sub.length);
+				if (subkey === sub) {
+					resultSoFar.push(each);
+				}
+			}
+
+		} else {
+			throw new InsightError("not valid *.");
+		}
+	}
 
 	public applyEQFilter(EQ: any, result: any[]) {
 		let string = Object.keys(EQ)[0];// course_avg

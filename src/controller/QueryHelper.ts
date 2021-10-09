@@ -4,6 +4,7 @@ import * as fs from "fs-extra";
 import {InsightError} from "./IInsightFacade";
 import FilterHelper from "./FilterHelper";
 import OptionHelper from "./OptionHelper";
+import MultipleDatasetsCheck from "./MultipleDatasetsCheck";
 
 export default class QueryHelper {
 	private possibleQueryKey: any[] = ["WHERE", "OPTIONS"];
@@ -29,19 +30,7 @@ export default class QueryHelper {
 	public invalidQuery(query: any) {
 		let queryObject = query;
 		let queryKeys: any [];
-	// queryKeys = Object.keys(queryObject);// [ 'WHERE', 'OPTIONS' ]
 
-	// Object.keys(queryObject).forEach(function(key) {
-	// 	console.log(queryObject[key]);
-	// });
-	// let whereQuery = queryObject["WHERE"];
-	// //
-	// for(let queryKey of Object.keys(queryObject)){
-	// 	if((!queryKey.includes("WHERE") || !queryKey.includes("OPTIONS"))){
-	// 		console.log("Key is not [ 'WHERE', 'OPTIONS' ]");
-	// 		return false;
-	// 	}
-	// }
 		if(queryObject["WHERE"] === undefined){
 			return false;
 		}
@@ -49,42 +38,36 @@ export default class QueryHelper {
 			return false;
 		}
 
-	// // TODO: need to loop over inside where to get the key
+
 		if(!(this.checkValidInsideWhere(query))){
 			return false;
 		}
-
-		if(!("OPTIONS" in queryObject)){
-			console.log("Missing OPTIONS");
+		console.log(query.OPTIONS);
+		if(query.OPTIONS === undefined){
 			return false;
 		}
 		if(queryObject["OPTIONS"] === null){
-			console.log("OPTIONS has null");
 			return false;
 		}
 		if(queryObject["OPTIONS"] === undefined){
-			console.log("OPTIONS has null");
 			return false;
 		}
-		if(!(typeof queryObject["OPTIONS"] === "object")){
-			console.log("OPTIONS is not object");
-			return false;
-		}
-		if(!(this.checkValidInsideOption(query))){
-			return false;
-		}
-		return false;
+		return true;
 	}
 
 	public checkValidInsideWhere(query: any) {
 		let queryObject = query;
 		let queryKeys: any [];
 		let whereQuery = queryObject["WHERE"];
+
+		if(Object.keys(query.WHERE).length === 0){
+			return true;
+		}
 	// inside where
 		let insideWhereKey = Object.keys(whereQuery);
 
-		if(insideWhereKey.length > 1){
-			console.log("WHERE has more object inside");
+		if(Object.keys(query.WHERE).length > 1){
+			// console.log("WHERE has more object inside");
 			return false;
 		}
 
@@ -100,18 +83,15 @@ export default class QueryHelper {
 			console.log("invalid filter name");
 			return false;
 		}
-
+		return true;
 	}
 
 
-	public referencesMultipleDatasets() {
-		return false;
+	public referencesMultipleDatasets(query: any) {
+		let md: MultipleDatasetsCheck = new MultipleDatasetsCheck();
+		return md.check(query);
 	}
 
-
-	public checkValidInsideOption(query: any) {
-		return false;
-	}
 
 	public getQueryRequestKey2(query: any, loadedData: any): any[] {
 
@@ -120,12 +100,11 @@ export default class QueryHelper {
 		let dataset: any[] = loadedData;
 		let result: any[] = [];
 		let temp: any[] = [];
-
-	// if(Object.keys(inside).length !== 1){
-	// 	throw new InsightError("should only have 1 key inside where");
-	// }
-
-		if(Object.prototype.hasOwnProperty.call(inside, "AND")){
+		if(Object.keys(query.WHERE).length === 0){
+			result = [];
+			result.push(loadedData);
+			this.temp = result;
+		} else if(Object.prototype.hasOwnProperty.call(inside, "AND")){
 			this.loopIntoWhere(inside.AND, result,temp);
 			let otherTemp = this.filterHelper.applyAndFilter(this.temp);
 			result = [];
