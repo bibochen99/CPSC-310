@@ -134,6 +134,12 @@ export default class QueryHelper {
 			// result.push(otherTemp);
 			// this.temp = result;
 
+			this.loopIntoWhere(inside.NOT, result,temp);
+			let otherTemp = this.filterHelper.applyNOTFilter(this.temp);
+			result = [];
+			result.push(otherTemp);
+			this.temp = result;
+
 
 		} else if(Object.prototype.hasOwnProperty.call(inside, "EQ")){
 			// console.log("145");
@@ -180,6 +186,13 @@ export default class QueryHelper {
 				// result = [];
 				// result.push(otherTemp);
 				// this.temp = result;
+
+				this.loopIntoWhere(nestedValue.NOT, result,temp);
+				let otherTemp = this.filterHelper.applyNOTFilter(temp);
+				result = [];
+				result.push(otherTemp);
+				this.temp = result;
+
 
 			} else if(Object.prototype.hasOwnProperty.call(nestedValue, "EQ")){
 				this.filterHelper.applyEQFilter(nestedValue.EQ,result);

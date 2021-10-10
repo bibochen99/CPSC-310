@@ -139,7 +139,7 @@ export default class InsightFacade implements IInsightFacade {
 
 
 			if (qh.queryTooLong(result[0])){
-				reject(new ResultTooLargeError("More that 5000 results"));
+				return reject(new ResultTooLargeError("More that 5000 results"));
 			}else {
 				try{
 					result = qh.applyOptional(query,result[0]);
