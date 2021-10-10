@@ -29,11 +29,8 @@ export default class OptionHelper {
 				return false;
 			}
 		}
-		if(Object.keys(query.OPTIONS.COLUMNS).length === 0){
-			return false;
-		}
+		return Object.keys(query.OPTIONS.COLUMNS).length !== 0;
 
 
-		return true;
 	}
 }

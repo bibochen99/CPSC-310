@@ -1,7 +1,5 @@
-import * as fs from "fs-extra";
 import {InsightError} from "./IInsightFacade";
 import FilterHelper from "./FilterHelper";
-import OptionHelper from "./OptionHelper";
 import MultipleDatasetsCheck from "./MultipleDatasetsCheck";
 
 export default class QueryHelper {
@@ -26,8 +24,6 @@ export default class QueryHelper {
 
 	public invalidQuery(query: any) {
 		let queryObject = query;
-		let queryKeys: any [];
-
 		if(queryObject["WHERE"] === undefined){
 			return false;
 		}
@@ -46,16 +42,12 @@ export default class QueryHelper {
 		if(queryObject["OPTIONS"] === null){
 			return false;
 		}
-		if(queryObject["OPTIONS"] === undefined){
-			return false;
-		}
-		return true;
+		return queryObject["OPTIONS"] !== undefined;
+
 	}
 
 	public checkValidInsideWhere(query: any) {
-		let queryObject = query;
-		let queryKeys: any [];
-		let whereQuery = queryObject["WHERE"];
+		let whereQuery = query["WHERE"];
 
 		// if(Object.keys(query.WHERE).length === 0){
 		// 	return true;
@@ -76,10 +68,8 @@ export default class QueryHelper {
 		// console.log("nothing inside the WHERE");
 			return false;
 		}
-		if(!(filterList.includes(filter))){
-			return false;
-		}
-		return true;
+		return filterList.includes(filter);
+
 	}
 
 
@@ -89,20 +79,18 @@ export default class QueryHelper {
 	}
 
 
-	public getQueryRequestKey2(query: any, loadedData: any): any[] {
+	public getQueryRequestKey2(query: any): any[] {
 
-		let inputQuery = query;
-		let inside = inputQuery["WHERE"];
+		let inside = query["WHERE"];
 		let result: any[] = [];
-		let temp: any[] = [];
 		if(Object.prototype.hasOwnProperty.call(inside, "AND")){
-			this.loopIntoWhere(inside.AND, result,temp);
+			this.loopIntoWhere(inside.AND, result);
 			let otherTemp = this.filterHelper.applyAndFilter(this.temp);
 			result = [];
 			result.push(otherTemp);
 			this.temp = result;
 		} else if(Object.prototype.hasOwnProperty.call(inside, "OR")){
-			this.loopIntoWhere(inside.OR, result,temp);
+			this.loopIntoWhere(inside.OR, result);
 			let otherTemp = this.filterHelper.applyOrFilter(this.temp);
 			result = [];
 			result.push(otherTemp);
@@ -120,7 +108,7 @@ export default class QueryHelper {
 		} else if(Object.prototype.hasOwnProperty.call(inside, "NOT")){
 			let cast: any[] = [];
 			cast.push(inside.NOT);
-			this.loopIntoWhere(cast, result,temp);
+			this.loopIntoWhere(cast, result);
 			let otherTemp = this.filterHelper.applyNOTFilter(this.temp);
 			result = [];
 			result.push(otherTemp);
@@ -142,18 +130,17 @@ export default class QueryHelper {
 		return this.temp;
 	}
 
-	public loopIntoWhere(value: any, result: any[],temp: any[]) {
-		temp = [];
+	public loopIntoWhere(value: any, result: any[]) {
 		for(let nestedValue of value){
 			if(Object.prototype.hasOwnProperty.call(nestedValue, "AND")){
-				this.loopIntoWhere(nestedValue.AND, result,temp);
+				this.loopIntoWhere(nestedValue.AND, result);
 				let otherTemp = this.filterHelper.applyAndFilter(result);
 				result = [];
 				result.push(otherTemp);
 				this.temp = result;
 
 			} else if(Object.prototype.hasOwnProperty.call(nestedValue, "OR")){
-				this.loopIntoWhere(nestedValue.OR, result,temp);
+				this.loopIntoWhere(nestedValue.OR, result);
 				let otherTemp = this.filterHelper.applyOrFilter(result);
 				result = [];
 				result.push(otherTemp);
@@ -172,7 +159,7 @@ export default class QueryHelper {
 
 				let cast: any[] = [];
 				cast.push(nestedValue.NOT);
-				this.loopIntoWhere(cast, result,temp);
+				this.loopIntoWhere(cast, result);
 				let otherTemp = this.filterHelper.applyNOTFilter(this.temp);
 				result = [];
 				result.push(otherTemp);

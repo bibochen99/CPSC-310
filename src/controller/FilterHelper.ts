@@ -1,5 +1,4 @@
 import {InsightError} from "./IInsightFacade";
-import QueryHelper from "./QueryHelper";
 
 export default class FilterHelper {
 	private sKey: string[] = ["dept", "id", "instructor", "title", "uuid"];
@@ -170,7 +169,6 @@ export default class FilterHelper {
 			}
 		}
 		// console.log(result.length);
-		let remove = temp;
 		temp = [];
 		temp.push(result);
 
@@ -201,7 +199,6 @@ export default class FilterHelper {
 	}
 
 	public applyOrFilter(temp: any[]) {
-		let result: any = [];
 
 		let temp2: any[];
 		let longestArr: any = temp[0];
@@ -220,7 +217,6 @@ export default class FilterHelper {
 				}
 			}
 		});
-		let remove = temp;
 		temp = [];
 		temp.push(longestArr);
 		// temp = longestArr;

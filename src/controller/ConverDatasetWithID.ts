@@ -1,5 +1,3 @@
-import * as fs from "fs-extra";
-
 export default class ConverDatasetWithID{
 
 	private input: any[];
@@ -30,7 +28,7 @@ export default class ConverDatasetWithID{
 		return loadedData;
 	}
 
-	public getIdFromDataset(): string {
-		return "";
-	}
+	// public getIdFromDataset(): string {
+	// 	return "";
+	// }
 }
