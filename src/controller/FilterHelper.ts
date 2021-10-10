@@ -179,25 +179,25 @@ export default class FilterHelper {
 
 	}
 	public applyNOTFilter(temp: any[]): any [] {
-		let temResult: any[] = this.addedDataset.filter(((value: any) => !this.addedDataset.includes(value)));
+		// let temResult: any[] = this.addedDataset.filter(((value: any) => !this.addedDataset.includes(value)));
 
-		// let holder: any[] = [];
-		//
-		// for (let each of this.addedDataset) {
-		// 	if (!(temp[0].includes(each))) {
-		// 		holder.push(each);
-		// 	}
-		// }
+		let holder: any[] = [];
 
-		temp = [];
-		temp.push(temResult);
-		return temp;
+		for (let each of this.addedDataset) {
+			if (!(temp[0].includes(each))) {
+				holder.push(each);
+			}
+		}
+
+		// temp = [];
+		// temp.push(temResult);
+		// return temp;
 
 		// console.log(holder.length);
-		// right
-		// temp = [];
-		// temp.push(holder);
-		// return holder;
+
+		temp = [];
+		temp.push(holder);
+		return holder;
 	}
 
 	public applyOrFilter(temp: any[]) {

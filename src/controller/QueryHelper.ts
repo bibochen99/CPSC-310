@@ -1,5 +1,3 @@
-
-
 import * as fs from "fs-extra";
 import {InsightError} from "./IInsightFacade";
 import FilterHelper from "./FilterHelper";
@@ -7,7 +5,6 @@ import OptionHelper from "./OptionHelper";
 import MultipleDatasetsCheck from "./MultipleDatasetsCheck";
 
 export default class QueryHelper {
-	private possibleQueryKey: any[] = ["WHERE", "OPTIONS"];
 	private mKey: string[] = ["courses_avg", "courses_pass", "courses_fail", "courses_audit",
 		"courses_year","avg", "pass", "fail", "audit", "year"];
 
@@ -80,14 +77,13 @@ export default class QueryHelper {
 			return false;
 		}
 		if(!(filterList.includes(filter))){
-			console.log("invalid filter name");
 			return false;
 		}
 		return true;
 	}
 
 
-	public referencesMultipleDatasets(query: any) {
+	public referencesMultipleDatasets(query: any): boolean{
 		let md: MultipleDatasetsCheck = new MultipleDatasetsCheck();
 		return md.check(query);
 	}
@@ -126,15 +122,9 @@ export default class QueryHelper {
 			this.temp = this.filterHelper.applyISFilter(inside.IS,result);
 
 		} else if(Object.prototype.hasOwnProperty.call(inside, "NOT")){
-			// let cast: any[] = [];
-			// cast.push(inside.NOT);
-			// this.loopIntoWhere(cast, result,temp);
-			// let otherTemp = this.filterHelper.applyNOTFilter(this.temp);
-			// result = [];
-			// result.push(otherTemp);
-			// this.temp = result;
-
-			this.loopIntoWhere(inside.NOT, result,temp);
+			let cast: any[] = [];
+			cast.push(inside.NOT);
+			this.loopIntoWhere(cast, result,temp);
 			let otherTemp = this.filterHelper.applyNOTFilter(this.temp);
 			result = [];
 			result.push(otherTemp);
@@ -177,22 +167,20 @@ export default class QueryHelper {
 			} else if(Object.prototype.hasOwnProperty.call(nestedValue, "IS")){
 				this.filterHelper.applyISFilter(nestedValue.IS,result);
 			} else if(Object.prototype.hasOwnProperty.call(nestedValue, "NOT")){
-
-
-				// let cast: any[] = [];
-				// cast.push(nestedValue.NOT);
-				// this.loopIntoWhere(cast, result,temp);
-				// let otherTemp = this.filterHelper.applyNOTFilter(this.temp);
+				// // console.log("193");
+				// this.loopIntoWhere(nestedValue.NOT, result,temp);
+				// let otherTemp = this.filterHelper.applyNOTFilter(temp);
 				// result = [];
 				// result.push(otherTemp);
 				// this.temp = result;
 
-				this.loopIntoWhere(nestedValue.NOT, result,temp);
-				let otherTemp = this.filterHelper.applyNOTFilter(temp);
+				let cast: any[] = [];
+				cast.push(nestedValue.NOT);
+				this.loopIntoWhere(cast, result,temp);
+				let otherTemp = this.filterHelper.applyNOTFilter(this.temp);
 				result = [];
 				result.push(otherTemp);
 				this.temp = result;
-
 
 			} else if(Object.prototype.hasOwnProperty.call(nestedValue, "EQ")){
 				this.filterHelper.applyEQFilter(nestedValue.EQ,result);
