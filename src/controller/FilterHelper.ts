@@ -5,12 +5,15 @@ export default class FilterHelper {
 	private mKey: string[] = ["avg", "pass", "fail", "audit", "year"];
 	private temp: any;
 	private addedDataset: any;
+	private copyDataset: any;
 
 	constructor(temp: any,loadedData: any){
 		this.temp = temp;
 		this.addedDataset = loadedData;
+		this.copyDataset = loadedData;
 	}
 	public applyISFilter(IS: any,result: any[]) {
+
 		let resultSoFar: any[] = [];
 		let string = Object.keys(IS)[0];// course_avg
 		let iS = string.split("_")[1];
@@ -23,15 +26,19 @@ export default class FilterHelper {
 		} else{
 
 			if(stringValue.includes("*")){
-				this.extracted(stringValue, string, resultSoFar);
+				resultSoFar = this.extracted(stringValue, string, resultSoFar);
 
 			}else{
-				for (let each of this.addedDataset){
-					if(each[string] === stringValue){
-						resultSoFar.push(each);
-					}
-				}
+				// for (let each of this.addedDataset){
+				// 	if(each[string] === stringValue){
+				// 		resultSoFar.push(each);
+				// 	}
+				// }
+				resultSoFar = this.addedDataset.filter((o: any)=>o[string] === stringValue);
+
+				// this.copyDataset = this.copyDataset.filter((o: any)=>o[string] === stringValue);
 			}
+
 		}
 		this.temp.push(resultSoFar);
 		result.push(resultSoFar);
@@ -46,23 +53,31 @@ export default class FilterHelper {
 			if (sub.includes("*")) {
 				throw new InsightError("not valid *.");
 			}
-			for (let each of this.addedDataset) {
-				// console.log(each[string]);
-				if (each[string].includes(sub)) {
-					resultSoFar.push(each);
-				}
-			}
+			// for (let each of this.addedDataset) {
+			// 	// console.log(each[string]);
+			// 	if (each[string].includes(sub)) {
+			// 		resultSoFar.push(each);
+			// 	}
+			// }
+			// this.copyDataset = this.copyDataset.filter((o: any)=>o[string].includes(sub));
+			return this.addedDataset.filter((o: any)=>o[string].includes(sub));
 		} else if (stringValue.substr(0, 1) === "*") {
 			let sub = stringValue.substr(1);
 			if (sub.includes("*")) {
 				throw new InsightError("not valid *.");
 			}
-			for (let each of this.addedDataset) {
-				let subkey = each[string].substr((each[string].length - sub.length), each[string].length);
-				if (subkey === sub) {
-					resultSoFar.push(each);
-				}
-			}
+			// for (let each of this.addedDataset) {
+			// 	let subkey = each[string].substr((each[string].length - sub.length), each[string].length);
+			// 	if (subkey === sub) {
+			// 		resultSoFar.push(each);
+			// 	}
+			// }
+
+			// this.copyDataset = this.copyDataset.filter((o: any)=>o[string].substr((o[string].length - sub.length),
+			// 	o[string].length)	=== sub);
+
+			return this.addedDataset.filter((o: any)=>o[string].substr((o[string].length - sub.length),
+				o[string].length)	=== sub);
 		} else if (stringValue.substr(-1) === "*") {
 
 
@@ -76,6 +91,8 @@ export default class FilterHelper {
 					resultSoFar.push(each);
 				}
 			}
+			// this.copyDataset = this.copyDataset.filter((o: any)=>o[string].substr(0, sub.length) === sub);
+			return this.addedDataset.filter((o: any)=>o[string].substr(0, sub.length) === sub);
 
 		} else {
 			throw new InsightError("not valid *.");
@@ -94,11 +111,13 @@ export default class FilterHelper {
 		} else {
 			// let temResult: any[] = this.addedDataset.filter((d)=>d.IS.key === EQ.value);
 			// result.push(temResult);
-			for (let each of this.addedDataset){
-				if(each[string] === numValue){
-					resultSoFar.push(each);
-				}
-			}
+			// for (let each of this.addedDataset){
+			// 	if(each[string] === numValue){
+			// 		resultSoFar.push(each);
+			// 	}
+			// }
+			resultSoFar = this.addedDataset.filter((o: any)=>o[string] === numValue);
+
 		}
 		this.temp.push(resultSoFar);
 		result.push(resultSoFar);
@@ -122,11 +141,12 @@ export default class FilterHelper {
 			// 	console.log(temResult);
 			// 	result.push(temResult);
 			// });
-			for (let each of this.addedDataset){
-				if(each[string] > numValue){
-					resultSoFar.push(each);
-				}
-			}
+			// for (let each of this.addedDataset){
+			// 	if(each[string] > numValue){
+			// 		resultSoFar.push(each);
+			// 	}
+			// }
+			resultSoFar = this.addedDataset.filter((o: any)=>o[string] > numValue);
 
 		}
 		this.temp.push(resultSoFar);
@@ -146,12 +166,13 @@ export default class FilterHelper {
 		}else if(typeof numValue !== "number") {
 			throw new InsightError("not number value.");
 		} else {
-
-			for (let each of this.addedDataset){
-				if(each[string] < numValue){
-					resultSoFar.push(each);
-				}
-			}
+			//
+			// for (let each of this.addedDataset){
+			// 	if(each[string] < numValue){
+			// 		resultSoFar.push(each);
+			// 	}
+			// }
+			resultSoFar = this.addedDataset.filter((o: any)=>o[string] < numValue);
 		}
 		this.temp.push(resultSoFar);
 		result.push(resultSoFar);
