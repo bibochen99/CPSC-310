@@ -30,6 +30,7 @@ export default class InsightFacade implements IInsightFacade {
 	public temp: any[];
 	public addData;
 	public dataSets: any[];
+	public check: boolean;
 
 	constructor() {
 		console.trace("InsightFacadeImpl::init()");
@@ -38,6 +39,7 @@ export default class InsightFacade implements IInsightFacade {
 		this.dataSets = [];
 		this.addedDataset = [];
 		this.temp = [];
+		this.check = true;
 	}
 
 	public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
@@ -109,30 +111,40 @@ export default class InsightFacade implements IInsightFacade {
 		return new Promise<string[]>((resolve, reject) => {
 			let qh: QueryHelper;
 			let converter: ConverDatasetWithID;
-			let loadedData: any = [];
+			// let loadedData: any = [];
 			let id: string;
-			loadedData = this.readDisk(loadedData);
-			converter = new ConverDatasetWithID();
 			id = "courses";
-			let newDataset: any = converter.addIDtoDataset(loadedData,id);
+			// let loadedData2 = this.readDisk(loadedData);
+			// let newMap = this.myMap;
+			let loadedData = this.myMap.get(id);
+
+			converter = new ConverDatasetWithID();
+
+			const newDataset: any = converter.addIDtoDataset(loadedData,id,this.check);
+			this.check = false;
+			// const newDataset: any = [];
 			qh = new QueryHelper(newDataset);
 			let result: any;
 			// get result here
 			// this.getResult();
 			let optionals: OptionHelper;
 			optionals = new OptionHelper();
-
+			// TODO:update for all
+			// if(!Object.keys(query).includes("WHERE")) {
+			// 	return reject(new ResultTooLargeError("???should be ResultTooLargeError"));
+			// }
 			if(!qh.invalidQuery(query)){
 				return reject(new InsightError("query is not valid."));
-			}else if(!optionals.check(query)){
+			} else if(!optionals.check(query)){
 				return reject(new InsightError("not pass option"));
 			}else if(qh.referencesMultipleDatasets(query)){
 				return reject(new InsightError("references Multiple Datasets."));
 			}
 
 			// this.getQueryRequestKey(query);
+
 			try{
-				result = qh.getQueryRequestKey2(query,loadedData);
+				result = qh.getQueryRequestKey2(query);
 			}catch(e){
 				return reject(new InsightError(e));
 			}
@@ -148,6 +160,8 @@ export default class InsightFacade implements IInsightFacade {
 				}
 			}
 
+			// console.log(newDataset);
+			// console.log(this.myMap);
 			// console.log(this.liftoffFilter);
 			resolve(result);
 		});
