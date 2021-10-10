@@ -57,9 +57,9 @@ export default class QueryHelper {
 		let queryKeys: any [];
 		let whereQuery = queryObject["WHERE"];
 
-		if(Object.keys(query.WHERE).length === 0){
-			return true;
-		}
+		// if(Object.keys(query.WHERE).length === 0){
+		// 	return true;
+		// }
 	// inside where
 		let insideWhereKey = Object.keys(whereQuery);
 
@@ -95,11 +95,7 @@ export default class QueryHelper {
 		let inside = inputQuery["WHERE"];
 		let result: any[] = [];
 		let temp: any[] = [];
-		if(Object.keys(query.WHERE).length === 0){
-			result = [];
-			result.push(loadedData);
-			this.temp = result;
-		} else if(Object.prototype.hasOwnProperty.call(inside, "AND")){
+		if(Object.prototype.hasOwnProperty.call(inside, "AND")){
 			this.loopIntoWhere(inside.AND, result,temp);
 			let otherTemp = this.filterHelper.applyAndFilter(this.temp);
 			result = [];
