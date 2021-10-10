@@ -83,18 +83,20 @@ export default class QueryHelper {
 
 		let inside = query["WHERE"];
 		let result: any[] = [];
+		let check: boolean = false;
 		if(Object.prototype.hasOwnProperty.call(inside, "AND")){
-			this.loopIntoWhere(inside.AND, result);
+			this.loopIntoWhere(inside.AND, result,check);
 			let otherTemp = this.filterHelper.applyAndFilter(this.temp);
 			result = [];
 			result.push(otherTemp);
 			this.temp = result;
 		} else if(Object.prototype.hasOwnProperty.call(inside, "OR")){
-			// this.loopIntoWhere(inside.OR, result);
-			// let otherTemp = this.filterHelper.applyOrFilter(this.temp);
-			// result = [];
-			// result.push(otherTemp);
-			// this.temp = result;
+			check = true;
+			this.loopIntoWhere(inside.OR, result, check);
+			let otherTemp = this.filterHelper.applyOrFilter(this.temp);
+			result = [];
+			result.push(otherTemp);
+			this.temp = result;
 
 			// this.loopIntoWhere(inside.OR, result,temp);
 			// let otherTemp = this.filterHelper.applyOrFilter(this.temp);
@@ -103,26 +105,27 @@ export default class QueryHelper {
 			// this.temp = result;
 		} else if(Object.prototype.hasOwnProperty.call(inside, "IS")){
 
-			this.temp = this.filterHelper.applyISFilter(inside.IS,result);
+			this.temp = this.filterHelper.applyISFilter(inside.IS,result,check);
 
 		} else if(Object.prototype.hasOwnProperty.call(inside, "NOT")){
-			// let cast: any[] = [];
-			// cast.push(inside.NOT);
-			// this.loopIntoWhere(cast, result);
-			// let otherTemp = this.filterHelper.applyNOTFilter(this.temp);
-			// result = [];
-			// result.push(otherTemp);
-			// this.temp = result;
+			check = true;
+			let cast: any[] = [];
+			cast.push(inside.NOT);
+			this.loopIntoWhere(cast, result, check);
+			let otherTemp = this.filterHelper.applyNOTFilter(this.temp);
+			result = [];
+			result.push(otherTemp);
+			this.temp = result;
 
 
 		} else if(Object.prototype.hasOwnProperty.call(inside, "EQ")){
-			// console.log("145");
-			this.temp = this.filterHelper.applyEQFilter(inside.EQ,result);
-			// console.log("146");
+
+			this.temp = this.filterHelper.applyEQFilter(inside.EQ,result,check);
+
 		} else if(Object.prototype.hasOwnProperty.call(inside, "GT")){
-			this.temp = this.filterHelper.applyGTFilter(inside.GT,result);
+			this.temp = this.filterHelper.applyGTFilter(inside.GT,result,check);
 		} else if(Object.prototype.hasOwnProperty.call(inside, "LT")){
-			this.temp = this.filterHelper.applyLTFilter(inside.LT,result);
+			this.temp = this.filterHelper.applyLTFilter(inside.LT,result,check);
 		}else{
 			throw new InsightError("not such key.");
 		}
@@ -130,25 +133,25 @@ export default class QueryHelper {
 		return this.temp;
 	}
 
-	public loopIntoWhere(value: any, result: any[]) {
+	public loopIntoWhere(value: any, result: any[], check: boolean) {
 		for(let nestedValue of value){
 			if(Object.prototype.hasOwnProperty.call(nestedValue, "AND")){
-				this.loopIntoWhere(nestedValue.AND, result);
+				this.loopIntoWhere(nestedValue.AND, result, check);
 				let otherTemp = this.filterHelper.applyAndFilter(result);
 				result = [];
 				result.push(otherTemp);
 				this.temp = result;
 
 			} else if(Object.prototype.hasOwnProperty.call(nestedValue, "OR")){
-				// this.loopIntoWhere(nestedValue.OR, result);
-				// let otherTemp = this.filterHelper.applyOrFilter(result);
-				// result = [];
-				// result.push(otherTemp);
-				// this.temp = result;
+				this.loopIntoWhere(nestedValue.OR, result,check);
+				let otherTemp = this.filterHelper.applyOrFilter(result);
+				result = [];
+				result.push(otherTemp);
+				this.temp = result;
 
 
 			} else if(Object.prototype.hasOwnProperty.call(nestedValue, "IS")){
-				this.filterHelper.applyISFilter(nestedValue.IS,result);
+				this.filterHelper.applyISFilter(nestedValue.IS, result, check);
 			} else if(Object.prototype.hasOwnProperty.call(nestedValue, "NOT")){
 				// // console.log("193");
 				// this.loopIntoWhere(nestedValue.NOT, result,temp);
@@ -157,20 +160,20 @@ export default class QueryHelper {
 				// result.push(otherTemp);
 				// this.temp = result;
 
-				// let cast: any[] = [];
-				// cast.push(nestedValue.NOT);
-				// this.loopIntoWhere(cast, result);
-				// let otherTemp = this.filterHelper.applyNOTFilter(this.temp);
-				// result = [];
-				// result.push(otherTemp);
-				// this.temp = result;
+				let cast: any[] = [];
+				cast.push(nestedValue.NOT);
+				this.loopIntoWhere(cast, result,check);
+				let otherTemp = this.filterHelper.applyNOTFilter(this.temp);
+				result = [];
+				result.push(otherTemp);
+				this.temp = result;
 
 			} else if(Object.prototype.hasOwnProperty.call(nestedValue, "EQ")){
-				this.filterHelper.applyEQFilter(nestedValue.EQ,result);
+				this.filterHelper.applyEQFilter(nestedValue.EQ, result, check);
 			} else if(Object.prototype.hasOwnProperty.call(nestedValue, "GT")){
-				this.filterHelper.applyGTFilter(nestedValue.GT,result);
+				this.filterHelper.applyGTFilter(nestedValue.GT, result, check);
 			} else if(Object.prototype.hasOwnProperty.call(nestedValue, "LT")){
-				this.filterHelper.applyLTFilter(nestedValue.LT,result);
+				this.filterHelper.applyLTFilter(nestedValue.LT, result, check);
 			}else{
 				throw new InsightError("not such key after and/or.");
 			}

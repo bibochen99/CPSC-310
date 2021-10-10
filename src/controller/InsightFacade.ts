@@ -121,20 +121,24 @@ export default class InsightFacade implements IInsightFacade {
 			// this.getResult();
 			let optionals: OptionHelper;
 			optionals = new OptionHelper();
+			if(!Object.keys(query).includes("WHERE")) {
+				return reject(new ResultTooLargeError("ResultTooLargeError"));
+			}
 			if(!qh.invalidQuery(query)){
 				return reject(new InsightError("query is not valid."));
-			}else if(!optionals.check(query)){
+			} else if(!optionals.check(query)){
 				return reject(new InsightError("not pass option"));
 			}else if(qh.referencesMultipleDatasets(query)){
 				return reject(new InsightError("references Multiple Datasets."));
-
 			}
 
 			// this.getQueryRequestKey(query);
-			try{
-				result = qh.getQueryRequestKey2(query);
-			}catch(e){
-				return reject(new InsightError(e));
+			{
+				try{
+					result = qh.getQueryRequestKey2(query);
+				}catch(e){
+					return reject(new InsightError(e));
+				}
 			}
 
 
