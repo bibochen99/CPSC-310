@@ -4,13 +4,13 @@ export default class FilterHelper {
 	private sKey: string[] = ["dept", "id", "instructor", "title", "uuid"];
 	private mKey: string[] = ["avg", "pass", "fail", "audit", "year"];
 	private temp: any;
-	private addedDataset: any;
-	private copyDataset: any;
+	private readonly addedDataset: any;
+
 
 	constructor(temp: any,loadedData: any){
 		this.temp = temp;
 		this.addedDataset = loadedData;
-		this.copyDataset = loadedData;
+
 	}
 	public applyISFilter(IS: any, result: any[], check: boolean) {
 
@@ -24,7 +24,7 @@ export default class FilterHelper {
 		}else if(typeof stringValue !== "string") {
 			throw new InsightError("not string value.");
 		} else{
-			if(check === true){
+			if(check){
 				if(stringValue.includes("*")){
 					resultSoFar = this.extracted(stringValue, string, resultSoFar,check);
 				}else{
@@ -33,19 +33,8 @@ export default class FilterHelper {
 				this.temp.push(resultSoFar);
 				result.push(resultSoFar);
 				return result;
-
-			} else{
-				if(stringValue.includes("*")){
-					this.extracted(stringValue, string, resultSoFar, check);
-				}else{
-					this.copyDataset = this.copyDataset.filter((o: any)=>o[string] === stringValue);
-				}
 			}
-
 		}
-		this.temp.push(this.copyDataset);
-		result.push(this.copyDataset);
-		return result;
 	}
 
 
@@ -59,7 +48,7 @@ export default class FilterHelper {
 			if(check === true){
 				resultSoFar = this.addedDataset.filter((o: any)=>o[string].includes(sub));
 			}
-			this.copyDataset = this.copyDataset.filter((o: any)=>o[string].includes(sub));
+
 		} else if (stringValue.substr(0, 1) === "*") {
 			let sub = stringValue.substr(1);
 			if (sub.includes("*")) {
@@ -69,8 +58,7 @@ export default class FilterHelper {
 				resultSoFar = this.addedDataset.filter((o: any)=>o[string].substr((o[string].length - sub.length),
 					o[string].length)	=== sub);
 			}
-			this.copyDataset = this.copyDataset.filter((o: any)=>o[string].substr((o[string].length - sub.length),
-				o[string].length)	=== sub);
+
 		} else if (stringValue.substr(-1) === "*") {
 			let sub = stringValue.substr(0, stringValue.length - 1);
 			if (sub.includes("*")) {
@@ -79,7 +67,6 @@ export default class FilterHelper {
 			if(check === true){
 				resultSoFar = this.addedDataset.filter((o: any)=>o[string].substr(0, sub.length) === sub);
 			}
-			this.copyDataset = this.copyDataset.filter((o: any)=>o[string].substr(0, sub.length) === sub);
 
 		} else {
 			throw new InsightError("not valid *.");
@@ -92,50 +79,40 @@ export default class FilterHelper {
 		let eQ = string.split("_")[1];
 		let numValue = EQ[string];
 		let resultSoFar = [];
-		if(!this.mKey.includes(eQ)){
+		if (!this.mKey.includes(eQ)) {
 			throw new InsightError("not valid mKey.");
-		}else if(typeof numValue !== "number") {
+		} else if (typeof numValue !== "number") {
 			throw new InsightError("not number value.");
 		} else {
-			if(check === true){
-				resultSoFar = this.addedDataset.filter((o: any)=>o[string] === numValue);
+			if (check === true) {
+				resultSoFar = this.addedDataset.filter((o: any) => o[string] === numValue);
 				this.temp.push(resultSoFar);
 				result.push(resultSoFar);
 				return result;
 			}
-			this.copyDataset = this.copyDataset.filter((o: any)=>o[string] === numValue);
-
 		}
-		this.temp.push(this.copyDataset);
-		result.push(this.copyDataset);
-		return result;
 	}
 
-	public applyGTFilter(GT: any, result: any[], check: boolean): any[] {
+	public applyGTFilter(GT: any, result: any[], check: boolean) {
 		let resultSoFar = [];
 		let string = Object.keys(GT)[0];// course_avg
 		let gT = string.split("_")[1];
 
 		let numValue = GT[string];
-		if(!this.mKey.includes(gT)){
+		if (!this.mKey.includes(gT)) {
 			throw new InsightError("not valid mKey.");
-		}else if(typeof numValue !== "number") {
+		} else if (typeof numValue !== "number") {
 			throw new InsightError("not number value.");
 		} else {
-			if(check === true){
-				resultSoFar = this.addedDataset.filter((o: any)=>o[string] > numValue);
+			if (check === true) {
+				resultSoFar = this.addedDataset.filter((o: any) => o[string] > numValue);
 				this.temp.push(resultSoFar);
 				result.push(resultSoFar);
 				return result;
 			}
-			this.copyDataset = this.copyDataset.filter((o: any)=>o[string] > numValue);
+
 
 		}
-		this.temp.push(this.copyDataset);
-		result.push(this.copyDataset);
-		return result;
-
-
 	}
 
 	public applyLTFilter(LT: any, result: any[], check: boolean) {
@@ -154,11 +131,8 @@ export default class FilterHelper {
 				result.push(resultSoFar);
 				return result;
 			}
-			this.copyDataset = this.copyDataset.filter((o: any)=>o[string] < numValue);
 		}
-		this.temp.push(this.copyDataset);
-		result.push(this.copyDataset);
-		return result;
+
 	}
 
 	public applyAndFilter(temp: any[]): any [] {
@@ -222,7 +196,7 @@ export default class FilterHelper {
 		});
 		temp = [];
 		temp.push(longestArr);
-		// temp = longestArr;
+
 		return longestArr;
 
 

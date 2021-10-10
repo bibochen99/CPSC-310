@@ -6,7 +6,7 @@ export default class QueryHelper {
 	private mKey: string[] = ["courses_avg", "courses_pass", "courses_fail", "courses_audit",
 		"courses_year","avg", "pass", "fail", "audit", "year"];
 
-	private addedDataset: any;
+	private readonly addedDataset: any;
 	private temp: any;
 	private filterHelper: FilterHelper;
 
@@ -83,7 +83,7 @@ export default class QueryHelper {
 
 		let inside = query["WHERE"];
 		let result: any[] = [];
-		let check: boolean = false;
+		let check: boolean = true;
 		if(Object.prototype.hasOwnProperty.call(inside, "AND")){
 			this.loopIntoWhere(inside.AND, result,check);
 			let otherTemp = this.filterHelper.applyAndFilter(this.temp);
