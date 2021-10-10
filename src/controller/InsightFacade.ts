@@ -132,7 +132,7 @@ export default class InsightFacade implements IInsightFacade {
 
 			// this.getQueryRequestKey(query);
 			try{
-				result = qh.getQueryRequestKey2(query,loadedData);
+				result = qh.getQueryRequestKey2(query);
 			}catch(e){
 				return reject(new InsightError(e));
 			}

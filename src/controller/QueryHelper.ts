@@ -89,7 +89,7 @@ export default class QueryHelper {
 	}
 
 
-	public getQueryRequestKey2(query: any, loadedData: any): any[] {
+	public getQueryRequestKey2(query: any): any[] {
 
 		let inputQuery = query;
 		let inside = inputQuery["WHERE"];
