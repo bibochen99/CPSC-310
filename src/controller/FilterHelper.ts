@@ -26,7 +26,7 @@ export default class FilterHelper {
 		} else{
 
 			if(stringValue.includes("*")){
-				resultSoFar = this.extracted(stringValue, string, resultSoFar);
+				this.extracted(stringValue, string, resultSoFar);
 
 			}else{
 				// for (let each of this.addedDataset){
@@ -34,14 +34,14 @@ export default class FilterHelper {
 				// 		resultSoFar.push(each);
 				// 	}
 				// }
-				resultSoFar = this.addedDataset.filter((o: any)=>o[string] === stringValue);
+				// resultSoFar = this.addedDataset.filter((o: any)=>o[string] === stringValue);
 
-				// this.copyDataset = this.copyDataset.filter((o: any)=>o[string] === stringValue);
+				this.copyDataset = this.copyDataset.filter((o: any)=>o[string] === stringValue);
 			}
 
 		}
-		this.temp.push(resultSoFar);
-		result.push(resultSoFar);
+		this.temp.push(this.copyDataset);
+		result.push(this.copyDataset);
 		return result;
 	}
 
@@ -60,7 +60,7 @@ export default class FilterHelper {
 			// 	}
 			// }
 			// this.copyDataset = this.copyDataset.filter((o: any)=>o[string].includes(sub));
-			return this.addedDataset.filter((o: any)=>o[string].includes(sub));
+			this.copyDataset.filter((o: any)=>o[string].includes(sub));
 		} else if (stringValue.substr(0, 1) === "*") {
 			let sub = stringValue.substr(1);
 			if (sub.includes("*")) {
@@ -76,7 +76,7 @@ export default class FilterHelper {
 			// this.copyDataset = this.copyDataset.filter((o: any)=>o[string].substr((o[string].length - sub.length),
 			// 	o[string].length)	=== sub);
 
-			return this.addedDataset.filter((o: any)=>o[string].substr((o[string].length - sub.length),
+			this.copyDataset.filter((o: any)=>o[string].substr((o[string].length - sub.length),
 				o[string].length)	=== sub);
 		} else if (stringValue.substr(-1) === "*") {
 
@@ -85,14 +85,14 @@ export default class FilterHelper {
 			if (sub.includes("*")) {
 				throw new InsightError("not valid *.");
 			}
-			for (let each of this.addedDataset) {
-				let subkey = each[string].substr(0, sub.length);
-				if (subkey === sub) {
-					resultSoFar.push(each);
-				}
-			}
+			// for (let each of this.addedDataset) {
+			// 	let subkey = each[string].substr(0, sub.length);
+			// 	if (subkey === sub) {
+			// 		resultSoFar.push(each);
+			// 	}
+			// }
 			// this.copyDataset = this.copyDataset.filter((o: any)=>o[string].substr(0, sub.length) === sub);
-			return this.addedDataset.filter((o: any)=>o[string].substr(0, sub.length) === sub);
+			this.copyDataset.filter((o: any)=>o[string].substr(0, sub.length) === sub);
 
 		} else {
 			throw new InsightError("not valid *.");
@@ -116,11 +116,11 @@ export default class FilterHelper {
 			// 		resultSoFar.push(each);
 			// 	}
 			// }
-			resultSoFar = this.addedDataset.filter((o: any)=>o[string] === numValue);
+			this.copyDataset.filter((o: any)=>o[string] === numValue);
 
 		}
-		this.temp.push(resultSoFar);
-		result.push(resultSoFar);
+		this.temp.push(this.copyDataset);
+		result.push(this.copyDataset);
 		return result;
 	}
 
@@ -146,11 +146,11 @@ export default class FilterHelper {
 			// 		resultSoFar.push(each);
 			// 	}
 			// }
-			resultSoFar = this.addedDataset.filter((o: any)=>o[string] > numValue);
+			this.copyDataset.filter((o: any)=>o[string] > numValue);
 
 		}
-		this.temp.push(resultSoFar);
-		result.push(resultSoFar);
+		this.temp.push(this.copyDataset);
+		result.push(this.copyDataset);
 		return result;
 
 
@@ -172,10 +172,10 @@ export default class FilterHelper {
 			// 		resultSoFar.push(each);
 			// 	}
 			// }
-			resultSoFar = this.addedDataset.filter((o: any)=>o[string] < numValue);
+			this.copyDataset.filter((o: any)=>o[string] < numValue);
 		}
-		this.temp.push(resultSoFar);
-		result.push(resultSoFar);
+		this.temp.push(this.copyDataset);
+		result.push(this.copyDataset);
 		return result;
 	}
 
