@@ -42,7 +42,7 @@ export default class QueryHelper {
 		if(!(this.checkValidInsideWhere(query))){
 			return false;
 		}
-		console.log(query.OPTIONS);
+
 		if(query.OPTIONS === undefined){
 			return false;
 		}
@@ -97,7 +97,6 @@ export default class QueryHelper {
 
 		let inputQuery = query;
 		let inside = inputQuery["WHERE"];
-		let dataset: any[] = loadedData;
 		let result: any[] = [];
 		let temp: any[] = [];
 		if(Object.keys(query.WHERE).length === 0){
@@ -127,13 +126,13 @@ export default class QueryHelper {
 			this.temp = this.filterHelper.applyISFilter(inside.IS,result);
 
 		} else if(Object.prototype.hasOwnProperty.call(inside, "NOT")){
-			let cast: any[] = [];
-			cast.push(inside.NOT);
-			this.loopIntoWhere(cast, result,temp);
-			let otherTemp = this.filterHelper.applyNOTFilter(this.temp);
-			result = [];
-			result.push(otherTemp);
-			this.temp = result;
+			// let cast: any[] = [];
+			// cast.push(inside.NOT);
+			// this.loopIntoWhere(cast, result,temp);
+			// let otherTemp = this.filterHelper.applyNOTFilter(this.temp);
+			// result = [];
+			// result.push(otherTemp);
+			// this.temp = result;
 
 
 		} else if(Object.prototype.hasOwnProperty.call(inside, "EQ")){
@@ -172,20 +171,15 @@ export default class QueryHelper {
 			} else if(Object.prototype.hasOwnProperty.call(nestedValue, "IS")){
 				this.filterHelper.applyISFilter(nestedValue.IS,result);
 			} else if(Object.prototype.hasOwnProperty.call(nestedValue, "NOT")){
-				// // console.log("193");
-				// this.loopIntoWhere(nestedValue.NOT, result,temp);
-				// let otherTemp = this.filterHelper.applyNOTFilter(temp);
+
+
+				// let cast: any[] = [];
+				// cast.push(nestedValue.NOT);
+				// this.loopIntoWhere(cast, result,temp);
+				// let otherTemp = this.filterHelper.applyNOTFilter(this.temp);
 				// result = [];
 				// result.push(otherTemp);
 				// this.temp = result;
-
-				let cast: any[] = [];
-				cast.push(nestedValue.NOT);
-				this.loopIntoWhere(cast, result,temp);
-				let otherTemp = this.filterHelper.applyNOTFilter(this.temp);
-				result = [];
-				result.push(otherTemp);
-				this.temp = result;
 
 			} else if(Object.prototype.hasOwnProperty.call(nestedValue, "EQ")){
 				this.filterHelper.applyEQFilter(nestedValue.EQ,result);
