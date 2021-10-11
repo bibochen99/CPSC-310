@@ -4,16 +4,13 @@ export default class FilterHelper {
 	private sKey: string[] = ["dept", "id", "instructor", "title", "uuid"];
 	private mKey: string[] = ["avg", "pass", "fail", "audit", "year"];
 	private temp: any;
-	private readonly addedDataset: any;
-
+	private addedDataset: any;
 
 	constructor(temp: any,loadedData: any){
 		this.temp = temp;
 		this.addedDataset = loadedData;
-
 	}
-	public applyISFilter(IS: any, result: any[], check: boolean) {
-
+	public applyISFilter(IS: any,result: any[]) {
 		let resultSoFar: any[] = [];
 		let string = Object.keys(IS)[0];// course_avg
 		let iS = string.split("_")[1];
@@ -24,6 +21,7 @@ export default class FilterHelper {
 		}else if(typeof stringValue !== "string") {
 			throw new InsightError("not string value.");
 		} else{
+
 			if(stringValue.includes("*")){
 				this.extracted(stringValue, iS, resultSoFar);
 
@@ -35,56 +33,63 @@ export default class FilterHelper {
 				}
 			}
 		}
-    this.temp.push(resultSoFar);
+		this.temp.push(resultSoFar);
 		result.push(resultSoFar);
 		return result;
 	}
 
 
-	private extracted(stringValue: string, string: string, resultSoFar: any[], check: boolean) {
+	private extracted(stringValue: string, string: string, resultSoFar: any[]) {
 
 		if (stringValue.substr(0, 1) === "*" && (stringValue.substr(-1) === "*")) {
 			let sub = stringValue.substr(1, stringValue.length - 2);
 			if (sub.includes("*")) {
 				throw new InsightError("not valid *.");
 			}
-			if(check === true){
-				resultSoFar = this.addedDataset.filter((o: any)=>o[string].includes(sub));
+			for (let each of this.addedDataset) {
+				// console.log(each[string]);
+				if (each[string].includes(sub)) {
+					resultSoFar.push(each);
+				}
 			}
-
 		} else if (stringValue.substr(0, 1) === "*") {
 			let sub = stringValue.substr(1);
 			if (sub.includes("*")) {
 				throw new InsightError("not valid *.");
 			}
-			if(check === true){
-				resultSoFar = this.addedDataset.filter((o: any)=>o[string].substr((o[string].length - sub.length),
-					o[string].length)	=== sub);
+			for (let each of this.addedDataset) {
+				let subkey = each[string].substr((each[string].length - sub.length), each[string].length);
+				if (subkey === sub) {
+					resultSoFar.push(each);
+				}
 			}
-
 		} else if (stringValue.substr(-1) === "*") {
+
+
 			let sub = stringValue.substr(0, stringValue.length - 1);
 			if (sub.includes("*")) {
 				throw new InsightError("not valid *.");
 			}
-			if(check === true){
-				resultSoFar = this.addedDataset.filter((o: any)=>o[string].substr(0, sub.length) === sub);
+			for (let each of this.addedDataset) {
+				let subkey = each[string].substr(0, sub.length);
+				if (subkey === sub) {
+					resultSoFar.push(each);
+				}
 			}
 
 		} else {
 			throw new InsightError("not valid *.");
 		}
-		return resultSoFar;
 	}
 
-	public applyEQFilter(EQ: any, result: any[], check: boolean) {
+	public applyEQFilter(EQ: any, result: any[]) {
 		let string = Object.keys(EQ)[0];// course_avg
 		let eQ = string.split("_")[1];
 		let numValue = EQ[string];
 		let resultSoFar = [];
-		if (!this.mKey.includes(eQ)) {
+		if(!this.mKey.includes(eQ)){
 			throw new InsightError("not valid mKey.");
-		} else if (typeof numValue !== "number") {
+		}else if(typeof numValue !== "number") {
 			throw new InsightError("not number value.");
 		} else {
 			// let temResult: any[] = this.addedDataset.filter((d)=>d.IS.key === EQ.value);
@@ -95,34 +100,43 @@ export default class FilterHelper {
 				}
 			}
 		}
-    this.temp.push(resultSoFar);
+		this.temp.push(resultSoFar);
 		result.push(resultSoFar);
 		return result;
 	}
 
-	public applyGTFilter(GT: any, result: any[], check: boolean) {
+	public applyGTFilter(GT: any, result: any[]): any[] {
 		let resultSoFar = [];
 		let string = Object.keys(GT)[0];// course_avg
 		let gT = string.split("_")[1];
 
 		let numValue = GT[string];
-		if (!this.mKey.includes(gT)) {
+		if(!this.mKey.includes(gT)){
 			throw new InsightError("not valid mKey.");
-		} else if (typeof numValue !== "number") {
+		}else if(typeof numValue !== "number") {
 			throw new InsightError("not number value.");
 		} else {
+			// let temResult: any[] = Object.values(this.addedDataset).filter((d)=>d.gT > GT.value);
+
+			// Promise.all(temResult).then((file)=>{
+			// 	console.log(temResult);
+			// 	result.push(temResult);
+			// });
 			for (let each of this.addedDataset){
 				if(each[gT] > numValue){
 					resultSoFar.push(each);
 				}
 			}
+
 		}
-    this.temp.push(resultSoFar);
+		this.temp.push(resultSoFar);
 		result.push(resultSoFar);
 		return result;
+
+
 	}
 
-	public applyLTFilter(LT: any, result: any[], check: boolean) {
+	public applyLTFilter(LT: any, result: any[]) {
 		let string = Object.keys(LT)[0];// course_avg
 		let lT = string.split("_")[1];
 		let numValue = LT[string];
@@ -157,6 +171,8 @@ export default class FilterHelper {
 		// console.log(result.length);
 		temp = [];
 		temp.push(result);
+
+
 		return result;
 
 	}
@@ -203,7 +219,7 @@ export default class FilterHelper {
 		});
 		temp = [];
 		temp.push(longestArr);
-
+		// temp = longestArr;
 		return longestArr;
 
 

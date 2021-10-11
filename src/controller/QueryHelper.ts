@@ -52,7 +52,7 @@ export default class QueryHelper {
 		// if(Object.keys(query.WHERE).length === 0){
 		// 	return true;
 		// }
-	// inside where
+		// inside where
 		let insideWhereKey = Object.keys(whereQuery);
 
 		if(Object.keys(query.WHERE).length > 1){
@@ -65,7 +65,7 @@ export default class QueryHelper {
 		let filter = insideWhereKey[0];
 		let filterList = ["AND","OR","NOT","IS","EQ","LT","GT","NOT"];
 		if(key.length === 0){
-		// console.log("nothing inside the WHERE");
+			// console.log("nothing inside the WHERE");
 			return false;
 		}
 		return filterList.includes(filter);
