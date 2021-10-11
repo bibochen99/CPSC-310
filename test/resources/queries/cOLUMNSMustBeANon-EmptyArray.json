@@ -1,0 +1,17 @@
+{
+  "errorMsg": "COLUMNS must be a non-empty array",
+  "title": "COLUMNS must be a non-empty array",
+  "input": {
+    "WHERE": {
+      "IS": {
+        "courses_id": "100"
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": [],
+      "ORDER": "courses_dept"
+    }
+  },
+  "errorExpected": true,
+  "with": "InsightError"
+}

@@ -1,0 +1,22 @@
+{
+  "errorMsg": "AND should only have 1 key, has 0",
+  "title": "query_AND_nothing",
+  "input": {
+    "WHERE": {
+      "AND": [
+        {}
+      ]
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_id",
+        "courses_avg",
+        "courses_uuid",
+        "courses_dept"
+      ],
+      "ORDER": "courses_id"
+    }
+  },
+  "errorExpected": true,
+  "with": "InsightError"
+}

@@ -1,0 +1,31 @@
+{
+  "errorMsg": "Invalid key type in IS",
+  "title": "query_AND_GT_IS_invalid",
+  "input": {
+    "WHERE": {
+      "AND": [
+        {
+          "GT": {
+            "courses_fail": 2200.55
+          }
+        },
+        {
+          "IS": {
+            "courses_year": "2001"
+          }
+        }
+      ]
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_id",
+        "courses_avg",
+        "courses_uuid",
+        "courses_dept"
+      ],
+      "ORDER": "courses_id"
+    }
+  },
+  "errorExpected": true,
+  "with": "InsightError"
+}

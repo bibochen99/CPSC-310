@@ -1,0 +1,8 @@
+
+{
+  "title": "HasnoBodyandOption_Query.json",
+  "input": {
+  },
+  "errorExpected": true,
+  "with":"InsightError"
+}

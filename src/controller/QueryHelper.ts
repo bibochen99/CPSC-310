@@ -181,7 +181,7 @@ export default class QueryHelper {
 	public applyOptional(query: any, resultSoFar: any): any[] {
 
 		let allKey = ["dept", "id", "instructor", "title",
-			"uuid","vg", "pass", "fail", "audit", "year"];
+			"uuid","avg", "pass", "fail", "audit", "year"];
 		let keep = query["OPTIONS"]["COLUMNS"];
 		let newkepp = [];
 		for (let each of keep){

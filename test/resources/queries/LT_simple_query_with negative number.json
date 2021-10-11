@@ -1,0 +1,24 @@
+
+{
+  "title": "LT_simple_query_with negative number.json.json",
+  "input": {
+    "WHERE": {
+
+      "LT": {
+        "courses_avg": -1
+      }
+
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_dept",
+        "courses_avg",
+        "courses_id"
+      ],
+      "ORDER": "courses_avg"
+    }
+  },
+  "errorExpected": false,
+  "with":[]
+}
+

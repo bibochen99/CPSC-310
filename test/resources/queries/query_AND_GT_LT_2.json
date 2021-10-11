@@ -1,0 +1,30 @@
+{
+  "title": "query_AND_GT_LT_2",
+  "input": {
+    "WHERE": {
+      "AND": [
+        {
+          "GT": {
+            "courses_avg": 92
+          }
+        },
+        {
+          "LT": {
+            "courses_avg": 91
+          }
+        }
+      ]
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_id",
+        "courses_avg",
+        "courses_uuid",
+        "courses_dept"
+      ],
+      "ORDER": "courses_id"
+    }
+  },
+  "errorExpected": false,
+  "with": []
+}

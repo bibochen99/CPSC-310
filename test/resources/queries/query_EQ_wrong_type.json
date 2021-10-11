@@ -1,20 +1,19 @@
 {
-  "errorMsg": "ORDER key must be in COLUMNS",
-  "title": "query_GT_year_invalid",
+  "errorMsg": "Invalid key type in EQ",
+  "title": "query_EQ_wrong_type",
   "input": {
     "WHERE": {
-      "GT": {
-        "courses_year": 2014
+      "EQ": {
+        "courses_dept": "cnps"
       }
     },
     "OPTIONS": {
       "COLUMNS": [
-        "courses_dept",
         "courses_id",
         "courses_avg",
         "courses_uuid"
       ],
-      "ORDER": "course_dept"
+      "ORDER": "courses_uuid"
     }
   },
   "errorExpected": true,
