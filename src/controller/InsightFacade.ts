@@ -110,13 +110,14 @@ export default class InsightFacade implements IInsightFacade {
 		return Promise.resolve(this.dataSets);
 	}
 	public performQuery(query: any): Promise<any[]> {
+		// console.log(query);
 		return new Promise<string[]>((resolve, reject) => {
 			let qh: QueryHelper;
 			let converter: ConverDatasetWithID;
 			let loadedData: any = [];
-			let id = "courses";
+			let id: string;
 			loadedData = this.readDisk(loadedData);
-
+			id = "courses";
 			// let newload: any[] = [];
 
 			// const loadedData = this.myMap.get(id);
@@ -125,7 +126,7 @@ export default class InsightFacade implements IInsightFacade {
 			converter = new ConverDatasetWithID();
 
 			// const newDataset: any = converter.addIDtoDataset(loadedData,id,this.check);
-
+			this.check = false;
 			// const newDataset: any = [];
 			qh = new QueryHelper(loadedData);
 			let result: any;
