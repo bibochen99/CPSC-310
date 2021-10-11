@@ -24,17 +24,20 @@ export default class FilterHelper {
 		}else if(typeof stringValue !== "string") {
 			throw new InsightError("not string value.");
 		} else{
-			if(check){
-				if(stringValue.includes("*")){
-					resultSoFar = this.extracted(stringValue, string, resultSoFar,check);
-				}else{
-					resultSoFar = this.addedDataset.filter((o: any)=>o[string] === stringValue);
+			if(stringValue.includes("*")){
+				this.extracted(stringValue, iS, resultSoFar);
+
+			}else{
+				for (let each of this.addedDataset){
+					if(each[iS] === stringValue){
+						resultSoFar.push(each);
+					}
 				}
-				this.temp.push(resultSoFar);
-				result.push(resultSoFar);
-				return result;
 			}
 		}
+    this.temp.push(resultSoFar);
+		result.push(resultSoFar);
+		return result;
 	}
 
 
@@ -84,13 +87,17 @@ export default class FilterHelper {
 		} else if (typeof numValue !== "number") {
 			throw new InsightError("not number value.");
 		} else {
-			if (check === true) {
-				resultSoFar = this.addedDataset.filter((o: any) => o[string] === numValue);
-				this.temp.push(resultSoFar);
-				result.push(resultSoFar);
-				return result;
+			// let temResult: any[] = this.addedDataset.filter((d)=>d.IS.key === EQ.value);
+			// result.push(temResult);
+			for (let each of this.addedDataset){
+				if(each[eQ] === numValue){
+					resultSoFar.push(each);
+				}
 			}
 		}
+    this.temp.push(resultSoFar);
+		result.push(resultSoFar);
+		return result;
 	}
 
 	public applyGTFilter(GT: any, result: any[], check: boolean) {
@@ -104,15 +111,15 @@ export default class FilterHelper {
 		} else if (typeof numValue !== "number") {
 			throw new InsightError("not number value.");
 		} else {
-			if (check === true) {
-				resultSoFar = this.addedDataset.filter((o: any) => o[string] > numValue);
-				this.temp.push(resultSoFar);
-				result.push(resultSoFar);
-				return result;
+			for (let each of this.addedDataset){
+				if(each[gT] > numValue){
+					resultSoFar.push(each);
+				}
 			}
-
-
 		}
+    this.temp.push(resultSoFar);
+		result.push(resultSoFar);
+		return result;
 	}
 
 	public applyLTFilter(LT: any, result: any[], check: boolean) {
@@ -125,14 +132,16 @@ export default class FilterHelper {
 		}else if(typeof numValue !== "number") {
 			throw new InsightError("not number value.");
 		} else {
-			if(check === true){
-				resultSoFar = this.addedDataset.filter((o: any)=>o[string] <  numValue);
-				this.temp.push(resultSoFar);
-				result.push(resultSoFar);
-				return result;
+
+			for (let each of this.addedDataset){
+				if(each[lT] < numValue){
+					resultSoFar.push(each);
+				}
 			}
 		}
-
+		this.temp.push(resultSoFar);
+		result.push(resultSoFar);
+		return result;
 	}
 
 	public applyAndFilter(temp: any[]): any [] {
@@ -148,8 +157,6 @@ export default class FilterHelper {
 		// console.log(result.length);
 		temp = [];
 		temp.push(result);
-
-
 		return result;
 
 	}

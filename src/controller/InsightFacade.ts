@@ -30,6 +30,7 @@ export default class InsightFacade implements IInsightFacade {
 	public temp: any[];
 	public addData;
 	public dataSets: any[];
+	public s: any[];
 	public check: boolean;
 
 	constructor() {
@@ -39,6 +40,7 @@ export default class InsightFacade implements IInsightFacade {
 		this.dataSets = [];
 		this.addedDataset = [];
 		this.temp = [];
+		this.s = [];
 		this.check = true;
 	}
 
@@ -68,6 +70,7 @@ export default class InsightFacade implements IInsightFacade {
 						throw new InsightError("Cannot write to disk");
 					}
 					this.addData.addNewData(id,kind,resultDataset,this.dataSets);
+					this.s = resultDataset;
 					this.myMap.set(id,resultDataset);
 					let keys: string[] = Array.from(this.myMap.keys());
 					return resolve(keys);
@@ -107,42 +110,40 @@ export default class InsightFacade implements IInsightFacade {
 		return Promise.resolve(this.dataSets);
 	}
 	public performQuery(query: any): Promise<any[]> {
-		// console.log(query);
 		return new Promise<string[]>((resolve, reject) => {
 			let qh: QueryHelper;
 			let converter: ConverDatasetWithID;
-			// let loadedData: any = [];
-			let id: string;
-			id = "courses";
-			// let loadedData2 = this.readDisk(loadedData);
-			// let newMap = this.myMap;
-			let loadedData = this.myMap.get(id);
+			let loadedData: any = [];
+			let id = "courses";
+			loadedData = this.readDisk(loadedData);
+
+			// let newload: any[] = [];
+
+			// const loadedData = this.myMap.get(id);
+			// const loadedData = this.myMap.get(id);
 
 			converter = new ConverDatasetWithID();
 
-			const newDataset: any = converter.addIDtoDataset(loadedData,id,this.check);
-			this.check = false;
+			// const newDataset: any = converter.addIDtoDataset(loadedData,id,this.check);
+
 			// const newDataset: any = [];
-			qh = new QueryHelper(newDataset);
+			qh = new QueryHelper(loadedData);
 			let result: any;
 			// get result here
 			// this.getResult();
 			let optionals: OptionHelper;
 			optionals = new OptionHelper();
-			// TODO:update for all
-			// if(!Object.keys(query).includes("WHERE")) {
-			// 	return reject(new ResultTooLargeError("???should be ResultTooLargeError"));
-			// }
+
 			if(!qh.invalidQuery(query)){
 				return reject(new InsightError("query is not valid."));
-			} else if(!optionals.check(query)){
+			}else if(!optionals.check(query)){
 				return reject(new InsightError("not pass option"));
 			}else if(qh.referencesMultipleDatasets(query)){
 				return reject(new InsightError("references Multiple Datasets."));
+
 			}
 
 			// this.getQueryRequestKey(query);
-
 			try{
 				result = qh.getQueryRequestKey2(query);
 			}catch(e){
@@ -160,10 +161,9 @@ export default class InsightFacade implements IInsightFacade {
 				}
 			}
 
-			// console.log(newDataset);
-			// console.log(this.myMap);
 			// console.log(this.liftoffFilter);
-			resolve(result);
+			let newresult: any = converter.addIDtoDataset(result,id,true);
+			resolve(newresult);
 		});
 
 
