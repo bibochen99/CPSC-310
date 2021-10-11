@@ -86,7 +86,7 @@ export default class FilterHelper {
 		let string = Object.keys(EQ)[0];// course_avg
 		let eQ = string.split("_")[1];
 		let numValue = EQ[string];
-		let resultSoFar = [];
+		let resultSoFar: any[] = [];
 		if(!this.mKey.includes(eQ)){
 			throw new InsightError("not valid mKey.");
 		}else if(typeof numValue !== "number") {
@@ -106,7 +106,7 @@ export default class FilterHelper {
 	}
 
 	public applyGTFilter(GT: any, result: any[]): any[] {
-		let resultSoFar = [];
+		let resultSoFar: any[] = [];
 		let string = Object.keys(GT)[0];// course_avg
 		let gT = string.split("_")[1];
 
@@ -140,7 +140,7 @@ export default class FilterHelper {
 		let string = Object.keys(LT)[0];// course_avg
 		let lT = string.split("_")[1];
 		let numValue = LT[string];
-		let resultSoFar = [];
+		let resultSoFar: any[] = [];
 		if(!this.mKey.includes(lT)){
 			throw new InsightError("not valid mKey.");
 		}else if(typeof numValue !== "number") {
@@ -160,17 +160,22 @@ export default class FilterHelper {
 
 	public applyAndFilter(temp: any[]): any [] {
 		// console.log(temp);
-		let result: any = [];
-		for (let i = 1; i < temp.length; i++) {
-			for (let each of temp[0]){
-				if(temp[i].includes(each)){
-					result.push(each);
+		let result: any[] = [];
+		for (let i = 0; i < temp.length - 1; i++) {
+			for (let each of temp[i]){
+				for (let j = i + 1; j < temp.length; j++){
+					if (!temp[j].includes(each)){
+						break;
+					}
+					if (j === temp.length - 1){
+						result.push(each);
+					}
 				}
 			}
 		}
 		// console.log(result.length);
-		temp = [];
-		temp.push(result);
+
+		this.temp.push(result);
 
 
 		return result;
@@ -201,7 +206,7 @@ export default class FilterHelper {
 	public applyOrFilter(temp: any[]) {
 
 		let temp2: any[];
-		let longestArr: any = temp[0];
+		let longestArr: any[] = temp[0];
 
 		for (let i = 1; i < temp.length ; i++) {
 			if(longestArr.length < temp[i].length){
