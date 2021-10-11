@@ -1,20 +1,19 @@
 {
-  "errorMsg": "ORDER key must be in COLUMNS",
-  "title": "query_GT_year_invalid",
+  "errorMsg": "Invalid key courses_num in IS",
+  "title": "Invalid key courses_num in IS",
   "input": {
     "WHERE": {
-      "GT": {
-        "courses_year": 2014
+      "IS": {
+        "courses_num": "100"
       }
     },
     "OPTIONS": {
       "COLUMNS": [
         "courses_dept",
-        "courses_id",
         "courses_avg",
-        "courses_uuid"
+        "courses_id"
       ],
-      "ORDER": "course_dept"
+      "ORDER": "courses_id"
     }
   },
   "errorExpected": true,

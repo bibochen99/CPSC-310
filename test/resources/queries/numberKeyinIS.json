@@ -1,0 +1,30 @@
+{
+  "errorMsg": "Invalid key type in IS",
+  "title": "numberKeyinIS",
+  "input": {
+    "WHERE": {
+      "AND": [
+        {
+          "GT": {
+            "courses_fail": 2200.55
+          }
+        },
+        {
+          "IS": {
+            "courses_avg": 80
+          }
+        }
+      ]
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_pass",
+        "courses_avg",
+        "courses_dept"
+      ],
+      "ORDER": "courses_dept"
+    }
+  },
+  "errorExpected": true,
+  "with": "InsightError"
+}
