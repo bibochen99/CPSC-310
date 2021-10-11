@@ -80,7 +80,6 @@ export default class QueryHelper {
 
 
 	public getQueryRequestKey2(query: any): any[] {
-
 		let inside = query["WHERE"];
 		let result: any[] = [];
 		if(Object.prototype.hasOwnProperty.call(inside, "AND")){
@@ -113,12 +112,8 @@ export default class QueryHelper {
 			result = [];
 			result.push(otherTemp);
 			this.temp = result;
-
-
 		} else if(Object.prototype.hasOwnProperty.call(inside, "EQ")){
-			// console.log("145");
 			this.temp = this.filterHelper.applyEQFilter(inside.EQ,result);
-			// console.log("146");
 		} else if(Object.prototype.hasOwnProperty.call(inside, "GT")){
 			this.temp = this.filterHelper.applyGTFilter(inside.GT,result);
 		} else if(Object.prototype.hasOwnProperty.call(inside, "LT")){

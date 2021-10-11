@@ -129,7 +129,7 @@ export default class InsightFacade implements IInsightFacade {
 			this.check = false;
 			// const newDataset: any = [];
 			qh = new QueryHelper(loadedData);
-			let result: any;
+			let result: any[];
 			// get result here
 			// this.getResult();
 			let optionals: OptionHelper;
