@@ -149,6 +149,7 @@ export default class QueryHelper {
 
 			} else if(Object.prototype.hasOwnProperty.call(nestedValue, "IS")){
 				this.filterHelper.applyISFilter(nestedValue.IS,result);
+				// to push again
 			} else if(Object.prototype.hasOwnProperty.call(nestedValue, "NOT")){
 				// // console.log("193");
 				// this.loopIntoWhere(nestedValue.NOT, result,temp);
