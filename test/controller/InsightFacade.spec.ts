@@ -101,6 +101,13 @@ describe("InsightFacade_given", function () {
 			{
 				errorValidator: (error): error is PQErrorKind =>
 					error === "ResultTooLargeError" || error === "InsightError",
+				assertOnResult(expected: any[],actual: any,input: any){
+					const orderKey = input.OPTIONS.ORDER;
+					expect(actual).to.be.instanceof(Array);
+					expect(actual).to.have.length(expected.length);
+					expect(actual).to.have.deep.members(expected);
+
+				},
 				assertOnError(expected, actual) {
 					if (expected === "ResultTooLargeError") {
 						expect(actual).to.be.instanceof(ResultTooLargeError);

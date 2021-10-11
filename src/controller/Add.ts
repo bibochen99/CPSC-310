@@ -5,10 +5,8 @@ import {InsightDataset, InsightDatasetKind} from "./IInsightFacade";
 
 export class Add{
 	public sameID(myMap: any, id: string) {
-		if (myMap.has(id)){
-			return true;
-		}
-		return false;
+		return !!myMap.has(id);
+
 	}
 
 	public addDataToDisk(persistDir: string) {
@@ -23,10 +21,8 @@ export class Add{
 	}
 
 	public validIdCheck(id: string): boolean {
-		if ((id === "") || (id.includes("_"))) {
-			return false;
-		}
-		return true;
+		return !((id === "") || (id.includes("_")));
+
 	}
 	public createUsefulFile(zip: JSZip): any [] {
 		let resultCourse: any[] = [];

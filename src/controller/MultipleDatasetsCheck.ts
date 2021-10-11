@@ -1,5 +1,3 @@
-import {InsightError} from "./IInsightFacade";
-
 export default class MultipleDatasetsCheck {
 	public valid: boolean;
 
@@ -10,8 +8,7 @@ export default class MultipleDatasetsCheck {
 	}
 	public check(query: any){
 		let result: any[] = [];
-		let inputQuery = query;
-		let inside = inputQuery["WHERE"];
+		let inside = query["WHERE"];
 		let temp: any[] = [];
 		let check = false;
 		if(Object.prototype.hasOwnProperty.call(inside, "AND")){
@@ -69,7 +66,6 @@ export default class MultipleDatasetsCheck {
 		}
 		return check;
 	}
-	private mKey: string[] = ["avg", "pass", "fail", "audit", "year","dept", "id", "instructor", "title", "uuid"];
 	public applyLTFilter(LT: any, check: boolean): boolean {
 		let string = Object.keys(LT)[0];// course_avg
 		let iS = string.split("_")[0];

@@ -1,5 +1,3 @@
-import * as fs from "fs-extra";
-
 export default class ConverDatasetWithID{
 
 	private input: any[];
@@ -8,7 +6,7 @@ export default class ConverDatasetWithID{
 
 	}
 
-	public addIDtoDataset(loadedData: any, id: string): any[] {
+	public addIDtoDataset(loadedData: any, id: string, check: any): any[] {
 		// https://stackoverflow.com/questions/13391579/how-to-rename-json-key
 		function renameKey (obj: any,oldKey: any,newKey: any){
 			obj[newKey] = obj[oldKey];
@@ -16,21 +14,44 @@ export default class ConverDatasetWithID{
 		}
 
 		loadedData.forEach((item: any) => {
-			renameKey(item,"dept",id + "_dept");
-			renameKey(item,"id",id + "_id");
-			renameKey(item,"avg",id + "_avg");
-			renameKey(item,"instructor",id + "_instructor");
-			renameKey(item,"title",id + "_title");
-			renameKey(item,"pass",id + "_pass");
-			renameKey(item,"fail",id + "_fail");
-			renameKey(item,"audit",id + "_audit");
-			renameKey(item,"uuid",id + "_uuid");
-			renameKey(item,"year",id + "_year");
+			// console.log(item["audit"]);
+			if(item["dept"] !== undefined){
+				renameKey(item,"dept",id + "_dept");
+			}
+			if(item["id"] !== undefined){
+				renameKey(item,"id",id + "_id");
+			}
+			if(item["avg"] !== undefined){
+				renameKey(item,"avg",id + "_avg");
+			}
+			if(item["instructor"] !== undefined){
+				renameKey(item,"instructor",id + "_instructor");
+			}
+			if(item["title"] !== undefined){
+				renameKey(item,"title",id + "_title");
+			}
+			if(item["pass"] !== undefined){
+				renameKey(item,"pass",id + "_pass");
+			}
+			if(item["fail"] !== undefined){
+				renameKey(item,"fail",id + "_fail");
+			}
+			if(item["audit"] !== undefined){
+				renameKey(item,"audit",id + "_audit");
+			}
+			if(item["uuid"] !== undefined){
+				renameKey(item,"uuid",id + "_uuid");
+			}
+			if(item["year"] !== undefined){
+				renameKey(item,"year",id + "_year");
+			}
+
+
 		});
 		return loadedData;
 	}
 
-	public getIdFromDataset(): string {
-		return "";
-	}
+	// public getIdFromDataset(): string {
+	// 	return "";
+	// }
 }
