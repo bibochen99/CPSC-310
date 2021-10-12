@@ -83,7 +83,7 @@ export default class FilterHelper {
 	}
 
 	public applyEQFilter(EQ: any, result: any[]) {
-		let string = Object.keys(EQ)[0];// course_avg
+		let string = Object.keys(EQ)[0];// courses_avg
 		let eQ = string.split("_")[1];
 		let numValue = EQ[string];
 		let resultSoFar: any[] = [];

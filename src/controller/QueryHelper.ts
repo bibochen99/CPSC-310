@@ -1,4 +1,4 @@
-import {InsightError} from "./IInsightFacade";
+import {InsightError, ResultTooLargeError} from "./IInsightFacade";
 import FilterHelper from "./FilterHelper";
 import MultipleDatasetsCheck from "./MultipleDatasetsCheck";
 
@@ -48,7 +48,9 @@ export default class QueryHelper {
 
 	public checkValidInsideWhere(query: any) {
 		let whereQuery = query["WHERE"];
-
+		if(Object.keys(whereQuery).length === 0){
+			throw (new ResultTooLargeError("More that 5000 results"));
+		}
 		// if(Object.keys(query.WHERE).length === 0){
 		// 	return true;
 		// }
@@ -81,14 +83,17 @@ export default class QueryHelper {
 
 	public getQueryRequestKey2(query: any): any[] {
 		let inside = query["WHERE"];
+
 		let result: any[] = [];
 		if(Object.prototype.hasOwnProperty.call(inside, "AND")){
+			this.checkEmptyAndOR(inside.AND);
 			this.loopIntoWhere(inside.AND, result);
 			let otherTemp = this.filterHelper.applyAndFilter(this.temp);
 			result = [];
 			result.push(otherTemp);
 			this.temp = result;
 		} else if(Object.prototype.hasOwnProperty.call(inside, "OR")){
+			this.checkEmptyAndOR(inside.OR);
 			this.loopIntoWhere(inside.OR, result);
 			let otherTemp = this.filterHelper.applyOrFilter(this.temp);
 			result = [];
@@ -101,10 +106,11 @@ export default class QueryHelper {
 			// result.push(otherTemp);
 			// this.temp = result;
 		} else if(Object.prototype.hasOwnProperty.call(inside, "IS")){
-
+			this.checkEmpty(inside.IS);
 			this.temp = this.filterHelper.applyISFilter(inside.IS,result);
 
 		} else if(Object.prototype.hasOwnProperty.call(inside, "NOT")){
+			this.checkEmpty(inside.NOT);
 			let cast: any[] = [];
 			cast.push(inside.NOT);
 			this.loopIntoWhere(cast, result);
@@ -113,16 +119,31 @@ export default class QueryHelper {
 			result.push(otherTemp);
 			this.temp = result;
 		} else if(Object.prototype.hasOwnProperty.call(inside, "EQ")){
+			this.checkEmpty(inside.EQ);
 			this.temp = this.filterHelper.applyEQFilter(inside.EQ,result);
 		} else if(Object.prototype.hasOwnProperty.call(inside, "GT")){
+			this.checkEmpty(inside.GT);
 			this.temp = this.filterHelper.applyGTFilter(inside.GT,result);
 		} else if(Object.prototype.hasOwnProperty.call(inside, "LT")){
+			this.checkEmpty(inside.LT);
 			this.temp = this.filterHelper.applyLTFilter(inside.LT,result);
 		}else{
 			throw new InsightError("not such key.");
 		}
 
 		return this.temp;
+	}
+
+	private checkEmptyAndOR(inside: any) {
+		if (inside.length === 0) {
+			throw (new InsightError("empty inside and/or"));
+		}
+	}
+
+	private checkEmpty(inside: any) {
+		if (Object.keys(inside).length === 0) {
+			throw (new InsightError("empty inside not/eq/is/gt/lt"));
+		}
 	}
 
 	public loopIntoWhere(value: any, result: any[]) {

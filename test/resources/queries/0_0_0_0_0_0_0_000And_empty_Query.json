@@ -3,7 +3,7 @@
   "title": "And_empty_Query.json .json",
   "input": {
     "WHERE": {
-      "AND": []
+      "OR": []
     },
     "OPTIONS": {
       "COLUMNS": [
