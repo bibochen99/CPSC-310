@@ -15,6 +15,7 @@ import OptionHelper from "./OptionHelper";
 import {Add} from "./Add";
 import QueryHelper from "./QueryHelper";
 import ConverDatasetWithID from "./ConverDatasetWithID";
+import CheckInvalid from "./CheckInvalid";
 
 const persistDir = "./data";
 const courseZip: string = "test/resources/archives/courses.zip";
@@ -119,29 +120,21 @@ export default class InsightFacade implements IInsightFacade {
 			let converter: ConverDatasetWithID;
 			let loadedData: any = [];
 			let id: string;
-			loadedData = this.readDisk(loadedData);
-			// id = "courses";
-			// let newload: any[] = [];
-			// const loadedData = this.myMap.get(id);
-			// const loadedData = this.myMap.get(id);
-
+			// loadedData = this.readDisk(loadedData,id);
 			converter = new ConverDatasetWithID();
-
-			// const newDataset: any = converter.addIDtoDataset(loadedData,id,this.check);
-			// this.check = false;
-			// const newDataset: any = [];
-			qh = new QueryHelper(loadedData);
+			// qh = new QueryHelper(loadedData);
 			let result: any;
-			// get result here
-			// this.getResult();
 			let optionals = new OptionHelper();
 			let ids = Array.from(this.myMap.keys());
-			if(!qh.invalidQuery(query)){
+			let checkInvalid = new CheckInvalid();
+			if(!checkInvalid.invalidQuery(query)){
 				return reject(new InsightError("query is not valid."));
 			}else if(!optionals.check(query)){
 				return reject(new InsightError("not pass option"));
 			}
 			id = optionals.getterID();
+			loadedData = this.readDisk(loadedData,id);
+			qh = new QueryHelper(loadedData);
 			if(!ids.includes((id))){
 				return reject(new InsightError("do not have this id."));
 			}else if(qh.referencesMultipleDatasets(query,id)){
@@ -179,12 +172,15 @@ export default class InsightFacade implements IInsightFacade {
 	// private possibleQueryKey: any[] = ["WHERE", "OPTIONS"];
 	// private possibleInputKey: any[] = [ "title", "input", "errorExpected", "with" ];
 	//
-	private readDisk(loadedData: any) {
+	private readDisk(loadedData: any, id: string) {
 		fs.readdirSync("./data").forEach(function (file) {
 			try{
-				let fileName = fs.readFileSync("./data/" + file,"utf8");
-				let obj = JSON.parse(fileName);
-				loadedData = obj;
+				let str3 = id.concat(".json");
+				if(str3 === file){
+					let fileName = fs.readFileSync("./data/" + file,"utf8");
+					let obj = JSON.parse(fileName);
+					loadedData = obj;
+				}
 			} catch (e) {
 				console.log("cannot read from disk");
 			}

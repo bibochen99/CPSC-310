@@ -22,5 +22,11 @@
     }
   },
   "errorExpected": false,
-  "with":[{"courses_dept":"lfs","courses_avg":0,"courses_id":"100"},{"courses_dept":"lfs","courses_avg":0,"courses_id":"100"}]
+  "with":[{
+	  "courses_dept":"lfs",
+	  "courses_avg":0,
+    "courses_id":"100"},{
+	  "courses_dept":"lfs",
+	  "courses_avg":0,
+    "courses_id":"100"}]
 }

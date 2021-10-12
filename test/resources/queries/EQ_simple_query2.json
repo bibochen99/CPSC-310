@@ -19,6 +19,15 @@
     }
   },
   "errorExpected": false,
-  "with":[{"courses_dept":"psyc","courses_avg":50,"courses_id":"315"},{"courses_dept":"chbe","courses_avg":50,"courses_id":"474"},{"courses_dept":"busi","courses_avg":50,"courses_id":"441"}]
+  "with":[{
+	  "courses_dept":"psyc",
+	  "courses_avg":50,
+    "courses_id":"315"},{
+	  "courses_dept":"chbe",
+	  "courses_avg":50,
+    "courses_id":"474"},{
+	  "courses_dept":"busi",
+	  "courses_avg":50,
+    "courses_id":"441"}]
 }
 
