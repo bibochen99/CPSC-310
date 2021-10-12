@@ -77,6 +77,10 @@ export default class MultipleDatasetsCheck {
 	}
 	public applyLTFilter(LT: any, check: boolean): boolean {
 		let string = Object.keys(LT)[0];// course_avg
+
+		if(!(string.includes("_") && string.split("_").length === 2)){
+			throw (new InsightError("invalid string, contain more _"));
+		}
 		let iS = string.split("_")[0];
 		if(iS !== this.id){
 			check = true;
