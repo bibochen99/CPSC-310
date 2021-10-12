@@ -32,6 +32,7 @@ export default class InsightFacade implements IInsightFacade {
 	public dataSets: any[];
 	public s: any[];
 	public check: boolean;
+	public id: string;
 
 	constructor() {
 		console.trace("InsightFacadeImpl::init()");
@@ -41,6 +42,7 @@ export default class InsightFacade implements IInsightFacade {
 		this.addedDataset = [];
 		this.temp = [];
 		this.s = [];
+		this.id = "";
 		this.check = true;
 	}
 
@@ -71,6 +73,7 @@ export default class InsightFacade implements IInsightFacade {
 					}
 					this.addData.addNewData(id,kind,resultDataset,this.dataSets);
 					this.s = resultDataset;
+					this.id = id;
 					this.myMap.set(id,resultDataset);
 					let keys: string[] = Array.from(this.myMap.keys());
 					return resolve(keys);
@@ -129,7 +132,7 @@ export default class InsightFacade implements IInsightFacade {
 			this.check = false;
 			// const newDataset: any = [];
 			qh = new QueryHelper(loadedData);
-			let result: any[];
+			let result: any;
 			// get result here
 			// this.getResult();
 			let optionals: OptionHelper;
@@ -163,7 +166,7 @@ export default class InsightFacade implements IInsightFacade {
 			}
 
 			// console.log(this.liftoffFilter);
-			let newresult: any = converter.addIDtoDataset(result,id,true);
+			let newresult: any = converter.addIDtoDataset(result,this.id,true);
 			resolve(newresult);
 		});
 
