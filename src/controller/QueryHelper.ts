@@ -1,12 +1,8 @@
-
-
-import * as fs from "fs-extra";
-import {InsightError} from "./IInsightFacade";
+import {InsightError, ResultTooLargeError} from "./IInsightFacade";
 import FilterHelper from "./FilterHelper";
-import OptionHelper from "./OptionHelper";
+import MultipleDatasetsCheck from "./MultipleDatasetsCheck";
 
 export default class QueryHelper {
-	private possibleQueryKey: any[] = ["WHERE", "OPTIONS"];
 	private mKey: string[] = ["courses_avg", "courses_pass", "courses_fail", "courses_audit",
 		"courses_year","avg", "pass", "fail", "audit", "year"];
 
@@ -28,63 +24,41 @@ export default class QueryHelper {
 
 	public invalidQuery(query: any) {
 		let queryObject = query;
-		let queryKeys: any [];
-	// queryKeys = Object.keys(queryObject);// [ 'WHERE', 'OPTIONS' ]
-
-	// Object.keys(queryObject).forEach(function(key) {
-	// 	console.log(queryObject[key]);
-	// });
-	// let whereQuery = queryObject["WHERE"];
-	// //
-	// for(let queryKey of Object.keys(queryObject)){
-	// 	if((!queryKey.includes("WHERE") || !queryKey.includes("OPTIONS"))){
-	// 		console.log("Key is not [ 'WHERE', 'OPTIONS' ]");
-	// 		return false;
-	// 	}
-	// }
-		if(queryObject["WHERE"] === undefined){
+		if(queryObject.WHERE === undefined){
 			return false;
 		}
 		if(queryObject["WHERE"] === null){
 			return false;
 		}
 
-	// // TODO: need to loop over inside where to get the key
+
 		if(!(this.checkValidInsideWhere(query))){
 			return false;
 		}
 
-		if(!("OPTIONS" in queryObject)){
-			console.log("Missing OPTIONS");
+		if(query.OPTIONS === undefined){
 			return false;
 		}
 		if(queryObject["OPTIONS"] === null){
-			console.log("OPTIONS has null");
 			return false;
 		}
-		if(queryObject["OPTIONS"] === undefined){
-			console.log("OPTIONS has null");
-			return false;
-		}
-		if(!(typeof queryObject["OPTIONS"] === "object")){
-			console.log("OPTIONS is not object");
-			return false;
-		}
-		if(!(this.checkValidInsideOption(query))){
-			return false;
-		}
-		return false;
+		return queryObject["OPTIONS"] !== undefined;
+
 	}
 
 	public checkValidInsideWhere(query: any) {
-		let queryObject = query;
-		let queryKeys: any [];
-		let whereQuery = queryObject["WHERE"];
-	// inside where
+		let whereQuery = query["WHERE"];
+		if(Object.keys(whereQuery).length === 0){
+			throw (new ResultTooLargeError("More that 5000 results"));
+		}
+		// if(Object.keys(query.WHERE).length === 0){
+		// 	return true;
+		// }
+		// inside where
 		let insideWhereKey = Object.keys(whereQuery);
 
-		if(insideWhereKey.length > 1){
-			console.log("WHERE has more object inside");
+		if(Object.keys(query.WHERE).length > 1){
+			// console.log("WHERE has more object inside");
 			return false;
 		}
 
@@ -93,64 +67,55 @@ export default class QueryHelper {
 		let filter = insideWhereKey[0];
 		let filterList = ["AND","OR","NOT","IS","EQ","LT","GT","NOT"];
 		if(key.length === 0){
-		// console.log("nothing inside the WHERE");
+			// console.log("nothing inside the WHERE");
 			return false;
 		}
-		if(!(filterList.includes(filter))){
-			console.log("invalid filter name");
-			return false;
-		}
+		return filterList.includes(filter);
 
 	}
 
 
-	public referencesMultipleDatasets() {
-		return false;
+	public referencesMultipleDatasets(query: any,id: string): boolean{
+		let md: MultipleDatasetsCheck = new MultipleDatasetsCheck();
+		return md.check(query,id);
 	}
 
 
-	public checkValidInsideOption(query: any) {
-		return false;
-	}
+	public getQueryRequestKey2(query: any): any[] {
+		let inside = query["WHERE"];
 
-	public getQueryRequestKey2(query: any, loadedData: any): any[] {
-
-		let inputQuery = query;
-		let inside = inputQuery["WHERE"];
-		let dataset: any[] = loadedData;
 		let result: any[] = [];
-		let temp: any[] = [];
-	// TODO: move to checking
-	// if(Object.keys(inside).length !== 1){
-	// 	throw new InsightError("should only have 1 key inside where");
-	// }
-
 		if(Object.prototype.hasOwnProperty.call(inside, "AND")){
-			this.loopIntoWhere(inside.AND, result,this.temp);
+			this.loopIntoWhere(inside.AND, result);
 			let otherTemp = this.filterHelper.applyAndFilter(this.temp);
 			result = [];
 			result.push(otherTemp);
 			this.temp = result;
 		} else if(Object.prototype.hasOwnProperty.call(inside, "OR")){
-			this.loopIntoWhere(inside.OR, result,temp);
+			this.loopIntoWhere(inside.OR, result);
 			let otherTemp = this.filterHelper.applyOrFilter(this.temp);
 			result = [];
 			result.push(otherTemp);
 			this.temp = result;
-		} else if(Object.prototype.hasOwnProperty.call(inside, "IS")){
 
+			// this.loopIntoWhere(inside.OR, result,temp);
+			// let otherTemp = this.filterHelper.applyOrFilter(this.temp);
+			// result = [];
+			// result.push(otherTemp);
+			// this.temp = result;
+		} else if(Object.prototype.hasOwnProperty.call(inside, "IS")){
 			this.temp = this.filterHelper.applyISFilter(inside.IS,result);
 
 		} else if(Object.prototype.hasOwnProperty.call(inside, "NOT")){
-			this.loopIntoWhere(inside.NOT, result,this.temp);
+			let cast: any[] = [];
+			cast.push(inside.NOT);
+			this.loopIntoWhere(cast, result);
 			let otherTemp = this.filterHelper.applyNOTFilter(this.temp);
 			result = [];
 			result.push(otherTemp);
 			this.temp = result;
 		} else if(Object.prototype.hasOwnProperty.call(inside, "EQ")){
-			console.log("145");
 			this.temp = this.filterHelper.applyEQFilter(inside.EQ,result);
-			console.log("146");
 		} else if(Object.prototype.hasOwnProperty.call(inside, "GT")){
 			this.temp = this.filterHelper.applyGTFilter(inside.GT,result);
 		} else if(Object.prototype.hasOwnProperty.call(inside, "LT")){
@@ -162,30 +127,53 @@ export default class QueryHelper {
 		return this.temp;
 	}
 
-	public loopIntoWhere(value: any, result: any[],temp: any[]) {
-		temp = [];
+	private checkEmptyAndOR(inside: any) {
+		if (inside.length === 0) {
+			throw (new InsightError("empty inside and/or"));
+		}
+	}
+
+	private checkEmpty(inside: any) {
+		if (Object.keys(inside).length === 0) {
+			throw (new InsightError("empty inside not/eq/is/gt/lt"));
+		}
+	}
+
+	public loopIntoWhere(value: any, result: any[]) {
 		for(let nestedValue of value){
 			if(Object.prototype.hasOwnProperty.call(nestedValue, "AND")){
-				this.loopIntoWhere(nestedValue.AND, result,temp);
+				this.loopIntoWhere(nestedValue.AND, result);
 				let otherTemp = this.filterHelper.applyAndFilter(result);
 				result = [];
 				result.push(otherTemp);
 				this.temp = result;
 
 			} else if(Object.prototype.hasOwnProperty.call(nestedValue, "OR")){
-				this.loopIntoWhere(nestedValue.OR, result,temp);
+				this.loopIntoWhere(nestedValue.OR, result);
 				let otherTemp = this.filterHelper.applyOrFilter(result);
 				result = [];
 				result.push(otherTemp);
 				this.temp = result;
+
+
 			} else if(Object.prototype.hasOwnProperty.call(nestedValue, "IS")){
 				this.filterHelper.applyISFilter(nestedValue.IS,result);
 			} else if(Object.prototype.hasOwnProperty.call(nestedValue, "NOT")){
-				this.loopIntoWhere(nestedValue.NOT, result,temp);
-				let otherTemp = this.filterHelper.applyNOTFilter(temp);
+				// // console.log("193");
+				// this.loopIntoWhere(nestedValue.NOT, result,temp);
+				// let otherTemp = this.filterHelper.applyNOTFilter(temp);
+				// result = [];
+				// result.push(otherTemp);
+				// this.temp = result;
+
+				let cast: any[] = [];
+				cast.push(nestedValue.NOT);
+				this.loopIntoWhere(cast, result);
+				let otherTemp = this.filterHelper.applyNOTFilter(this.temp);
 				result = [];
 				result.push(otherTemp);
 				this.temp = result;
+
 			} else if(Object.prototype.hasOwnProperty.call(nestedValue, "EQ")){
 				this.filterHelper.applyEQFilter(nestedValue.EQ,result);
 			} else if(Object.prototype.hasOwnProperty.call(nestedValue, "GT")){
@@ -201,12 +189,16 @@ export default class QueryHelper {
 
 	public applyOptional(query: any, resultSoFar: any): any[] {
 
-		let allKey = ["courses_dept", "courses_id", "courses_instructor", "courses_title",
-			"courses_uuid","courses_avg", "courses_pass", "courses_fail", "courses_audit", "courses_year"];
+		let allKey = ["dept", "id", "instructor", "title",
+			"uuid","avg", "pass", "fail", "audit", "year"];
 		let keep = query["OPTIONS"]["COLUMNS"];
+		let newkepp = [];
+		for (let each of keep){
+			newkepp.push(each.split("_")[1]);
+		}
 		let remove = [];
 		for (let each of allKey){
-			if(!keep.includes(each)){
+			if(!newkepp.includes(each)){
 				remove.push(each);
 			}
 		}
@@ -221,7 +213,8 @@ export default class QueryHelper {
 			return resultSoFar;
 		}
 
-		let order = query["OPTIONS"]["ORDER"];
+		let oldorder = query["OPTIONS"]["ORDER"];
+		let order = oldorder.split("_")[1];
 
 
 		resultSoFar.sort((a: any, b: any) =>{

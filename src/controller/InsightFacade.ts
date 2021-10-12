@@ -1,4 +1,11 @@
-import {IInsightFacade, InsightDataset, InsightDatasetKind, InsightError, NotFoundError} from "./IInsightFacade";
+import {
+	IInsightFacade,
+	InsightDataset,
+	InsightDatasetKind,
+	InsightError,
+	NotFoundError,
+	ResultTooLargeError
+} from "./IInsightFacade";
 import * as fs from "fs-extra";
 
 import JSZip = require("jszip");
@@ -6,6 +13,8 @@ import Log from "@ubccpsc310/folder-test/build/Log";
 import {Subject} from "./Subject";
 import OptionHelper from "./OptionHelper";
 import {Add} from "./Add";
+import QueryHelper from "./QueryHelper";
+import ConverDatasetWithID from "./ConverDatasetWithID";
 
 const persistDir = "./data";
 const courseZip: string = "test/resources/archives/courses.zip";
@@ -16,13 +25,25 @@ const courseZip: string = "test/resources/archives/courses.zip";
  */
 export default class InsightFacade implements IInsightFacade {
 	public myMap: any;
+
+	public addedDataset: any[];
+	public temp: any[];
 	public addData;
 	public dataSets: any[];
+	public s: any[];
+	public check: boolean;
+	public id: string;
+
 	constructor() {
 		console.trace("InsightFacadeImpl::init()");
 		this.myMap = new Map();
 		this.addData = new Add();
 		this.dataSets = [];
+		this.addedDataset = [];
+		this.temp = [];
+		this.s = [];
+		this.id = "";
+		this.check = true;
 	}
 
 	public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
@@ -51,6 +72,8 @@ export default class InsightFacade implements IInsightFacade {
 						throw new InsightError("Cannot write to disk");
 					}
 					this.addData.addNewData(id,kind,resultDataset,this.dataSets);
+					// this.s = resultDataset;
+					// this.id = id;
 					this.myMap.set(id,resultDataset);
 					let keys: string[] = Array.from(this.myMap.keys());
 					return resolve(keys);
@@ -86,9 +109,9 @@ export default class InsightFacade implements IInsightFacade {
 		});
 	}
 
-  public listDatasets(): Promise<InsightDataset[]> {
+	public listDatasets(): Promise<InsightDataset[]> {
 		return Promise.resolve(this.dataSets);
-  }
+	}
 	public performQuery(query: any): Promise<any[]> {
 		// console.log(query);
 		return new Promise<string[]>((resolve, reject) => {
@@ -97,33 +120,44 @@ export default class InsightFacade implements IInsightFacade {
 			let loadedData: any = [];
 			let id: string;
 			loadedData = this.readDisk(loadedData);
-			converter = new ConverDatasetWithID();
-			id = "courses";
-			let newDataset: any = converter.addIDtoDataset(loadedData,id);
-			qh = new QueryHelper(newDataset);
-			let result: any;
+			// id = "courses";
+			// let newload: any[] = [];
+			// const loadedData = this.myMap.get(id);
+			// const loadedData = this.myMap.get(id);
 
-			if(qh.invalidQuery(query)){
+			converter = new ConverDatasetWithID();
+
+			// const newDataset: any = converter.addIDtoDataset(loadedData,id,this.check);
+			// this.check = false;
+			// const newDataset: any = [];
+			qh = new QueryHelper(loadedData);
+			let result: any;
+			// get result here
+			// this.getResult();
+			let optionals = new OptionHelper();
+			let ids = Array.from(this.myMap.keys());
+			if(!qh.invalidQuery(query)){
 				return reject(new InsightError("query is not valid."));
-			}else if(qh.referencesMultipleDatasets()){
+			}else if(!optionals.check(query)){
+				return reject(new InsightError("not pass option"));
+			}
+			id = optionals.getterID();
+			if(!ids.includes((id))){
+				return reject(new InsightError("do not have this id."));
+			}else if(qh.referencesMultipleDatasets(query,id)){
 				return reject(new InsightError("references Multiple Datasets."));
 			}
 
 			// this.getQueryRequestKey(query);
 			try{
-				result = qh.getQueryRequestKey2(query,loadedData);
+				result = qh.getQueryRequestKey2(query);
 			}catch(e){
-				return reject(new InsightError("data not ready"));
+				return reject(new InsightError(e));
 			}
-			// get result here
-			// this.getResult();
-			let optionals: OptionHelper;
-			optionals = new OptionHelper();
+
 
 			if (qh.queryTooLong(result[0])){
-				return reject(new InsightError("query result are longer than 5000."));
-			}else if(!optionals.check(query,result[0])){
-				return reject(new InsightError("not pass option"));
+				return reject(new ResultTooLargeError("More that 5000 results"));
 			}else {
 				try{
 					result = qh.applyOptional(query,result[0]);
@@ -133,7 +167,8 @@ export default class InsightFacade implements IInsightFacade {
 			}
 
 			// console.log(this.liftoffFilter);
-			resolve(result);
+			let newresult: any = converter.addIDtoDataset(result,id,true);
+			resolve(newresult);
 		});
 
 

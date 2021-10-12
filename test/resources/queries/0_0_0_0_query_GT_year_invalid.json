@@ -1,0 +1,24 @@
+{
+  "errorMsg": "ORDER key must be in COLUMNS",
+  "title": "query_GT_year_invalid",
+  "input": {
+    "WHERE": {
+      "GT": {
+        "courses_year": 2014
+      },"GT": {
+	"courses_year": 2014
+}
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_dept",
+        "courses_id",
+        "courses_avg",
+        "courses_uuid"
+      ],
+      "ORDER": "courses_dept"
+    }
+  },
+  "errorExpected": true,
+  "with": "ResultTooLargeError"
+}
