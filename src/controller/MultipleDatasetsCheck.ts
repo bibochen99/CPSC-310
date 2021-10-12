@@ -1,3 +1,5 @@
+import {InsightError} from "./IInsightFacade";
+
 export default class MultipleDatasetsCheck {
 	public valid: boolean;
 	public id: string;
@@ -13,25 +15,31 @@ export default class MultipleDatasetsCheck {
 		let check = false;
 		this.id = id;
 		if(Object.prototype.hasOwnProperty.call(inside, "AND")){
+			this.checkEmptyAndOR(inside.AND);
 			check = this.loopIntoWhere(inside.AND, result,temp);
 		} else if(Object.prototype.hasOwnProperty.call(inside, "OR")){
+			this.checkEmptyAndOR(inside.OR);
 			check = this.loopIntoWhere(inside.OR, result,temp);
 
 		} else if(Object.prototype.hasOwnProperty.call(inside, "IS")){
-
+			this.checkEmpty(inside.IS);
 			return false;
 
 		} else if(Object.prototype.hasOwnProperty.call(inside, "NOT")){
+			this.checkEmpty(inside.NOT);
 			let cast: any[] = [];
 			cast.push(inside.NOT);
 			this.loopIntoWhere(cast, result,temp);
 		} else if(Object.prototype.hasOwnProperty.call(inside, "EQ")){
+			this.checkEmpty(inside.EQ);
 			// console.log("145");
 			return false;
 			// console.log("146");
 		} else if(Object.prototype.hasOwnProperty.call(inside, "GT")){
+			this.checkEmpty(inside.GT);
 			return false;
 		} else if(Object.prototype.hasOwnProperty.call(inside, "LT")){
+			this.checkEmpty(inside.LT);
 			return false;
 		}
 		return check;
@@ -75,6 +83,17 @@ export default class MultipleDatasetsCheck {
 		}
 		return check;
 
+	}
+	private checkEmptyAndOR(inside: any) {
+		if (inside.length === 0) {
+			throw (new InsightError("empty inside and/or"));
+		}
+	}
+
+	private checkEmpty(inside: any) {
+		if (Object.keys(inside).length === 0) {
+			throw (new InsightError("empty inside not/eq/is/gt/lt"));
+		}
 	}
 }
 
