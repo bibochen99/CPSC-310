@@ -18,7 +18,17 @@
     }
   },
   "errorExpected": false,
-  "with":[{"courses_dept":"apsc","courses_instructor":"ellis, naoko;fernlund, goran;jaeger, carol patricia;nakane, jonathan;nazhat, yahya;nesbit, susan;ostafichuk, peter;yadav, vikramaditya;yan, joseph","courses_id":"100","courses_title":"intro to eng i","courses_uuid":"4205"},{"courses_dept":"apsc","courses_instructor":"ellis, naoko;fernlund, goran;jaeger, carol patricia;nakane, jonathan;nazhat, yahya;nesbit, susan;ostafichuk, peter;yadav, vikramaditya;yan, joseph","courses_id":"100","courses_title":"intro to eng i","courses_uuid":"4206"},{"courses_dept":"apsc","courses_instructor":"ellis, naoko;fernlund, goran;jaeger, carol patricia;nakane, jonathan;ostafichuk, peter;yadav, vikramaditya","courses_id":"100","courses_title":"intro to eng i","courses_uuid":"4207"},{"courses_dept":"apsc","courses_instructor":"ellis, naoko;fernlund, goran;jaeger, carol patricia;nakane, jonathan;nazhat, yahya;nesbit, susan;ostafichuk, peter;yadav, vikramaditya;yan, joseph","courses_id":"100","courses_title":"intro to eng i","courses_uuid":"4208"},{"courses_dept":"apsc","courses_instructor":"","courses_id":"100","courses_title":"intro to eng i","courses_uuid":"4209"}]
+  "with":[{
+	  "courses_dept":"apsc","courses_instructor":"ellis, naoko;fernlund, goran;jaeger, carol patricia;nakane, jonathan;nazhat, yahya;nesbit, susan;ostafichuk, peter;yadav, vikramaditya;yan, joseph",
+    "courses_id":"100","courses_title":"intro to eng i","courses_uuid":"4205"},{
+	  "courses_dept":"apsc","courses_instructor":"ellis, naoko;fernlund, goran;jaeger, carol patricia;nakane, jonathan;nazhat, yahya;nesbit, susan;ostafichuk, peter;yadav, vikramaditya;yan, joseph",
+    "courses_id":"100","courses_title":"intro to eng i","courses_uuid":"4206"},{
+	  "courses_dept":"apsc","courses_instructor":"ellis, naoko;fernlund, goran;jaeger, carol patricia;nakane, jonathan;ostafichuk, peter;yadav, vikramaditya",
+    "courses_id":"100","courses_title":"intro to eng i","courses_uuid":"4207"},{
+	  "courses_dept":"apsc","courses_instructor":"ellis, naoko;fernlund, goran;jaeger, carol patricia;nakane, jonathan;nazhat, yahya;nesbit, susan;ostafichuk, peter;yadav, vikramaditya;yan, joseph",
+    "courses_id":"100","courses_title":"intro to eng i","courses_uuid":"4208"},{
+	  "courses_dept":"apsc","courses_instructor":"",
+    "courses_id":"100","courses_title":"intro to eng i","courses_uuid":"4209"}]
 }
 
 

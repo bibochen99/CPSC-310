@@ -17,6 +17,14 @@
     }
   },
   "errorExpected": false,
-  "with":[{"courses_dept":"frst","courses_avg":0},{"courses_dept":"lfs","courses_avg":0},{"courses_dept":"lfs","courses_avg":0},{"courses_dept":"wood","courses_avg":1}]
+  "with":[{
+	  "courses_dept":"frst",
+    "courses_avg":0},{
+	  "courses_dept":"lfs",
+    "courses_avg":0},{
+	  "courses_dept":"lfs",
+    "courses_avg":0},{
+	  "courses_dept":"wood",
+    "courses_avg":1}]
 }
 
