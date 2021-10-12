@@ -75,9 +75,9 @@ export default class QueryHelper {
 	}
 
 
-	public referencesMultipleDatasets(query: any): boolean{
+	public referencesMultipleDatasets(query: any,id: string): boolean{
 		let md: MultipleDatasetsCheck = new MultipleDatasetsCheck();
-		return md.check(query);
+		return md.check(query,id);
 	}
 
 

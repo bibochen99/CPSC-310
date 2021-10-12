@@ -72,8 +72,8 @@ export default class InsightFacade implements IInsightFacade {
 						throw new InsightError("Cannot write to disk");
 					}
 					this.addData.addNewData(id,kind,resultDataset,this.dataSets);
-					this.s = resultDataset;
-					this.id = id;
+					// this.s = resultDataset;
+					// this.id = id;
 					this.myMap.set(id,resultDataset);
 					let keys: string[] = Array.from(this.myMap.keys());
 					return resolve(keys);
@@ -120,31 +120,32 @@ export default class InsightFacade implements IInsightFacade {
 			let loadedData: any = [];
 			let id: string;
 			loadedData = this.readDisk(loadedData);
-			id = "courses";
+			// id = "courses";
 			// let newload: any[] = [];
-
 			// const loadedData = this.myMap.get(id);
 			// const loadedData = this.myMap.get(id);
 
 			converter = new ConverDatasetWithID();
 
 			// const newDataset: any = converter.addIDtoDataset(loadedData,id,this.check);
-			this.check = false;
+			// this.check = false;
 			// const newDataset: any = [];
 			qh = new QueryHelper(loadedData);
 			let result: any;
 			// get result here
 			// this.getResult();
-			let optionals: OptionHelper;
-			optionals = new OptionHelper();
-
+			let optionals = new OptionHelper();
+			let ids = Array.from(this.myMap.keys());
 			if(!qh.invalidQuery(query)){
 				return reject(new InsightError("query is not valid."));
 			}else if(!optionals.check(query)){
 				return reject(new InsightError("not pass option"));
-			}else if(qh.referencesMultipleDatasets(query)){
+			}
+			id = optionals.getterID();
+			if(!ids.includes((id))){
+				return reject(new InsightError("do not have this id."));
+			}else if(qh.referencesMultipleDatasets(query,id)){
 				return reject(new InsightError("references Multiple Datasets."));
-
 			}
 
 			// this.getQueryRequestKey(query);
@@ -166,7 +167,7 @@ export default class InsightFacade implements IInsightFacade {
 			}
 
 			// console.log(this.liftoffFilter);
-			let newresult: any = converter.addIDtoDataset(result,this.id,true);
+			let newresult: any = converter.addIDtoDataset(result,id,true);
 			resolve(newresult);
 		});
 

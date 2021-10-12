@@ -1,10 +1,10 @@
 export default class OptionHelper {
 	public valid: boolean;
-
+	public id: string;
 
 	constructor() {
 		this.valid = true;
-
+		this.id = "";
 	}
 
 	public check(query: any) {
@@ -14,7 +14,12 @@ export default class OptionHelper {
 		}
 		if (keep === null) {
 			return false;
+		}else if(keep.length === 0){
+			return false;
 		}
+
+		let str = keep[0].split("_")[0];
+		this.id = str;
 		if (Object.keys(query.OPTIONS).length === 2) {
 			// let colKey:any[] = query.OPTIONS.COLUMNS;
 			if (query.OPTIONS.ORDER === undefined) {
@@ -32,5 +37,8 @@ export default class OptionHelper {
 		return Object.keys(query.OPTIONS.COLUMNS).length !== 0;
 
 
+	}
+	public getterID(): string{
+		return this.id;
 	}
 }
