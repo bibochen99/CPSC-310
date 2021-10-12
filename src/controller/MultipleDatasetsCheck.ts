@@ -1,16 +1,17 @@
 export default class MultipleDatasetsCheck {
 	public valid: boolean;
-
+	public id: string;
 
 	constructor() {
 		this.valid = true;
-
+		this.id = "";
 	}
-	public check(query: any){
+	public check(query: any,id: string){
 		let result: any[] = [];
 		let inside = query["WHERE"];
 		let temp: any[] = [];
 		let check = false;
+		this.id = id;
 		if(Object.prototype.hasOwnProperty.call(inside, "AND")){
 			check = this.loopIntoWhere(inside.AND, result,temp);
 		} else if(Object.prototype.hasOwnProperty.call(inside, "OR")){
@@ -69,7 +70,7 @@ export default class MultipleDatasetsCheck {
 	public applyLTFilter(LT: any, check: boolean): boolean {
 		let string = Object.keys(LT)[0];// course_avg
 		let iS = string.split("_")[0];
-		if(iS !== "courses"){
+		if(iS !== this.id){
 			check = true;
 		}
 		return check;
