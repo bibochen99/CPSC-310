@@ -22,6 +22,58 @@ export default class QueryHelper {
 		return (result.length > 5000);
 	}
 
+	public invalidQuery(query: any) {
+		let queryObject = query;
+		if(queryObject.WHERE === undefined){
+			return false;
+		}
+		if(queryObject["WHERE"] === null){
+			return false;
+		}
+
+
+		if(!(this.checkValidInsideWhere(query))){
+			return false;
+		}
+
+		if(query.OPTIONS === undefined){
+			return false;
+		}
+		if(queryObject["OPTIONS"] === null){
+			return false;
+		}
+		return queryObject["OPTIONS"] !== undefined;
+
+	}
+
+	public checkValidInsideWhere(query: any) {
+		let whereQuery = query["WHERE"];
+		if(Object.keys(whereQuery).length === 0){
+			throw (new ResultTooLargeError("More that 5000 results"));
+		}
+		// if(Object.keys(query.WHERE).length === 0){
+		// 	return true;
+		// }
+		// inside where
+		let insideWhereKey = Object.keys(whereQuery);
+
+		if(Object.keys(query.WHERE).length > 1){
+			// console.log("WHERE has more object inside");
+			return false;
+		}
+
+
+		let key = Object.keys(insideWhereKey);
+		let filter = insideWhereKey[0];
+		let filterList = ["AND","OR","NOT","IS","EQ","LT","GT","NOT"];
+		if(key.length === 0){
+			// console.log("nothing inside the WHERE");
+			return false;
+		}
+		return filterList.includes(filter);
+
+	}
+
 
 	public referencesMultipleDatasets(query: any,id: string): boolean{
 		let md: MultipleDatasetsCheck = new MultipleDatasetsCheck();
@@ -34,14 +86,12 @@ export default class QueryHelper {
 
 		let result: any[] = [];
 		if(Object.prototype.hasOwnProperty.call(inside, "AND")){
-			this.checkEmptyAndOR(inside.AND);
 			this.loopIntoWhere(inside.AND, result);
 			let otherTemp = this.filterHelper.applyAndFilter(this.temp);
 			result = [];
 			result.push(otherTemp);
 			this.temp = result;
 		} else if(Object.prototype.hasOwnProperty.call(inside, "OR")){
-			this.checkEmptyAndOR(inside.OR);
 			this.loopIntoWhere(inside.OR, result);
 			let otherTemp = this.filterHelper.applyOrFilter(this.temp);
 			result = [];
@@ -54,11 +104,9 @@ export default class QueryHelper {
 			// result.push(otherTemp);
 			// this.temp = result;
 		} else if(Object.prototype.hasOwnProperty.call(inside, "IS")){
-			this.checkEmpty(inside.IS);
 			this.temp = this.filterHelper.applyISFilter(inside.IS,result);
 
 		} else if(Object.prototype.hasOwnProperty.call(inside, "NOT")){
-			this.checkEmpty(inside.NOT);
 			let cast: any[] = [];
 			cast.push(inside.NOT);
 			this.loopIntoWhere(cast, result);
@@ -67,13 +115,10 @@ export default class QueryHelper {
 			result.push(otherTemp);
 			this.temp = result;
 		} else if(Object.prototype.hasOwnProperty.call(inside, "EQ")){
-			this.checkEmpty(inside.EQ);
 			this.temp = this.filterHelper.applyEQFilter(inside.EQ,result);
 		} else if(Object.prototype.hasOwnProperty.call(inside, "GT")){
-			this.checkEmpty(inside.GT);
 			this.temp = this.filterHelper.applyGTFilter(inside.GT,result);
 		} else if(Object.prototype.hasOwnProperty.call(inside, "LT")){
-			this.checkEmpty(inside.LT);
 			this.temp = this.filterHelper.applyLTFilter(inside.LT,result);
 		}else{
 			throw new InsightError("not such key.");
