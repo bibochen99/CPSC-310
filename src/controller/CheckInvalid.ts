@@ -1,5 +1,4 @@
 import {ResultTooLargeError} from "./IInsightFacade";
-import MultipleDatasetsCheck from "./MultipleDatasetsCheck";
 
 export default class CheckInvalid {
 
@@ -60,11 +59,5 @@ export default class CheckInvalid {
 		}
 		return filterList.includes(filter);
 
-	}
-
-
-	public referencesMultipleDatasets(query: any,id: string): boolean{
-		let md: MultipleDatasetsCheck = new MultipleDatasetsCheck();
-		return md.check(query,id);
 	}
 }

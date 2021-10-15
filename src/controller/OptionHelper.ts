@@ -25,10 +25,8 @@ export default class OptionHelper {
 		}
 
 
-		let str = keep[0].split("_")[0];
-		this.id = str;
+		this.id = keep[0].split("_")[0];
 		if (Object.keys(query.OPTIONS).length === 2) {
-			// let colKey:any[] = query.OPTIONS.COLUMNS;
 			if (query.OPTIONS.ORDER === undefined) {
 				return false;
 			} else if (query.OPTIONS.ORDER === null) {
