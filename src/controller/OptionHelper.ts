@@ -49,6 +49,7 @@ export default class OptionHelper {
 
 
 	}
+
 	public getterID(): string{
 		return this.id;
 	}

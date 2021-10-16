@@ -8,6 +8,7 @@ export default class MultipleDatasetsCheck {
 		this.valid = true;
 		this.id = "";
 	}
+
 	public check(query: any,id: string){
 		let result: any[] = [];
 		let inside = query["WHERE"];
@@ -43,6 +44,7 @@ export default class MultipleDatasetsCheck {
 		return check;
 
 	}
+
 	public loopIntoWhere(value: any, result: any[],temp: any[]): boolean {
 		temp = [];
 		let check = false;
@@ -73,6 +75,7 @@ export default class MultipleDatasetsCheck {
 		}
 		return check;
 	}
+
 	public applyLTFilter(LT: any, check: boolean): boolean {
 		let string = Object.keys(LT)[0];// course_avg
 
@@ -86,6 +89,7 @@ export default class MultipleDatasetsCheck {
 		return check;
 
 	}
+
 	private static checkEmptyAndOR(inside: any) {
 		if (inside.length === 0) {
 			throw (new InsightError("empty inside and/or"));
