@@ -9,16 +9,13 @@ import {
 import * as fs from "fs-extra";
 
 import JSZip = require("jszip");
-import Log from "@ubccpsc310/folder-test/build/Log";
-import {Subject} from "./Subject";
 import OptionHelper from "./OptionHelper";
 import {Add} from "./Add";
 import QueryHelper from "./QueryHelper";
-import ConverDatasetWithID from "./ConverDatasetWithID";
+import ConvertDatasetWithID from "./ConvertDatasetWithID";
 import CheckInvalid from "./CheckInvalid";
 
 const persistDir = "./data";
-const courseZip: string = "test/resources/archives/courses.zip";
 /**
  * This is the main programmatic entry point for the project.
  * Method documentation is in IInsightFacade
@@ -78,14 +75,14 @@ export default class InsightFacade implements IInsightFacade {
 					this.myMap.set(id,resultDataset);
 					let keys: string[] = Array.from(this.myMap.keys());
 					return resolve(keys);
-				}).catch((error)=>{
+				}).catch(()=>{
 					return reject(new InsightError("Invalid error"));
 				});
 			});
 		});
 
 	}
-// return true if same id from list dataset
+
 	public removeDataset(id: string): Promise<string> {
 		return new Promise<string>((resolve, reject) => {
 			if (!(this.addData.validIdCheck(id))) {
@@ -113,16 +110,14 @@ export default class InsightFacade implements IInsightFacade {
 	public listDatasets(): Promise<InsightDataset[]> {
 		return Promise.resolve(this.dataSets);
 	}
+
 	public performQuery(query: any): Promise<any[]> {
-		// console.log(query);
 		return new Promise<string[]>((resolve, reject) => {
 			let qh: QueryHelper;
-			let converter: ConverDatasetWithID;
+			let converter: ConvertDatasetWithID;
 			let loadedData: any = [];
 			let id: string;
-			// loadedData = this.readDisk(loadedData,id);
-			converter = new ConverDatasetWithID();
-			// qh = new QueryHelper(loadedData);
+			converter = new ConvertDatasetWithID();
 			let result: any;
 			let optionals = new OptionHelper();
 			let ids = Array.from(this.myMap.keys());
@@ -140,15 +135,11 @@ export default class InsightFacade implements IInsightFacade {
 			}else if(qh.referencesMultipleDatasets(query,id)){
 				return reject(new InsightError("references Multiple Datasets."));
 			}
-
-			// this.getQueryRequestKey(query);
 			try{
-				result = qh.getQueryRequestKey2(query);
+				result = qh.performQuery(query);
 			}catch(e){
 				return reject(new InsightError(e));
 			}
-
-
 			if (qh.queryTooLong(result[0])){
 				return reject(new ResultTooLargeError("More that 5000 results"));
 			}else {
@@ -158,33 +149,25 @@ export default class InsightFacade implements IInsightFacade {
 					return reject(new InsightError("not valid"));
 				}
 			}
-
-			// console.log(this.liftoffFilter);
-			let newresult: any = converter.addIDtoDataset(result,id,true);
-			resolve(newresult);
+			let newResult: any = converter.addIDtoDataset(result,id,true);
+			resolve(newResult);
 		});
-
-
 	}
 
-	//
-	// // should read file from disk for query
-	// private possibleQueryKey: any[] = ["WHERE", "OPTIONS"];
-	// private possibleInputKey: any[] = [ "title", "input", "errorExpected", "with" ];
-	//
+
 	private readDisk(loadedData: any, id: string) {
 		fs.readdirSync("./data").forEach(function (file) {
 			try{
 				let str3 = id.concat(".json");
 				if(str3 === file){
 					let fileName = fs.readFileSync("./data/" + file,"utf8");
-					let obj = JSON.parse(fileName);
-					loadedData = obj;
+					// let obj = JSON.parse(fileName);
+					// loadedData = obj;
+					loadedData = JSON.parse(fileName);
 				}
 			} catch (e) {
 				console.log("cannot read from disk");
 			}
-
 		});
 		return loadedData;
 	}

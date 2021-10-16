@@ -1,4 +1,4 @@
-export default class ConverDatasetWithID{
+export default class ConvertDatasetWithID {
 
 	private input: any[];
 	constructor(){
