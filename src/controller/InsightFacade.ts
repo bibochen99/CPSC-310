@@ -156,19 +156,14 @@ export default class InsightFacade implements IInsightFacade {
 
 
 	private readDisk(loadedData: any, id: string) {
-		fs.readdirSync("./data").forEach(function (file) {
-			try{
-				let str3 = id.concat(".json");
-				if(str3 === file){
-					let fileName = fs.readFileSync("./data/" + file,"utf8");
-					// let obj = JSON.parse(fileName);
-					// loadedData = obj;
-					loadedData = JSON.parse(fileName);
-				}
-			} catch (e) {
-				console.log("cannot read from disk");
-			}
-		});
+		let str3 = id.concat(".json");
+		if (fs.existsSync("./data/" + str3)) {
+			let fileName = fs.readFileSync("./data/" + str3,"utf8");
+			loadedData = JSON.parse(fileName);
+		} else {
+			// File doesn't exist in path
+			throw new InsightError("no such file in disk");
+		}
 		return loadedData;
 	}
 }
