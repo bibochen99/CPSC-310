@@ -84,7 +84,9 @@ export default class MultipleDatasetsCheck {
 		}
 		let iS = string.split("_")[0];
 		if(iS !== this.id){
-			check = true;
+			// check = true;
+			throw new InsightError("query on different dataset");
+
 		}
 		return check;
 
