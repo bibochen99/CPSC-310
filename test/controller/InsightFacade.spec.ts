@@ -84,7 +84,7 @@ describe("InsightFacade_given", function () {
 				insightFacade.addDataset("courses", datasetContents.get("courses") ?? "", InsightDatasetKind.Courses),
 				insightFacade.addDataset("ubc", datasetContents.get("courses") ?? "", InsightDatasetKind.Courses)
 			];
-
+			// const loadDatasetPromiseswithEmpty: any[] = [];
 			return Promise.all(loadDatasetPromises);
 		});
 
