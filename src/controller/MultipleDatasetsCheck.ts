@@ -28,6 +28,9 @@ export default class MultipleDatasetsCheck {
 
 		} else if(Object.prototype.hasOwnProperty.call(inside, "NOT")){
 			MultipleDatasetsCheck.checkEmpty(inside.NOT);
+			if (Object.keys(inside.NOT).length !== 1) {
+				throw new InsightError("NOT has more than one thing");
+			}
 			let cast: any[] = [];
 			cast.push(inside.NOT);
 			this.loopIntoWhere(cast, result,temp);
@@ -97,6 +100,7 @@ export default class MultipleDatasetsCheck {
 			throw (new InsightError("empty inside and/or"));
 		}
 	}
+
 
 	private static checkEmpty(inside: any) {
 		if (Object.keys(inside).length === 0) {

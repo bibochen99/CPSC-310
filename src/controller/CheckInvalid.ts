@@ -18,12 +18,10 @@ export default class CheckInvalid {
 			return false;
 		}
 
-
 		if(!(this.checkValidInsideWhere(query))){
 			return false;
 		}
 		let options = queryObject["OPTIONS"];
-
 
 		if(query.OPTIONS === undefined){
 			return false;
