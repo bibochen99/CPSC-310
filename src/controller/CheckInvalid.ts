@@ -22,8 +22,13 @@ export default class CheckInvalid {
 		if(!(this.checkValidInsideWhere(query))){
 			return false;
 		}
+		let options = queryObject["OPTIONS"];
+
 
 		if(query.OPTIONS === undefined){
+			return false;
+		}
+		if (Object.keys(options).length !== 1 && Object.keys(options).length !== 2) {
 			return false;
 		}
 		if(queryObject["OPTIONS"] === null){
