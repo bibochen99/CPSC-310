@@ -1,6 +1,7 @@
 import {InsightError} from "./IInsightFacade";
 import FilterHelper from "./FilterHelper";
 import MultipleDatasetsCheck from "./MultipleDatasetsCheck";
+import Transformation from "./Transformation";
 
 export default class QueryHelper {
 	private mKey: string[] = ["courses_avg", "courses_pass", "courses_fail", "courses_audit",
@@ -107,46 +108,49 @@ export default class QueryHelper {
 	public applyOptional(query: any, resultSoFar: any): any[] {
 
 		let allKey = ["dept", "id", "instructor", "title",
-			"uuid","avg", "pass", "fail", "audit", "year"];
+			"uuid", "avg", "pass", "fail", "audit", "year"];
 		let keep = query["OPTIONS"]["COLUMNS"];
 		let newKeep = [];
-		for (let each of keep){
+		for (let each of keep) {
 			newKeep.push(each.split("_")[1]);
 		}
 		let remove = [];
-		for (let each of allKey){
-			if(!newKeep.includes(each)){
+		for (let each of allKey) {
+			if (!newKeep.includes(each)) {
 				remove.push(each);
 			}
 		}
 
-		for (let each of resultSoFar){
-			for (let nested of remove){
+		for (let each of resultSoFar) {
+			for (let nested of remove) {
 				delete each[nested];
 			}
 		}
 
-		if(query["OPTIONS"]["ORDER"] === undefined){
+		if (query["OPTIONS"]["ORDER"] === undefined) {
 			return resultSoFar;
 		}
 
 		let oldOrder = query["OPTIONS"]["ORDER"];
 		let order = oldOrder.split("_")[1];
+		if (Object.prototype.hasOwnProperty.call(query, "TRANSFORMATIONS")) {
+			let performTransformation: Transformation = new Transformation(query,resultSoFar);
 
-
-		resultSoFar.sort((a: any, b: any) =>{
-			if(this.mKey.includes(order)){
-				return a[order] - b[order];
-			}else{
-				if (a[order] < b[order]) {
-					return -1;
+		} else {
+			resultSoFar.sort((a: any, b: any) => {
+				if (this.mKey.includes(order)) {
+					return a[order] - b[order];
+				} else {
+					if (a[order] < b[order]) {
+						return -1;
+					}
+					if (a[order] > b[order]) {
+						return 1;
+					}
+					return 0;
 				}
-				if (a[order] > b[order]) {
-					return 1;
-				}
-				return 0;
-			}
-		});
+			});
+		}
 
 		return resultSoFar;
 	}
