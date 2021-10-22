@@ -30,7 +30,7 @@ export default class Transformation {
 		}
 		this.applyArr = this.queryInTransformation["APPLY"];
 	}
-// TODO: use resultSofar to check if the key is valid
+
 	public startTransformation(): any[]{
 		if(!this.groupChecker()){
 			throw new InsightError("Group is not valid");
