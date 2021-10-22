@@ -135,6 +135,7 @@ export default class QueryHelper {
 		let order = oldOrder.split("_")[1];
 		if (Object.prototype.hasOwnProperty.call(query, "TRANSFORMATIONS")) {
 			let performTransformation: Transformation = new Transformation(query,resultSoFar);
+			resultSoFar = performTransformation.startTransformation();
 
 		} else {
 			resultSoFar.sort((a: any, b: any) => {
