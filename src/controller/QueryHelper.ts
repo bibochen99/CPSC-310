@@ -4,8 +4,7 @@ import MultipleDatasetsCheck from "./MultipleDatasetsCheck";
 import Transformation from "./Transformation";
 
 export default class QueryHelper {
-	private mKey: string[] = ["courses_avg", "courses_pass", "courses_fail", "courses_audit",
-		"courses_year","avg", "pass", "fail", "audit", "year"];
+	private mKey: string[] = ["avg", "pass", "fail", "audit", "year"];
 
 	private addedDataset: any;
 	private temp: any;
