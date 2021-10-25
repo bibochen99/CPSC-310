@@ -94,7 +94,7 @@ export default class Transformation {
 		}
 		return true;
 	}
-// TODO: third if statement need to do, right now it only check if key is string, but "" is also string.
+
 	private applyRuleChecker() {
 		let tempArr: any = [];
 		for(let each of this.applyRuleArr){
