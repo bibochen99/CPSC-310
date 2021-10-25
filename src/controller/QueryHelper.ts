@@ -4,8 +4,7 @@ import MultipleDatasetsCheck from "./MultipleDatasetsCheck";
 import Transformation from "./Transformation";
 
 export default class QueryHelper {
-	private mKey: string[] = ["courses_avg", "courses_pass", "courses_fail", "courses_audit",
-		"courses_year","avg", "pass", "fail", "audit", "year"];
+	private mKey: string[] = ["avg", "pass", "fail", "audit", "year"];
 
 	private addedDataset: any;
 	private temp: any;
@@ -105,7 +104,7 @@ export default class QueryHelper {
 	}
 
 
-	public applyOptional(query: any, resultSoFar: any): any[] {
+	public applyOptional(query: any, resultSoFar: any,id: string): any[] {
 
 		let allKey = ["dept", "id", "instructor", "title",
 			"uuid", "avg", "pass", "fail", "audit", "year"];
@@ -134,7 +133,8 @@ export default class QueryHelper {
 		let oldOrder = query["OPTIONS"]["ORDER"];
 		let order = oldOrder.split("_")[1];
 		if (Object.prototype.hasOwnProperty.call(query, "TRANSFORMATIONS")) {
-			let performTransformation: Transformation = new Transformation(query,resultSoFar);
+			let performTransformation: Transformation = new Transformation(query,resultSoFar,id);
+			resultSoFar = performTransformation.startTransformation();
 
 		} else {
 			resultSoFar.sort((a: any, b: any) => {

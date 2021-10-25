@@ -3,20 +3,131 @@ import {InsightError} from "./IInsightFacade";
 export default class Transformation {
 	private queryInTransformation: any;
 	private resultSoFar: any;
+	private groupArr: any;
+	private applyArr: any;
+	private query: any;
+	private applyKeyArr: any;
+	private applyRuleArr: any;
+	private applyToken: string[] = ["MAX", "MIN", "AVG", "COUNT", "SUM"];
+	private mfield: string[] = ["avg", "pass", "fail", "audit", "year", "lat", "lon", "seats"];
+	private id: string;
 
-
-	constructor(query: any,resultSoFar: any){
+	constructor(query: any,resultSoFar: any,id: string){
 		this.queryInTransformation = query["TRANSFORMATIONS"];
 		this.resultSoFar = resultSoFar;
+		this.query = query;
+		this.applyKeyArr = [];
+		this.applyRuleArr = [];
+		this.id = id;
 		if(!Object.prototype.hasOwnProperty.call(this.queryInTransformation, "GROUP")){
 			throw new InsightError("no Group");
 		}else if(!Array.isArray(this.queryInTransformation["GROUP"])){
 			throw new InsightError("Group is not array");
+		}else if(this.queryInTransformation["GROUP"].length < 1){
+			throw new InsightError("Group has nothing");
 		}
+		this.groupArr = this.queryInTransformation["GROUP"];
+
 		if(!Object.prototype.hasOwnProperty.call(this.queryInTransformation, "APPLY")){
 			throw new InsightError("no APPLY");
 		}else if(!Array.isArray(this.queryInTransformation["APPLY"])){
 			throw new InsightError("APPLY is not array");
+		}else if(this.queryInTransformation["APPLY"].length < 1){
+			throw new InsightError("APPLY has nothing");
 		}
+		this.applyArr = this.queryInTransformation["APPLY"];
+	}
+
+	public startTransformation(): any[]{
+		if(!this.groupChecker()){
+			throw new InsightError("Group is not valid");
+		}else {
+			this.groupHelper();
+		}
+
+		if(!this.applyChecker()){
+			throw new InsightError("APPLY is not valid");
+		}else{
+			this.applyHelper();
+		}
+		return [];
+	}
+
+	private groupHelper() {
+		return [];
+	}
+
+	private applyHelper() {
+		return [];
+
+	}
+
+	private groupChecker() {
+		let keyInCol: any[] = this.query.OPTIONS.COLUMNS;
+		for(let each of this.groupArr){
+			if(!keyInCol.includes(each)){
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private applyChecker() {
+
+		for(let each of this.applyArr){
+			if(Object.keys(each).length !== 1){
+				throw new InsightError("applyKey is not 1 key");
+			}
+			let tempString = Object.keys(each)[0];
+			if(tempString.includes("_")){
+				throw new InsightError("applyKey contain underscore");
+			}
+			if(this.applyKeyArr.includes(tempString)){
+				throw new InsightError("applyKey already contain in applyKeyArr");
+			}else {
+				this.applyKeyArr.push(tempString);
+				this.applyRuleArr.push(each[tempString]);
+			}
+			if(!this.applyRuleChecker()){
+				throw new InsightError("invalid in applyRule");
+			}
+		}
+		return true;
+	}
+
+	private applyRuleChecker() {
+		let tempArr: any = [];
+		for(let each of this.applyRuleArr){
+			let tempKey = each[Object.keys(each)[0]];
+			if(Object.keys(each).length === 0){
+				return false;
+			} else if(!this.applyToken.includes(Object.keys(each)[0])){
+				return false;
+			} else if(typeof tempKey !== "string"){
+				return false;
+			}else if(tempKey.length === 0){
+				return false;
+			}else if(tempKey.indexOf("_") <= 0){
+				return false;
+			}else if(tempKey.split("_")[0] !== this.id){
+				return false;
+			}
+			if(tempArr.length === 0){
+				tempArr.push(tempKey.split("_")[0]);
+			}else {
+				if(!tempArr.includes(tempKey.split("_")[0])){
+					return false;
+				}
+			}
+			let tempApplyToken = Object.keys(each)[0];
+			if(tempApplyToken !== "COUNT"){
+				if(!this.mfield.includes(tempKey.split("_")[1])){
+					return false;
+				}
+
+			}
+
+		}
+		return false;
 	}
 }
