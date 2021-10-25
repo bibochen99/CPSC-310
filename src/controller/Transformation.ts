@@ -6,12 +6,19 @@ export default class Transformation {
 	private groupArr: any;
 	private applyArr: any;
 	private query: any;
+	private applyKeyArr: any;
+	private applyRuleArr: any;
+	private applyToken: string[] = ["MAX", "MIN", "AVG", "COUNT", "SUM"];
+	private mfield: string[] = ["avg", "pass", "fail", "audit", "year", "lat", "lon", "seats"];
+	private id: string;
 
-
-	constructor(query: any,resultSoFar: any){
+	constructor(query: any,resultSoFar: any,id: string){
 		this.queryInTransformation = query["TRANSFORMATIONS"];
 		this.resultSoFar = resultSoFar;
 		this.query = query;
+		this.applyKeyArr = [];
+		this.applyRuleArr = [];
+		this.id = id;
 		if(!Object.prototype.hasOwnProperty.call(this.queryInTransformation, "GROUP")){
 			throw new InsightError("no Group");
 		}else if(!Array.isArray(this.queryInTransformation["GROUP"])){
@@ -66,13 +73,60 @@ export default class Transformation {
 	}
 
 	private applyChecker() {
+
 		for(let each of this.applyArr){
 			if(Object.keys(each).length !== 1){
 				throw new InsightError("applyKey is not 1 key");
 			}
-			if(Object.keys(each)[0].includes("_")){
+			let tempString = Object.keys(each)[0];
+			if(tempString.includes("_")){
 				throw new InsightError("applyKey contain underscore");
 			}
+			if(this.applyKeyArr.includes(tempString)){
+				throw new InsightError("applyKey already contain in applyKeyArr");
+			}else {
+				this.applyKeyArr.push(tempString);
+				this.applyRuleArr.push(each[tempString]);
+			}
+			if(!this.applyRuleChecker()){
+				throw new InsightError("invalid in applyRule");
+			}
+		}
+		return true;
+	}
+// TODO: third if statement need to do, right now it only check if key is string, but "" is also string.
+	private applyRuleChecker() {
+		let tempArr: any = [];
+		for(let each of this.applyRuleArr){
+			let tempKey = each[Object.keys(each)[0]];
+			if(Object.keys(each).length === 0){
+				return false;
+			} else if(!this.applyToken.includes(Object.keys(each)[0])){
+				return false;
+			} else if(typeof tempKey !== "string"){
+				return false;
+			}else if(tempKey.length === 0){
+				return false;
+			}else if(tempKey.indexOf("_") <= 0){
+				return false;
+			}else if(tempKey.split("_")[0] !== this.id){
+				return false;
+			}
+			if(tempArr.length === 0){
+				tempArr.push(tempKey.split("_")[0]);
+			}else {
+				if(!tempArr.includes(tempKey.split("_")[0])){
+					return false;
+				}
+			}
+			let tempApplyToken = Object.keys(each)[0];
+			if(tempApplyToken !== "COUNT"){
+				if(!this.mfield.includes(tempKey.split("_")[1])){
+					return false;
+				}
+
+			}
+
 		}
 		return false;
 	}

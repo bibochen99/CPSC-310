@@ -105,7 +105,7 @@ export default class QueryHelper {
 	}
 
 
-	public applyOptional(query: any, resultSoFar: any): any[] {
+	public applyOptional(query: any, resultSoFar: any,id: string): any[] {
 
 		let allKey = ["dept", "id", "instructor", "title",
 			"uuid", "avg", "pass", "fail", "audit", "year"];
@@ -134,7 +134,7 @@ export default class QueryHelper {
 		let oldOrder = query["OPTIONS"]["ORDER"];
 		let order = oldOrder.split("_")[1];
 		if (Object.prototype.hasOwnProperty.call(query, "TRANSFORMATIONS")) {
-			let performTransformation: Transformation = new Transformation(query,resultSoFar);
+			let performTransformation: Transformation = new Transformation(query,resultSoFar,id);
 			resultSoFar = performTransformation.startTransformation();
 
 		} else {
