@@ -11,6 +11,9 @@ export default class Transformation {
 	private applyToken: string[] = ["MAX", "MIN", "AVG", "COUNT", "SUM"];
 	private mfield: string[] = ["avg", "pass", "fail", "audit", "year", "lat", "lon", "seats"];
 	private id: string;
+	private anyKey: any=["avg", "pass", "fail", "audit", "year", "lat", "lon", "seats",
+		"dept", "id", "instructor", "title", "uuid","fullname","shortname","number","name","address","type","furniture"
+		,"herf"];
 
 	constructor(query: any,resultSoFar: any,id: string){
 		this.queryInTransformation = query["TRANSFORMATIONS"];
@@ -32,9 +35,10 @@ export default class Transformation {
 			throw new InsightError("no APPLY");
 		}else if(!Array.isArray(this.queryInTransformation["APPLY"])){
 			throw new InsightError("APPLY is not array");
-		}else if(this.queryInTransformation["APPLY"].length < 1){
-			throw new InsightError("APPLY has nothing");
 		}
+		// else if(this.queryInTransformation["APPLY"].length < 1){
+		// 	throw new InsightError("APPLY has nothing");
+		// }
 		this.applyArr = this.queryInTransformation["APPLY"];
 	}
 
@@ -63,10 +67,27 @@ export default class Transformation {
 	}
 
 	private groupChecker() {
-		let keyInCol: any[] = this.query.OPTIONS.COLUMNS;
+		// let keyInCol: any[] = this.query.OPTIONS.COLUMNS;
+		// let idKeyInCol: any[] = [];
+		// for(let each of keyInCol){
+		// 	if(each.includes("_")){
+		// 		idKeyInCol.push(each);
+		// 	}
+		// }
+		let tempID: any[] = [];
 		for(let each of this.groupArr){
-			if(!keyInCol.includes(each)){
+
+			let tempString = each.split("_")[1];
+			let tempStringID = each.split("_")[0];
+			if(!this.anyKey.includes(tempString)){
 				return false;
+			}
+			if(tempID.length === 0){
+				tempID.push(tempStringID);
+			}else{
+				if(!tempID.includes(tempStringID)){
+					throw new InsightError("Query on multiple dataset");
+				}
 			}
 		}
 		return true;
@@ -75,6 +96,10 @@ export default class Transformation {
 	private applyChecker() {
 
 		for(let each of this.applyArr){
+			let tempObjKey = Object.keys(each)[0];
+			if(Object.keys(each[tempObjKey]).length !== 1){
+				throw new InsightError("ApplyToken is not 1");
+			}
 			if(Object.keys(each).length !== 1){
 				throw new InsightError("applyKey is not 1 key");
 			}
@@ -128,6 +153,6 @@ export default class Transformation {
 			}
 
 		}
-		return false;
+		return true;
 	}
 }
