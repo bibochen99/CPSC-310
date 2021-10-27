@@ -16,9 +16,21 @@ export default class MultipleDatasetsCheck {
 		let check = false;
 		this.id = id;
 		if(Object.prototype.hasOwnProperty.call(inside, "AND")){
+			if(!Array.isArray(inside.AND) || inside.AND.length === 0){
+				throw new InsightError("AND problem");
+			}
+			if (Object.keys((query.WHERE.AND[0])).length !== 1) {
+				throw new InsightError("AND problem");
+			}
 			MultipleDatasetsCheck.checkEmptyAndOR(inside.AND);
 			check = this.loopIntoWhere(inside.AND, result,temp);
 		} else if(Object.prototype.hasOwnProperty.call(inside, "OR")){
+			if(!Array.isArray(inside.OR) || inside.OR.length === 0){
+				throw new InsightError("OR problem");
+			}
+			if (Object.keys((query.WHERE.OR[0])).length !== 1) {
+				throw new InsightError("OR problem");
+			}
 			MultipleDatasetsCheck.checkEmptyAndOR(inside.OR);
 			check = this.loopIntoWhere(inside.OR, result,temp);
 
@@ -53,15 +65,23 @@ export default class MultipleDatasetsCheck {
 		let check = false;
 		for(let nestedValue of value){
 			if(Object.prototype.hasOwnProperty.call(nestedValue, "AND")){
+				if (Object.keys((nestedValue.AND[0])).length !== 1) {
+					throw new InsightError("NOT has more than one thing");
+				}
 				this.loopIntoWhere(nestedValue.AND, result,temp);
 
 			} else if(Object.prototype.hasOwnProperty.call(nestedValue, "OR")){
+				if (Object.keys((nestedValue.OR[0])).length !== 1) {
+					throw new InsightError("NOT has more than one thing");
+				}
 				this.loopIntoWhere(nestedValue.OR, result,temp);
 
 			} else if(Object.prototype.hasOwnProperty.call(nestedValue, "IS")){
 				check = this.applyLTFilter(nestedValue.IS,check);
 			} else if(Object.prototype.hasOwnProperty.call(nestedValue, "NOT")){
-
+				if (Object.keys(nestedValue.NOT).length !== 1) {
+					throw new InsightError("NOT has more than one thing");
+				}
 				let cast: any[] = [];
 				cast.push(nestedValue.NOT);
 				this.loopIntoWhere(cast, result,temp);

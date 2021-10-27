@@ -106,8 +106,9 @@ export default class QueryHelper {
 
 	public applyOptional(query: any, resultSoFar: any,id: string): any[] {
 
-		let allKey = ["dept", "id", "instructor", "title",
-			"uuid", "avg", "pass", "fail", "audit", "year"];
+		let allKey = ["avg", "pass", "fail", "audit", "year", "lat", "lon", "seats",
+			"dept", "id", "instructor", "title", "uuid","fullname","shortname","number","name","address","type"
+			,"furniture","herf"];
 		let keep = query["OPTIONS"]["COLUMNS"];
 		let newKeep = [];
 		for (let each of keep) {
@@ -126,34 +127,104 @@ export default class QueryHelper {
 			}
 		}
 
-		if (query["OPTIONS"]["ORDER"] === undefined) {
-			return resultSoFar;
-		}
 
-		let oldOrder = query["OPTIONS"]["ORDER"];
-		let order = oldOrder.split("_")[1];
+		// TODO: order need to reconsider for use
 		if (Object.prototype.hasOwnProperty.call(query, "TRANSFORMATIONS")) {
 			let performTransformation: Transformation = new Transformation(query,resultSoFar,id);
 			resultSoFar = performTransformation.startTransformation();
-
 		} else {
-			resultSoFar.sort((a: any, b: any) => {
-				if (this.mKey.includes(order)) {
-					return a[order] - b[order];
-				} else {
-					if (a[order] < b[order]) {
-						return -1;
-					}
-					if (a[order] > b[order]) {
-						return 1;
-					}
-					return 0;
-				}
-			});
+			if (query["OPTIONS"]["ORDER"] === undefined) {
+				return resultSoFar;
+			}
+
+			let oldOrder = query["OPTIONS"]["ORDER"];
+			if(typeof oldOrder === "string"){
+				let order = oldOrder.split("_")[1];
+				this.oldSort(resultSoFar, order);
+			}else{
+				this.newSort(resultSoFar, oldOrder);
+			}
 		}
 
 		return resultSoFar;
 	}
 
 
+	private oldSort(resultSoFar: any, order: any) {
+		resultSoFar.sort((a: any, b: any) => {
+			if (this.mKey.includes(order)) {
+				return a[order] - b[order];
+			} else {
+				if (a[order] < b[order]) {
+					return -1;
+				}
+				if (a[order] > b[order]) {
+					return 1;
+				}
+				return 0;
+			}
+		});
+	}
+
+	private newSort(resultSoFar: any, oldOrder: any) {
+		let tempKey = oldOrder["keys"];
+		let tempDir = oldOrder["dir"];
+		let i = 0;
+		if(tempDir === "UP"){
+			this.upSortHelper(resultSoFar,i,tempKey);
+		}else{
+			this.downSortHelper(resultSoFar,i,tempKey);
+		}
+
+	}
+
+	private upSortHelper(resultSoFar: any, i: number, tempKey: any) {
+		let order = tempKey[i];
+		resultSoFar.sort((a: any, b: any) => {
+			if (this.mKey.includes(order)) {
+				if(a[order].localeCompare(b[order])  === 0){
+					i++;
+					if(i <= tempKey.length - 1){
+						this.upSortHelper(resultSoFar,i,tempKey);
+					}
+				}else{
+					return a[order].localeCompare(b[order]);
+				}
+			} else {
+				if(a[order] - b[order] === 0){
+					i++;
+					if(i <= tempKey.length - 1){
+						this.upSortHelper(resultSoFar,i,tempKey);
+					}
+				}else{
+					return a[order] > b[order] ? 1 : -1;
+				}
+			}
+		});
+	}
+
+	private downSortHelper(resultSoFar: any, i: number, tempKey: any) {
+		let order = tempKey[i];
+		resultSoFar.sort((a: any, b: any) => {
+			if (this.mKey.includes(order)) {
+				if(a[order].localeCompare(b[order])  === 0){
+					i++;
+					if(i <= tempKey.length - 1){
+						this.upSortHelper(resultSoFar,i,tempKey);
+					}
+				}else{
+					return -(a[order].localeCompare(b[order]));
+				}
+			} else {
+				if(a[order] - b[order] === 0){
+					i++;
+					if(i <= tempKey.length - 1){
+						this.upSortHelper(resultSoFar,i,tempKey);
+					}
+				}else{
+					return a[order] > b[order] ? -1 : 1;
+				}
+			}
+		});
+	}
 }
