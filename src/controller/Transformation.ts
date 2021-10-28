@@ -1,4 +1,6 @@
 import {InsightError} from "./IInsightFacade";
+import GroupHelper from "./GroupHelper";
+import ApplyHelper from "./ApplyHelper";
 
 export default class Transformation {
 	private queryInTransformation: any;
@@ -43,27 +45,30 @@ export default class Transformation {
 	}
 
 	public startTransformation(): any[]{
+		let tempMap: any;
 		if(!this.groupChecker()){
 			throw new InsightError("Group is not valid");
 		}else {
-			this.groupHelper();
+			tempMap = this.groupHelper();
 		}
 
 		if(!this.applyChecker()){
 			throw new InsightError("APPLY is not valid");
 		}else{
-			this.applyHelper();
+			return this.applyHelper(tempMap);
 		}
-		return [];
+
 	}
 
 	private groupHelper() {
-		return [];
+		let groupHelper = new GroupHelper(this.query,this.resultSoFar);
+		return groupHelper.doGroupHelp();
+
 	}
 
-	private applyHelper() {
-		return [];
-
+	private applyHelper(tempMap: any) {
+		let applyHelper = new ApplyHelper(this.query,tempMap,this.applyRuleArr,this.applyKeyArr);
+		return applyHelper.doApplyHelp();
 	}
 
 	private groupChecker() {
@@ -155,4 +160,8 @@ export default class Transformation {
 		}
 		return true;
 	}
+
+	// private groupPrepare() {
+	//
+	// }
 }
