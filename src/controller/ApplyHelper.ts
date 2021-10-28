@@ -13,6 +13,7 @@ export default class ApplyHelper {
 		this.ruleArr = ruleArr;
 		this.applyKeyArr = applyKeyArr;
 	}
+
 	public doApplyHelp(){
 		let i = 0;
 		for(let each of this.ruleArr){

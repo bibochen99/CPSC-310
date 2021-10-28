@@ -5,6 +5,7 @@ export default class GroupHelper {
 		this.resultSoFar = resultSoFar;
 		this.query = query;
 	}
+
 	public doGroupHelp(){
 		let groupKeyArr = this.query.TRANSFORMATIONS.GROUP;
 		let groupMap = new Map();
