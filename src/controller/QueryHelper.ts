@@ -4,7 +4,7 @@ import MultipleDatasetsCheck from "./MultipleDatasetsCheck";
 import Transformation from "./Transformation";
 
 export default class QueryHelper {
-	private mKey: string[] = ["avg", "pass", "fail", "audit", "year"];
+	private mKey: string[] = ["avg", "pass", "fail", "audit", "year","lat","lon","seats"];
 
 	private addedDataset: any;
 	private temp: any;
@@ -110,41 +110,42 @@ export default class QueryHelper {
 			"dept", "id", "instructor", "title", "uuid","fullname","shortname","number","name","address","type"
 			,"furniture","herf"];
 		let keep = query["OPTIONS"]["COLUMNS"];
-		let newKeep = [];
-		for (let each of keep) {
-			newKeep.push(each.split("_")[1]);
-		}
-		let remove = [];
-		for (let each of allKey) {
-			if (!newKeep.includes(each)) {
-				remove.push(each);
-			}
-		}
-
-		for (let each of resultSoFar) {
-			for (let nested of remove) {
-				delete each[nested];
-			}
-		}
+		let tempResultSoFar = resultSoFar;
 
 
-		// TODO: order need to reconsider for use
 		if (Object.prototype.hasOwnProperty.call(query, "TRANSFORMATIONS")) {
-			let performTransformation: Transformation = new Transformation(query,resultSoFar,id);
+			let performTransformation: Transformation = new Transformation(query,tempResultSoFar,id);
 			resultSoFar = performTransformation.startTransformation();
 		} else {
-			if (query["OPTIONS"]["ORDER"] === undefined) {
-				return resultSoFar;
+			let newKeep = [];
+			for (let each of keep) {
+				newKeep.push(each.split("_")[1]);
 			}
-
-			let oldOrder = query["OPTIONS"]["ORDER"];
-			if(typeof oldOrder === "string"){
-				let order = oldOrder.split("_")[1];
-				this.oldSort(resultSoFar, order);
-			}else{
-				this.newSort(resultSoFar, oldOrder);
+			let remove = [];
+			for (let each of allKey) {
+				if (!newKeep.includes(each)) {
+					remove.push(each);
+				}
+			}
+			for (let each of resultSoFar) {
+				for (let nested of remove) {
+					delete each[nested];
+				}
 			}
 		}
+
+		if (query["OPTIONS"]["ORDER"] === undefined) {
+			return resultSoFar;
+		}
+
+		let oldOrder = query["OPTIONS"]["ORDER"];
+		if(typeof oldOrder === "string"){
+			let order = oldOrder.split("_")[1];
+			this.oldSort(resultSoFar, order);
+		}else{
+			this.newSort(resultSoFar, oldOrder);
+		}
+
 
 		return resultSoFar;
 	}
@@ -182,13 +183,13 @@ export default class QueryHelper {
 		let order = tempKey[i];
 		resultSoFar.sort((a: any, b: any) => {
 			if (this.mKey.includes(order)) {
-				if(a[order].localeCompare(b[order])  === 0){
+				if(a[order] - b[order]  === 0){
 					i++;
 					if(i <= tempKey.length - 1){
 						this.upSortHelper(resultSoFar,i,tempKey);
 					}
 				}else{
-					return a[order].localeCompare(b[order]);
+					return a[order] - b[order];
 				}
 			} else {
 				if(a[order] - b[order] === 0){
@@ -207,13 +208,13 @@ export default class QueryHelper {
 		let order = tempKey[i];
 		resultSoFar.sort((a: any, b: any) => {
 			if (this.mKey.includes(order)) {
-				if(a[order].localeCompare(b[order])  === 0){
+				if(a[order] - b[order]  === 0){
 					i++;
 					if(i <= tempKey.length - 1){
 						this.upSortHelper(resultSoFar,i,tempKey);
 					}
 				}else{
-					return -(a[order].localeCompare(b[order]));
+					return -(a[order] - b[order]);
 				}
 			} else {
 				if(a[order] - b[order] === 0){
@@ -222,7 +223,7 @@ export default class QueryHelper {
 						this.upSortHelper(resultSoFar,i,tempKey);
 					}
 				}else{
-					return a[order] > b[order] ? -1 : 1;
+					return a[order] < b[order] ? 1 : -1;
 				}
 			}
 		});
