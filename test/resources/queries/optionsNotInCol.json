@@ -1,0 +1,20 @@
+{
+  "errorMsg": "ORDER key must be in COLUMNS",
+  "title": "optionsNotInCol",
+  "input": {
+    "WHERE": {
+      "GT": {
+        "courses_avg": 98
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_dept",
+        "courses_avg"
+      ],
+      "ORDER": "courses_uuid"
+    }
+  },
+  "errorExpected": true,
+  "with": "InsightError"
+}

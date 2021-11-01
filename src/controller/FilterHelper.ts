@@ -1,8 +1,9 @@
 import {InsightError} from "./IInsightFacade";
 
 export default class FilterHelper {
-	private sKey: string[] = ["dept", "id", "instructor", "title", "uuid"];
-	private mKey: string[] = ["avg", "pass", "fail", "audit", "year"];
+	private sKey: string[] = ["dept", "id", "instructor", "title", "uuid","fullname","shortname","number","name"
+		,"address","type","furniture","href"];
+	private mKey: string[] = ["avg", "pass", "fail", "audit", "year","lat","lon","seats"];
 	private temp: any;
 	private addedDataset: any;
 

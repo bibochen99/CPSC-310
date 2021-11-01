@@ -1,0 +1,34 @@
+{
+  "errorMsg": "Apply body should only have 1 key, has 0",
+  "title": "applyBodyNoKey",
+  "input": {
+    "WHERE": {
+      "GT": {
+        "courses_avg": 90
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_dept",
+        "hello"
+      ]
+    },
+    "TRANSFORMATIONS": {
+      "GROUP": [
+        "courses_dept"
+      ],
+      "APPLY": [
+        {
+          "hello": {}
+        },
+        {
+          "goodbye": {
+            "MIN": "courses_avg"
+          }
+        }
+      ]
+    }
+  },
+  "errorExpected": true,
+  "with": "InsightError"
+}

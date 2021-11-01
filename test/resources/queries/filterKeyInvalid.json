@@ -1,0 +1,29 @@
+{
+  "errorMsg": "Invalid filter key: RANDOM",
+  "title": "filterKeyInvalid",
+  "input": {
+    "WHERE": {
+      "RANDOM": [
+        {
+          "GT": {
+            "courses_avg": 90
+          }
+        },
+        {
+          "IS": {
+            "courses_dept": "adhe"
+          }
+        }
+      ]
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_dept",
+        "courses_avg"
+      ],
+      "ORDER": "courses_avg"
+    }
+  },
+  "errorExpected": true,
+  "with": "InsightError"
+}

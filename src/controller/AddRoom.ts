@@ -51,11 +51,10 @@ export default class AddRoom {
 					if (resultDataset.length === 0) {
 						return reject(new InsightError("no valid room"));
 					} else {
-						let data = JSON.stringify({ data: resultDataset });
 						let addData = new Add();
 						addData.addDataToDisk("./data");
 						try {
-							fs.writeFileSync("./data/" + id + ".json", data);
+							fs.writeFileSync("./data/" + id + ".json", JSON.stringify(resultDataset));
 						} catch (err){
 							throw new InsightError("Cannot write to disk");
 						}
@@ -146,7 +145,7 @@ export default class AddRoom {
 			http.get(url, (res) => {
 				const { statusCode } = res;
 				let error;
-				if (statusCode !== 200) {
+				if (statusCode === undefined || statusCode < 200 || statusCode >= 300) {
 					error = new Error("Request Failed.\n" +
 						`Status Code: ${statusCode}`);
 				}

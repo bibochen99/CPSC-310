@@ -1,0 +1,44 @@
+{
+  "errorMsg": "All ORDER keys must be in COLUMNS",
+  "title": "orderKeyNotInColumn",
+  "input": {
+    "WHERE": {
+      "GT": {
+        "rooms_seats": 95
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "rooms_type",
+        "hello",
+        "goodbye"
+      ],
+      "ORDER": {
+        "dir": "UP",
+        "keys": [
+          "hello",
+          "wrong"
+        ]
+      }
+    },
+    "TRANSFORMATIONS": {
+      "GROUP": [
+        "rooms_type"
+      ],
+      "APPLY": [
+        {
+          "hello": {
+            "SUM": "rooms_seats"
+          }
+        },
+        {
+          "goodbye": {
+            "COUNT": "rooms_type"
+          }
+        }
+      ]
+    }
+  },
+  "errorExpected": true,
+  "with": "InsightError"
+}

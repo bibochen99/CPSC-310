@@ -1,0 +1,36 @@
+{
+  "errorMsg": "Duplicate APPLY key hello",
+  "title": "duplicateApplykey",
+  "input": {
+    "WHERE": {
+      "GT": {
+        "courses_avg": 90
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_dept",
+        "hello"
+      ]
+    },
+    "TRANSFORMATIONS": {
+      "GROUP": [
+        "courses_dept"
+      ],
+      "APPLY": [
+        {
+          "hello": {
+            "MAX": "courses_avg"
+          }
+        },
+        {
+          "hello": {
+            "MIN": "courses_avg"
+          }
+        }
+      ]
+    }
+  },
+  "errorExpected": true,
+  "with": "InsightError"
+}

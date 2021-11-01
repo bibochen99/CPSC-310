@@ -1,0 +1,22 @@
+{
+  "errorMsg": "Referenced dataset \"random\" not added yet",
+  "title": "datasetInvalid",
+  "input": {
+    "WHERE": {
+      "NOT": {
+        "LT": {
+          "courses_avg": 98
+        }
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "random_dept",
+        "courses_avg"
+      ],
+      "ORDER": "courses_avg"
+    }
+  },
+  "errorExpected": true,
+  "with": "InsightError"
+}

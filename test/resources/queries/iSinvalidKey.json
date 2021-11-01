@@ -1,0 +1,20 @@
+{
+  "errorMsg": "Invalid key type in IS",
+  "title": "ISinvalidKey",
+  "input": {
+    "WHERE": {
+      "IS": {
+        "courses_avg": "adhe"
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_dept",
+        "courses_avg"
+      ],
+      "ORDER": "courses_avg"
+    }
+  },
+  "errorExpected": true,
+  "with": "InsightError"
+}

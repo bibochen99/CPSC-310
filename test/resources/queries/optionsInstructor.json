@@ -1,0 +1,32 @@
+{
+  "title": "optionsInstructor",
+  "input": {
+    "WHERE": {
+      "GT": {
+        "courses_avg": 99
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_instructor",
+        "courses_avg"
+      ],
+      "ORDER": "courses_instructor"
+    }
+  },
+  "errorExpected": false,
+  "with": [
+    {
+      "courses_instructor": "",
+      "courses_avg": 99.78
+    },
+    {
+      "courses_instructor": "cox, daniel",
+      "courses_avg": 99.19
+    },
+    {
+      "courses_instructor": "gomez, jose",
+      "courses_avg": 99.78
+    }
+  ]
+}
