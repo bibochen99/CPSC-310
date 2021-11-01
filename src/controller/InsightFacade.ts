@@ -53,7 +53,7 @@ export default class InsightFacade implements IInsightFacade {
 				return reject(new InsightError("Id is not valid."));
 			} else if (this.addData.sameID(this.myMap,id)) {
 				return reject(new InsightError("This Id already add."));
-			} else if (this.checkContentAndKind()){
+			} else if (this.checkContentAndKind(content,kind)){
 				return reject(new InsightError("This Id already add."));
 			}
 
@@ -177,7 +177,12 @@ export default class InsightFacade implements IInsightFacade {
 		return loadedData;
 	}
 
-	private checkContentAndKind() {
+	private checkContentAndKind(content: any, kind: InsightDatasetKind) {
+		if(!(kind === InsightDatasetKind.Courses || kind === InsightDatasetKind.Rooms)){
+			return true;
+		}else if(!(content === undefined || content === null)){
+			return true;
+		}
 		return false;
 	}
 }
