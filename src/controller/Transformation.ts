@@ -51,6 +51,7 @@ export default class Transformation {
 		}else {
 			tempMap = this.groupHelper();
 		//
+		//
 		}
 
 		if(!this.applyChecker()){
