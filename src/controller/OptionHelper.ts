@@ -6,7 +6,7 @@ export default class OptionHelper {
 	public id: string;
 	private anyKey: any=["avg", "pass", "fail", "audit", "year", "lat", "lon", "seats",
 		"dept", "id", "instructor", "title", "uuid","fullname","shortname","number","name","address","type","furniture"
-		,"herf"];
+		,"href"];
 
 	constructor() {
 		this.valid = true;

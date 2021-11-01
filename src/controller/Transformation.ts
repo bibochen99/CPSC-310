@@ -15,7 +15,7 @@ export default class Transformation {
 	private id: string;
 	private anyKey: any=["avg", "pass", "fail", "audit", "year", "lat", "lon", "seats",
 		"dept", "id", "instructor", "title", "uuid","fullname","shortname","number","name","address","type","furniture"
-		,"herf"];
+		,"href"];
 
 	constructor(query: any,resultSoFar: any,id: string){
 		this.queryInTransformation = query["TRANSFORMATIONS"];
