@@ -51,7 +51,7 @@ export default class AddRoom {
 					if (resultDataset.length === 0) {
 						return reject(new InsightError("no valid room"));
 					} else {
-						let data = JSON.stringify(resultDataset);
+						let data = JSON.stringify({ data: resultDataset });
 						let addData = new Add();
 						addData.addDataToDisk("./data");
 						try {

@@ -1,0 +1,22 @@
+
+{
+  "title": "IS_simple_query2.json.json",
+  "input": {
+    "WHERE": {
+      "IS": {
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_pass",
+        "courses_fail",
+        "courses_audit",
+        "courses_title"
+      ]
+    }
+  },
+  "errorExpected": true,
+  "with":"InsightError"
+}
+
+
