@@ -53,7 +53,12 @@ export default class AddRoom {
 					} else {
 						let data = JSON.stringify({ data: resultDataset });
 						let addData = new Add();
-						fs.writeFileSync("./data/" + id + ".json", data);
+						addData.addDataToDisk("./data");
+						try {
+							fs.writeFileSync("./data/" + id + ".json", data);
+						} catch (err){
+							throw new InsightError("Cannot write to disk");
+						}
 						addData.addNewData(id,InsightDatasetKind.Rooms, resultDataset,dataSets);
 						myMap.set(id,resultDataset);
 						let keys: string[] = Array.from(myMap.keys());
@@ -96,8 +101,8 @@ export default class AddRoom {
 		}
 	}
 
-	private getRoomDetailData(roomDetailData: RoomDetailData): Promise<Record<string, unknown>> {
-		return new Promise<Record<string, unknown>>((resolve, reject) => {
+	private getRoomDetailData(roomDetailData: RoomDetailData): Promise<any> {
+		return new Promise<any>((resolve, reject) => {
 			let body: any;
 			let lat: any;
 			let lon: any;
@@ -110,11 +115,11 @@ export default class AddRoom {
 					}
 				}).then(() =>{
 					this.getGeolocation(roomDetailData.address).then((data: any) => {
-						if (data.error !== undefined) {
-							return resolve({message: "no geolocation"});
-						} else {
+						if (data.error === undefined) {
 							lat = data.lat;
 							lon = data.lon;
+						} else {
+							return resolve({message: "No geolocation for this buildings"});
 						}
 					}).then(() =>{
 						let address = roomDetailData.address;
@@ -123,6 +128,7 @@ export default class AddRoom {
 						let resultDataset = roomDetailData.resultDataset;
 						let room: Room = {address,shortName,fullName,resultDataset,body,lat,lon};
 						AddRoom.createRoom(room);
+						return resolve({message: fullName});
 					}).catch((err: any) => {
 						return reject(new InsightError("invalid"));
 					});
@@ -133,7 +139,7 @@ export default class AddRoom {
 	}
 
 	private getGeolocation(address: string): Promise<any> {
-		return new Promise<Record<string, unknown>>((resolve, reject) => {
+		return new Promise<any>((resolve, reject) => {
 			let url = "http://cs310.students.cs.ubc.ca:11316/api/v1/project_team105/"
 				+ AddRoom.address(address);
 			http.get(url, (res) => {

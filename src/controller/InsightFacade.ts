@@ -87,7 +87,7 @@ export default class InsightFacade implements IInsightFacade {
 					return reject(new InsightError("Invalid zip error"));
 				});
 			}else {
-				this.addRoom.addRoomSet(id,content,this.myMap,this.dataSets);
+				return resolve(this.addRoom.addRoomSet(id,content,this.myMap,this.dataSets));
 			}
 		});
 	}
