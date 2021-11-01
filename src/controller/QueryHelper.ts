@@ -1,16 +1,16 @@
-import {InsightError, ResultTooLargeError} from "./IInsightFacade";
+import {InsightError} from "./IInsightFacade";
 import FilterHelper from "./FilterHelper";
 import MultipleDatasetsCheck from "./MultipleDatasetsCheck";
+import Transformation from "./Transformation";
 
 export default class QueryHelper {
-	private mKey: string[] = ["courses_avg", "courses_pass", "courses_fail", "courses_audit",
-		"courses_year","avg", "pass", "fail", "audit", "year"];
+	private mKey: string[] = ["avg", "pass", "fail", "audit", "year","lat","lon","seats"];
 
 	private addedDataset: any;
 	private temp: any;
 	private filterHelper: FilterHelper;
 
-	constructor( loadedData: any){
+	constructor(loadedData: any){
 
 		this.addedDataset = loadedData;
 		this.temp = [];
@@ -22,68 +22,14 @@ export default class QueryHelper {
 		return (result.length > 5000);
 	}
 
-	public invalidQuery(query: any) {
-		let queryObject = query;
-		if(queryObject.WHERE === undefined){
-			return false;
-		}
-		if(queryObject["WHERE"] === null){
-			return false;
-		}
-
-
-		if(!(this.checkValidInsideWhere(query))){
-			return false;
-		}
-
-		if(query.OPTIONS === undefined){
-			return false;
-		}
-		if(queryObject["OPTIONS"] === null){
-			return false;
-		}
-		return queryObject["OPTIONS"] !== undefined;
-
-	}
-
-	public checkValidInsideWhere(query: any) {
-		let whereQuery = query["WHERE"];
-		if(Object.keys(whereQuery).length === 0){
-			throw (new ResultTooLargeError("More that 5000 results"));
-		}
-		// if(Object.keys(query.WHERE).length === 0){
-		// 	return true;
-		// }
-		// inside where
-		let insideWhereKey = Object.keys(whereQuery);
-
-		if(Object.keys(query.WHERE).length > 1){
-			// console.log("WHERE has more object inside");
-			return false;
-		}
-
-
-		let key = Object.keys(insideWhereKey);
-		let filter = insideWhereKey[0];
-		let filterList = ["AND","OR","NOT","IS","EQ","LT","GT","NOT"];
-		if(key.length === 0){
-			// console.log("nothing inside the WHERE");
-			return false;
-		}
-		return filterList.includes(filter);
-
-	}
-
-
 	public referencesMultipleDatasets(query: any,id: string): boolean{
 		let md: MultipleDatasetsCheck = new MultipleDatasetsCheck();
 		return md.check(query,id);
 	}
 
 
-	public getQueryRequestKey2(query: any): any[] {
+	public performQuery(query: any): any[] {
 		let inside = query["WHERE"];
-
 		let result: any[] = [];
 		if(Object.prototype.hasOwnProperty.call(inside, "AND")){
 			this.loopIntoWhere(inside.AND, result);
@@ -97,15 +43,8 @@ export default class QueryHelper {
 			result = [];
 			result.push(otherTemp);
 			this.temp = result;
-
-			// this.loopIntoWhere(inside.OR, result,temp);
-			// let otherTemp = this.filterHelper.applyOrFilter(this.temp);
-			// result = [];
-			// result.push(otherTemp);
-			// this.temp = result;
 		} else if(Object.prototype.hasOwnProperty.call(inside, "IS")){
 			this.temp = this.filterHelper.applyISFilter(inside.IS,result);
-
 		} else if(Object.prototype.hasOwnProperty.call(inside, "NOT")){
 			let cast: any[] = [];
 			cast.push(inside.NOT);
@@ -127,17 +66,6 @@ export default class QueryHelper {
 		return this.temp;
 	}
 
-	private checkEmptyAndOR(inside: any) {
-		if (inside.length === 0) {
-			throw (new InsightError("empty inside and/or"));
-		}
-	}
-
-	private checkEmpty(inside: any) {
-		if (Object.keys(inside).length === 0) {
-			throw (new InsightError("empty inside not/eq/is/gt/lt"));
-		}
-	}
 
 	public loopIntoWhere(value: any, result: any[]) {
 		for(let nestedValue of value){
@@ -147,25 +75,15 @@ export default class QueryHelper {
 				result = [];
 				result.push(otherTemp);
 				this.temp = result;
-
 			} else if(Object.prototype.hasOwnProperty.call(nestedValue, "OR")){
 				this.loopIntoWhere(nestedValue.OR, result);
 				let otherTemp = this.filterHelper.applyOrFilter(result);
 				result = [];
 				result.push(otherTemp);
 				this.temp = result;
-
-
 			} else if(Object.prototype.hasOwnProperty.call(nestedValue, "IS")){
 				this.filterHelper.applyISFilter(nestedValue.IS,result);
 			} else if(Object.prototype.hasOwnProperty.call(nestedValue, "NOT")){
-				// // console.log("193");
-				// this.loopIntoWhere(nestedValue.NOT, result,temp);
-				// let otherTemp = this.filterHelper.applyNOTFilter(temp);
-				// result = [];
-				// result.push(otherTemp);
-				// this.temp = result;
-
 				let cast: any[] = [];
 				cast.push(nestedValue.NOT);
 				this.loopIntoWhere(cast, result);
@@ -173,7 +91,6 @@ export default class QueryHelper {
 				result = [];
 				result.push(otherTemp);
 				this.temp = result;
-
 			} else if(Object.prototype.hasOwnProperty.call(nestedValue, "EQ")){
 				this.filterHelper.applyEQFilter(nestedValue.EQ,result);
 			} else if(Object.prototype.hasOwnProperty.call(nestedValue, "GT")){
@@ -187,40 +104,58 @@ export default class QueryHelper {
 	}
 
 
-	public applyOptional(query: any, resultSoFar: any): any[] {
+	public applyOptional(query: any, resultSoFar: any,id: string): any[] {
 
-		let allKey = ["dept", "id", "instructor", "title",
-			"uuid","avg", "pass", "fail", "audit", "year"];
+		let allKey = ["avg", "pass", "fail", "audit", "year", "lat", "lon", "seats",
+			"dept", "id", "instructor", "title", "uuid","fullname","shortname","number","name","address","type"
+			,"furniture","herf"];
 		let keep = query["OPTIONS"]["COLUMNS"];
-		let newkepp = [];
-		for (let each of keep){
-			newkepp.push(each.split("_")[1]);
-		}
-		let remove = [];
-		for (let each of allKey){
-			if(!newkepp.includes(each)){
-				remove.push(each);
+		let tempResultSoFar = resultSoFar;
+
+
+		if (Object.prototype.hasOwnProperty.call(query, "TRANSFORMATIONS")) {
+			let performTransformation: Transformation = new Transformation(query,tempResultSoFar,id);
+			resultSoFar = performTransformation.startTransformation();
+		} else {
+			let newKeep = [];
+			for (let each of keep) {
+				newKeep.push(each.split("_")[1]);
+			}
+			let remove = [];
+			for (let each of allKey) {
+				if (!newKeep.includes(each)) {
+					remove.push(each);
+				}
+			}
+			for (let each of resultSoFar) {
+				for (let nested of remove) {
+					delete each[nested];
+				}
 			}
 		}
 
-		for (let each of resultSoFar){
-			for (let nested of remove){
-				delete each[nested];
-			}
-		}
-
-		if(query["OPTIONS"]["ORDER"] === undefined){
+		if (query["OPTIONS"]["ORDER"] === undefined) {
 			return resultSoFar;
 		}
 
-		let oldorder = query["OPTIONS"]["ORDER"];
-		let order = oldorder.split("_")[1];
+		let oldOrder = query["OPTIONS"]["ORDER"];
+		if(typeof oldOrder === "string"){
+			let order = oldOrder.split("_")[1];
+			this.oldSort(resultSoFar, order);
+		}else{
+			this.newSort(resultSoFar, oldOrder);
+		}
 
 
-		resultSoFar.sort((a: any, b: any) =>{
-			if(this.mKey.includes(order)){
+		return resultSoFar;
+	}
+
+
+	private oldSort(resultSoFar: any, order: any) {
+		resultSoFar.sort((a: any, b: any) => {
+			if (this.mKey.includes(order)) {
 				return a[order] - b[order];
-			}else{
+			} else {
 				if (a[order] < b[order]) {
 					return -1;
 				}
@@ -230,9 +165,67 @@ export default class QueryHelper {
 				return 0;
 			}
 		});
-
-		return resultSoFar;
 	}
 
+	private newSort(resultSoFar: any, oldOrder: any) {
+		let tempKey = oldOrder["keys"];
+		let tempDir = oldOrder["dir"];
+		let i = 0;
+		if(tempDir === "UP"){
+			this.upSortHelper(resultSoFar,i,tempKey);
+		}else{
+			this.downSortHelper(resultSoFar,i,tempKey);
+		}
 
+	}
+
+	private upSortHelper(resultSoFar: any, i: number, tempKey: any) {
+		let order = tempKey[i];
+		resultSoFar.sort((a: any, b: any) => {
+			if (this.mKey.includes(order)) {
+				if(a[order] - b[order]  === 0){
+					i++;
+					if(i <= tempKey.length - 1){
+						this.upSortHelper(resultSoFar,i,tempKey);
+					}
+				}else{
+					return a[order] - b[order];
+				}
+			} else {
+				if(a[order] - b[order] === 0){
+					i++;
+					if(i <= tempKey.length - 1){
+						this.upSortHelper(resultSoFar,i,tempKey);
+					}
+				}else{
+					return a[order] > b[order] ? 1 : -1;
+				}
+			}
+		});
+	}
+
+	private downSortHelper(resultSoFar: any, i: number, tempKey: any) {
+		let order = tempKey[i];
+		resultSoFar.sort((a: any, b: any) => {
+			if (this.mKey.includes(order)) {
+				if(a[order] - b[order]  === 0){
+					i++;
+					if(i <= tempKey.length - 1){
+						this.upSortHelper(resultSoFar,i,tempKey);
+					}
+				}else{
+					return -(a[order] - b[order]);
+				}
+			} else {
+				if(a[order] - b[order] === 0){
+					i++;
+					if(i <= tempKey.length - 1){
+						this.upSortHelper(resultSoFar,i,tempKey);
+					}
+				}else{
+					return a[order] < b[order] ? 1 : -1;
+				}
+			}
+		});
+	}
 }

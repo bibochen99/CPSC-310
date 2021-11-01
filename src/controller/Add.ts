@@ -4,6 +4,7 @@ import JSZip from "jszip";
 import {InsightDataset, InsightDatasetKind} from "./IInsightFacade";
 
 export class Add{
+
 	public sameID(myMap: any, id: string) {
 		return !!myMap.has(id);
 
@@ -24,6 +25,7 @@ export class Add{
 		return !((id === "") || (id.includes("_")));
 
 	}
+
 	public createUsefulFile(zip: JSZip): any [] {
 		let resultCourse: any[] = [];
 		for (let file in zip.files) {

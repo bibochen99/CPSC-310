@@ -1,4 +1,4 @@
-export default class ConverDatasetWithID{
+export default class ConvertDatasetWithID {
 
 	private input: any[];
 	constructor(){
@@ -50,6 +50,7 @@ export default class ConverDatasetWithID{
 
 
 		});
+		this.solveForApply(loadedData);
 
 		return loadedData;
 	}
@@ -57,4 +58,19 @@ export default class ConverDatasetWithID{
 	// public getIdFromDataset(): string {
 	// 	return "";
 	// }
+	private solveForApply(loadedData: any) {
+		for(let each of loadedData){
+			let tempKey = Object.keys(each);
+			for(let nestedKey of tempKey){
+				if(nestedKey.includes("-")){
+					let temKey = nestedKey;
+					let newKey = temKey.split("-")[1];
+					let temValue = each[temKey];
+					delete each[nestedKey];
+					each[newKey] = temValue;
+
+				}
+			}
+		}
+	}
 }
