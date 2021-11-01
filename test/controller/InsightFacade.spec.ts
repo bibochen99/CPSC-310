@@ -21,7 +21,7 @@ describe("InsightFacade_given", function () {
 	// Reference any datasets you've added to test/resources/archives here and they will
 	// automatically be loaded in the 'before' hook.
 	const datasetsToLoad: {[key: string]: string} = {
-		courses: "./test/resources/archives/courses.zip",
+		courses: "./test/resources/archives/rooms.zip",
 	};
 
 	before(function () {
@@ -62,7 +62,7 @@ describe("InsightFacade_given", function () {
 			const id: string = "courses";
 			const content: string = datasetContents.get("courses") ?? "";
 			const expected: string[] = [id];
-			return insightFacade.addDataset(id, content, InsightDatasetKind.Courses).then((result: string[]) => {
+			return insightFacade.addDataset(id, content, InsightDatasetKind.Rooms).then((result: string[]) => {
 				expect(result).to.deep.equal(expected);
 			});
 		});

@@ -8,12 +8,13 @@ import {
 } from "./IInsightFacade";
 import * as fs from "fs-extra";
 
-import JSZip = require("jszip");
 import OptionHelper from "./OptionHelper";
 import {Add} from "./Add";
+import AddRoom from "./AddRoom";
 import QueryHelper from "./QueryHelper";
 import ConvertDatasetWithID from "./ConvertDatasetWithID";
 import CheckInvalid from "./CheckInvalid";
+import JSZip = require("jszip");
 
 const persistDir = "./data";
 /**
@@ -31,11 +32,13 @@ export default class InsightFacade implements IInsightFacade {
 	public s: any[];
 	public check: boolean;
 	public id: string;
+	private addRoom: any;
 
 	constructor() {
 		console.trace("InsightFacadeImpl::init()");
 		this.myMap = new Map();
 		this.addData = new Add();
+		this.addRoom = new AddRoom();
 		this.dataSets = [];
 		this.addedDataset = [];
 		this.temp = [];
@@ -50,37 +53,44 @@ export default class InsightFacade implements IInsightFacade {
 				return reject(new InsightError("Id is not valid."));
 			} else if (this.addData.sameID(this.myMap,id)) {
 				return reject(new InsightError("This Id already add."));
-			} else if (kind === InsightDatasetKind.Rooms) {
-				return reject(new InsightError("Room is Invalid in C1."));
+			} else if (this.checkContentAndKind()){
+				return reject(new InsightError("This Id already add."));
 			}
+
 			let jsZip = new JSZip();
 			let resultDataset: any[] = [];
 			let resultCourseName: any[];
-			jsZip.loadAsync(content, {base64: true}).then((zip) => {
-				resultCourseName = this.addData.createUsefulFile(zip);
-				Promise.all(resultCourseName).then((file)=>{
-					if(file.length === 0 ){
-						return Promise.reject(new InsightError("length of 0 in zip"));
-					}
-					this.addData.createJSON(file, resultDataset);
-					this.addData.addDataToDisk(persistDir);
-					try{
-						fs.writeFileSync(persistDir + "/" + id + ".json", JSON.stringify(resultDataset));
-					} catch (err) {
-						throw new InsightError("Cannot write to disk");
-					}
-					this.addData.addNewData(id,kind,resultDataset,this.dataSets);
-					// this.s = resultDataset;
-					// this.id = id;
-					this.myMap.set(id,resultDataset);
-					let keys: string[] = Array.from(this.myMap.keys());
-					return resolve(keys);
+			if(kind === InsightDatasetKind.Courses){
+				jsZip.loadAsync(content, {base64: true}).then((zip) => {
+					resultCourseName = this.addData.createUsefulFile(zip);
+					Promise.all(resultCourseName).then((file)=>{
+						if(file.length === 0 ){
+							return reject(new InsightError("length of 0 in zip"));
+						}
+						this.addData.createJSON(file, resultDataset);
+						if(resultDataset.length === 0){
+							return reject(new InsightError("length of 0 in zip"));
+						}
+						this.addData.addDataToDisk(persistDir);
+						try{
+							fs.writeFileSync(persistDir + "/" + id + ".json", JSON.stringify(resultDataset));
+						} catch (err) {
+							throw new InsightError("Cannot write to disk");
+						}
+						this.addData.addNewData(id,kind,resultDataset,this.dataSets);
+						this.myMap.set(id,resultDataset);
+						let keys: string[] = Array.from(this.myMap.keys());
+						return resolve(keys);
+					}).catch(()=>{
+						return reject(new InsightError("Invalid error"));
+					});
 				}).catch(()=>{
-					return reject(new InsightError("Invalid error"));
+					return reject(new InsightError("Invalid zip error"));
 				});
-			});
+			}else {
+				return resolve(this.addRoom.addRoomSet(id,content,this.myMap,this.dataSets));
+			}
 		});
-
 	}
 
 	public removeDataset(id: string): Promise<string> {
@@ -165,5 +175,9 @@ export default class InsightFacade implements IInsightFacade {
 			throw new InsightError("no such file in disk");
 		}
 		return loadedData;
+	}
+
+	private checkContentAndKind() {
+		return false;
 	}
 }
