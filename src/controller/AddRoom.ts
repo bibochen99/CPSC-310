@@ -146,7 +146,7 @@ export default class AddRoom {
 			http.get(url, (res) => {
 				const { statusCode } = res;
 				let error;
-				if (statusCode !== 200) {
+				if (statusCode === undefined || statusCode < 200 || statusCode >= 300) {
 					error = new Error("Request Failed.\n" +
 						`Status Code: ${statusCode}`);
 				}
