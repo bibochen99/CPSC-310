@@ -61,6 +61,7 @@ export default class AddRoom {
 						}
 						addData.addNewData(id,InsightDatasetKind.Rooms, resultDataset,dataSets);
 						myMap.set(id,resultDataset);
+						// return keys
 						let keys: string[] = Array.from(myMap.keys());
 						return resolve(keys);
 					}
