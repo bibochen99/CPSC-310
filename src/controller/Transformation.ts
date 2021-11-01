@@ -50,6 +50,8 @@ export default class Transformation {
 			throw new InsightError("Group is not valid");
 		}else {
 			tempMap = this.groupHelper();
+		//
+		//
 		}
 
 		if(!this.applyChecker()){
