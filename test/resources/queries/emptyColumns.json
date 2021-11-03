@@ -1,0 +1,17 @@
+{
+  "errorMsg": "COLUMNS must be a non-empty array",
+  "title": "emptyColumns",
+  "input": {
+    "WHERE": {
+      "GT": {
+        "courses_avg": 97
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": [],
+      "ORDER": "courses_avg"
+    }
+  },
+  "errorExpected": true,
+  "with": "InsightError"
+}

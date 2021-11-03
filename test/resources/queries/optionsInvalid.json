@@ -1,0 +1,14 @@
+{
+  "errorMsg": "OPTIONS must be object",
+  "title": "optionsInvalid",
+  "input": {
+    "WHERE": {
+      "GT": {
+        "courses_avg": 97
+      }
+    },
+    "OPTIONS": 1
+  },
+  "errorExpected": true,
+  "with": "InsightError"
+}

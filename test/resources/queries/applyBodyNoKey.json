@@ -1,13 +1,38 @@
 {
+<<<<<<< HEAD
+  "errorMsg": "Apply body should only have 1 key, has 0",
+=======
+>>>>>>> origin/bibo
   "title": "applyBodyNoKey",
   "input": {
     "WHERE": {
       "GT": {
+<<<<<<< HEAD
+        "courses_avg": 90
+=======
         "rooms_seats": 160
+>>>>>>> origin/bibo
       }
     },
     "OPTIONS": {
       "COLUMNS": [
+<<<<<<< HEAD
+        "courses_dept",
+        "hello"
+      ]
+    },
+    "TRANSFORMATIONS": {
+      "GROUP": [
+        "courses_dept"
+      ],
+      "APPLY": [
+        {
+          "hello": {}
+        },
+        {
+          "goodbye": {
+            "MIN": "courses_avg"
+=======
         "rooms_seats",
         "fullname"
       ],
@@ -27,11 +52,16 @@
         {
           "fullname": {
             "COUNT": "rooms_fullname"
+>>>>>>> origin/bibo
           }
         }
       ]
     }
   },
+<<<<<<< HEAD
+  "errorExpected": true,
+  "with": "InsightError"
+=======
   "errorExpected": false,
   "with": [
     {
@@ -139,4 +169,5 @@
       "fullname": 1
     }
   ]
+>>>>>>> origin/bibo
 }

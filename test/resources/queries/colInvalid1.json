@@ -1,0 +1,21 @@
+{
+  "errorMsg": "Invalid key courses_avg_avg in COLUMNS",
+  "title": "colInvalid1",
+  "input": {
+    "WHERE": {
+      "GT": {
+        "courses_avg": 97
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_dept",
+        "courses_avg",
+        "courses_avg_avg"
+      ],
+      "ORDER": "courses_avg"
+    }
+  },
+  "errorExpected": true,
+  "with": "InsightError"
+}

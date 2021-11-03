@@ -1,0 +1,20 @@
+{
+  "errorMsg": "Invalid value type in IS, should be string",
+  "title": "invalidValISNum",
+  "input": {
+    "WHERE": {
+      "IS": {
+        "courses_dept": 10
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_dept",
+        "courses_avg"
+      ],
+      "ORDER": "courses_avg"
+    }
+  },
+  "errorExpected": true,
+  "with": "InsightError"
+}

@@ -1,0 +1,32 @@
+{
+  "title": "optionsTitle",
+  "input": {
+    "WHERE": {
+      "GT": {
+        "courses_avg": 99
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_title",
+        "courses_avg"
+      ],
+      "ORDER": "courses_title"
+    }
+  },
+  "errorExpected": false,
+  "with": [
+    {
+      "courses_title": "algb topology i",
+      "courses_avg": 99.78
+    },
+    {
+      "courses_title": "algb topology i",
+      "courses_avg": 99.78
+    },
+    {
+      "courses_title": "career planning",
+      "courses_avg": 99.19
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "title": "optionsAudit",
+  "input": {
+    "WHERE": {
+      "GT": {
+        "courses_avg": 99
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_audit",
+        "courses_avg"
+      ],
+      "ORDER": "courses_audit"
+    }
+  },
+  "errorExpected": false,
+  "with": [
+    {
+      "courses_audit": 0,
+      "courses_avg": 99.19
+    },
+    {
+      "courses_audit": 0,
+      "courses_avg": 99.78
+    },
+    {
+      "courses_audit": 0,
+      "courses_avg": 99.78
+    }
+  ]
+}

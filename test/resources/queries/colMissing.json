@@ -1,0 +1,16 @@
+{
+  "errorMsg": "OPTIONS missing COLUMNS",
+  "title": "colMissing",
+  "input": {
+    "WHERE": {
+      "GT": {
+        "courses_avg": 97
+      }
+    },
+    "OPTIONS": {
+      "ORDER": "courses_avg"
+    }
+  },
+  "errorExpected": true,
+  "with": "InsightError"
+}
