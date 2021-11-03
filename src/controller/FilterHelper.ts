@@ -156,6 +156,11 @@ export default class FilterHelper {
 	public applyAndFilter(temp: any[]): any [] {
 		// console.log(temp);
 		let result: any[] = [];
+		if(temp.length === 1){
+			for (let each of temp[0]){
+				result.push(each);
+			}
+		}
 		for (let i = 0; i < temp.length - 1; i++) {
 			for (let each of temp[i]){
 				for (let j = i + 1; j < temp.length; j++){
@@ -163,7 +168,10 @@ export default class FilterHelper {
 						break;
 					}
 					if (j === temp.length - 1){
-						result.push(each);
+						if(!result.includes(each)){
+							result.push(each);
+						}
+
 					}
 				}
 			}
