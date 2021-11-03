@@ -21,7 +21,8 @@ describe("InsightFacade_given", function () {
 	// Reference any datasets you've added to test/resources/archives here and they will
 	// automatically be loaded in the 'before' hook.
 	const datasetsToLoad: {[key: string]: string} = {
-		courses: "./test/resources/archives/rooms.zip",
+		courses: "./test/resources/archives/courses.zip",
+		rooms: "./test/resources/archives/rooms.zip"
 	};
 
 	before(function () {
@@ -59,8 +60,8 @@ describe("InsightFacade_given", function () {
 
 		// This is a unit test. You should create more like this!
 		it("Should add a valid dataset", function () {
-			const id: string = "courses";
-			const content: string = datasetContents.get("courses") ?? "";
+			const id: string = "rooms";
+			const content: string = datasetContents.get("rooms") ?? "";
 			const expected: string[] = [id];
 			return insightFacade.addDataset(id, content, InsightDatasetKind.Rooms).then((result: string[]) => {
 				expect(result).to.deep.equal(expected);
@@ -82,6 +83,8 @@ describe("InsightFacade_given", function () {
 			// Will *fail* if there is a problem reading ANY dataset.
 			const loadDatasetPromises = [
 				insightFacade.addDataset("courses", datasetContents.get("courses") ?? "", InsightDatasetKind.Courses),
+				insightFacade.addDataset("courses", datasetContents.get("courses") ?? ""
+					, InsightDatasetKind.Courses)
 			];
 
 			return Promise.all(loadDatasetPromises);
@@ -119,5 +122,3 @@ describe("InsightFacade_given", function () {
 		);
 	});
 });
-
-
