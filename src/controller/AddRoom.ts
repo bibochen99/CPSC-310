@@ -186,8 +186,7 @@ export default class AddRoom {
 		for (let element of body.childNodes) {
 			if (element.nodeName === "tr") {
 				let roomsHref =  element.childNodes[1].childNodes[1].attrs[0].value.trim();
-				let roomsNumber =  element.childNodes[1].childNodes[1].
-					childNodes[0].value.trim();
+				let roomsNumber =  element.childNodes[1].childNodes[1].childNodes[0].value.trim();
 				let roomsSeats = element.childNodes[3].childNodes[0].value.trim();
 				let roomsFurniture = element.childNodes[5].childNodes[0].value.trim();
 				let roomsType = element.childNodes[7].childNodes[0].value.trim();
