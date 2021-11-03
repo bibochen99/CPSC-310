@@ -1,0 +1,20 @@
+{
+  "errorMsg": "Asterisks (*) can only be the first or last characters of input strings",
+  "title": "ISAstinvalidVal",
+  "input": {
+    "WHERE": {
+      "IS": {
+        "courses_dept": "*a*dhe*"
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_dept",
+        "courses_avg"
+      ],
+      "ORDER": "courses_avg"
+    }
+  },
+  "errorExpected": true,
+  "with": "InsightError"
+}

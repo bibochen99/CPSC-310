@@ -1,0 +1,13 @@
+{
+  "errorMsg": "Missing OPTIONS",
+  "title": "optionsMissing",
+  "input": {
+    "WHERE": {
+      "GT": {
+        "courses_avg": 97
+      }
+    }
+  },
+  "errorExpected": true,
+  "with": "InsightError"
+}

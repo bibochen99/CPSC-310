@@ -1,0 +1,18 @@
+{
+  "errorMsg": "IS should only have 1 key, has 0",
+  "title": "ISempty",
+  "input": {
+    "WHERE": {
+      "IS": {}
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_dept",
+        "courses_avg"
+      ],
+      "ORDER": "courses_avg"
+    }
+  },
+  "errorExpected": true,
+  "with": "InsightError"
+}

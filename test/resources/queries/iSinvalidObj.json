@@ -1,0 +1,18 @@
+{
+  "errorMsg": "IS must be object",
+  "title": "ISinvalidObj",
+  "input": {
+    "WHERE": {
+      "IS": 1
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_dept",
+        "courses_avg"
+      ],
+      "ORDER": "courses_avg"
+    }
+  },
+  "errorExpected": true,
+  "with": "InsightError"
+}

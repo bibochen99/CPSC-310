@@ -1,0 +1,173 @@
+{
+<<<<<<< HEAD
+  "errorMsg": "Apply body should only have 1 key, has 0",
+=======
+>>>>>>> origin/bibo
+  "title": "applyBodyNoKey",
+  "input": {
+    "WHERE": {
+      "GT": {
+<<<<<<< HEAD
+        "courses_avg": 90
+=======
+        "rooms_seats": 160
+>>>>>>> origin/bibo
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+<<<<<<< HEAD
+        "courses_dept",
+        "hello"
+      ]
+    },
+    "TRANSFORMATIONS": {
+      "GROUP": [
+        "courses_dept"
+      ],
+      "APPLY": [
+        {
+          "hello": {}
+        },
+        {
+          "goodbye": {
+            "MIN": "courses_avg"
+=======
+        "rooms_seats",
+        "fullname"
+      ],
+      "ORDER": {
+        "dir": "DOWN",
+        "keys": [
+          "rooms_seats",
+          "fullname"
+        ]
+      }
+    },
+    "TRANSFORMATIONS": {
+      "GROUP": [
+        "rooms_seats"
+      ],
+      "APPLY": [
+        {
+          "fullname": {
+            "COUNT": "rooms_fullname"
+>>>>>>> origin/bibo
+          }
+        }
+      ]
+    }
+  },
+<<<<<<< HEAD
+  "errorExpected": true,
+  "with": "InsightError"
+=======
+  "errorExpected": false,
+  "with": [
+    {
+      "rooms_seats": 503,
+      "fullname": 1
+    },
+    {
+      "rooms_seats": 442,
+      "fullname": 1
+    },
+    {
+      "rooms_seats": 426,
+      "fullname": 1
+    },
+    {
+      "rooms_seats": 375,
+      "fullname": 1
+    },
+    {
+      "rooms_seats": 350,
+      "fullname": 2
+    },
+    {
+      "rooms_seats": 325,
+      "fullname": 1
+    },
+    {
+      "rooms_seats": 299,
+      "fullname": 1
+    },
+    {
+      "rooms_seats": 280,
+      "fullname": 1
+    },
+    {
+      "rooms_seats": 275,
+      "fullname": 1
+    },
+    {
+      "rooms_seats": 265,
+      "fullname": 1
+    },
+    {
+      "rooms_seats": 260,
+      "fullname": 1
+    },
+    {
+      "rooms_seats": 257,
+      "fullname": 1
+    },
+    {
+      "rooms_seats": 250,
+      "fullname": 1
+    },
+    {
+      "rooms_seats": 240,
+      "fullname": 1
+    },
+    {
+      "rooms_seats": 236,
+      "fullname": 1
+    },
+    {
+      "rooms_seats": 228,
+      "fullname": 1
+    },
+    {
+      "rooms_seats": 225,
+      "fullname": 1
+    },
+    {
+      "rooms_seats": 224,
+      "fullname": 1
+    },
+    {
+      "rooms_seats": 205,
+      "fullname": 1
+    },
+    {
+      "rooms_seats": 200,
+      "fullname": 2
+    },
+    {
+      "rooms_seats": 190,
+      "fullname": 1
+    },
+    {
+      "rooms_seats": 188,
+      "fullname": 1
+    },
+    {
+      "rooms_seats": 187,
+      "fullname": 1
+    },
+    {
+      "rooms_seats": 183,
+      "fullname": 1
+    },
+    {
+      "rooms_seats": 181,
+      "fullname": 2
+    },
+    {
+      "rooms_seats": 167,
+      "fullname": 1
+    }
+  ]
+>>>>>>> origin/bibo
+}
