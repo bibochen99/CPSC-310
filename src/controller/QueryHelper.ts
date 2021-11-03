@@ -143,8 +143,6 @@ export default class QueryHelper {
 		}else{
 			this.newSort(resultSoFar, oldOrder,query);
 		}
-
-
 		return resultSoFar;
 	}
 
@@ -215,7 +213,7 @@ export default class QueryHelper {
 				if(a[order] - b[order]  === 0){
 					i++;
 					if(i <= tempKey.length - 1){
-						this.upSortHelper(resultSoFar,i,tempKey);
+						this.downSortHelper(resultSoFar,i,tempKey);
 					}
 				}else{
 					return -(a[order] - b[order]);
@@ -224,7 +222,7 @@ export default class QueryHelper {
 				if(a[order] - b[order] === 0){
 					i++;
 					if(i <= tempKey.length - 1){
-						this.upSortHelper(resultSoFar,i,tempKey);
+						this.downSortHelper(resultSoFar,i,tempKey);
 					}
 				}else{
 					return a[order] < b[order] ? 1 : -1;
