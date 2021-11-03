@@ -7,6 +7,7 @@ import {
 	ResultTooLargeError
 } from "./IInsightFacade";
 import * as fs from "fs-extra";
+
 import OptionHelper from "./OptionHelper";
 import {Add} from "./Add";
 import AddRoom from "./AddRoom";
@@ -52,8 +53,8 @@ export default class InsightFacade implements IInsightFacade {
 				return reject(new InsightError("Id is not valid."));
 			} else if (this.addData.sameID(this.myMap,id)) {
 				return reject(new InsightError("This Id already add."));
-			} else if (this.checkContentAndKind()){
-				return reject(new InsightError("This Id already add."));
+			} else if (this.checkContentAndKind(content,kind)){
+				return reject(new InsightError("content invalid."));
 			}
 
 			let jsZip = new JSZip();
@@ -176,7 +177,12 @@ export default class InsightFacade implements IInsightFacade {
 		return loadedData;
 	}
 
-	private checkContentAndKind() {
+	private checkContentAndKind(content: any, kind: InsightDatasetKind) {
+		if(!(kind === InsightDatasetKind.Courses || kind === InsightDatasetKind.Rooms)){
+			return true;
+		} else if((content === undefined || content === null)){
+			return true;
+		}
 		return false;
 	}
 }

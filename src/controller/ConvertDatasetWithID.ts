@@ -14,7 +14,6 @@ export default class ConvertDatasetWithID {
 			delete obj[oldKey];
 		}
 
-
 		loadedData.forEach((item: any) => {
 			// console.log(item["audit"]);
 			if(item["dept"] !== undefined){
@@ -47,9 +46,8 @@ export default class ConvertDatasetWithID {
 			if(item["year"] !== undefined){
 				renameKey(item,"year",id + "_year");
 			}
-
-
 		});
+		this.changeRoom(loadedData,id);
 		this.solveForApply(loadedData);
 
 		return loadedData;
@@ -72,5 +70,48 @@ export default class ConvertDatasetWithID {
 				}
 			}
 		}
+	}
+
+	private changeRoom(loadedData: any, id: string) {
+		function renameKey (obj: any,oldKey: any,newKey: any){
+			obj[newKey] = obj[oldKey];
+			delete obj[oldKey];
+		}
+
+		loadedData.forEach((item: any) => {
+			if(item["fullname"] !== undefined){
+				renameKey(item,"fullname",id + "_fullname");
+			}
+			if(item["shortname"] !== undefined){
+				renameKey(item,"shortname",id + "_shortname");
+			}
+			if(item["number"] !== undefined){
+				renameKey(item,"number",id + "_number");
+			}
+			if(item["address"] !== undefined){
+				renameKey(item,"address",id + "_address");
+			}
+			if(item["lat"] !== undefined){
+				renameKey(item,"lat",id + "_lat");
+			}
+			if(item["lon"] !== undefined){
+				renameKey(item,"lon",id + "_lon");
+			}
+			if(item["seats"] !== undefined){
+				renameKey(item,"seats",id + "_seats");
+			}
+			if(item["type"] !== undefined){
+				renameKey(item,"type",id + "_type");
+			}
+			if(item["furniture"] !== undefined){
+				renameKey(item,"furniture",id + "_furniture");
+			}
+			if(item["href"] !== undefined){
+				renameKey(item,"href",id + "_href");
+			}
+			if(item["name"] !== undefined){
+				renameKey(item,"name",id + "_name");
+			}
+		});
 	}
 }

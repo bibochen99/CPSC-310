@@ -5,13 +5,11 @@ import Transformation from "./Transformation";
 
 export default class QueryHelper {
 	private mKey: string[] = ["avg", "pass", "fail", "audit", "year","lat","lon","seats"];
-
 	private addedDataset: any;
 	private temp: any;
 	private filterHelper: FilterHelper;
 
 	constructor(loadedData: any){
-
 		this.addedDataset = loadedData;
 		this.temp = [];
 		this.filterHelper = new FilterHelper(this.temp,this.addedDataset);
@@ -108,7 +106,7 @@ export default class QueryHelper {
 
 		let allKey = ["avg", "pass", "fail", "audit", "year", "lat", "lon", "seats",
 			"dept", "id", "instructor", "title", "uuid","fullname","shortname","number","name","address","type"
-			,"furniture","herf"];
+			,"furniture","href"];
 		let keep = query["OPTIONS"]["COLUMNS"];
 		let tempResultSoFar = resultSoFar;
 
@@ -143,10 +141,8 @@ export default class QueryHelper {
 			let order = oldOrder.split("_")[1];
 			this.oldSort(resultSoFar, order);
 		}else{
-			this.newSort(resultSoFar, oldOrder);
+			this.newSort(resultSoFar, oldOrder,query);
 		}
-
-
 		return resultSoFar;
 	}
 
@@ -167,8 +163,14 @@ export default class QueryHelper {
 		});
 	}
 
-	private newSort(resultSoFar: any, oldOrder: any) {
+	private newSort(resultSoFar: any, oldOrder: any, query: any) {
 		let tempKey = oldOrder["keys"];
+		let tempCol = query.OPTIONS.COLUMNS;
+		for(let each of tempKey){
+			if(!tempCol.includes(each)){
+				throw new InsightError();
+			}
+		}
 		let tempDir = oldOrder["dir"];
 		let i = 0;
 		if(tempDir === "UP"){
@@ -211,7 +213,7 @@ export default class QueryHelper {
 				if(a[order] - b[order]  === 0){
 					i++;
 					if(i <= tempKey.length - 1){
-						this.upSortHelper(resultSoFar,i,tempKey);
+						this.downSortHelper(resultSoFar,i,tempKey);
 					}
 				}else{
 					return -(a[order] - b[order]);
@@ -220,7 +222,7 @@ export default class QueryHelper {
 				if(a[order] - b[order] === 0){
 					i++;
 					if(i <= tempKey.length - 1){
-						this.upSortHelper(resultSoFar,i,tempKey);
+						this.downSortHelper(resultSoFar,i,tempKey);
 					}
 				}else{
 					return a[order] < b[order] ? 1 : -1;

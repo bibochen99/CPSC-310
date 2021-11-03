@@ -1,0 +1,80 @@
+{
+  "title": "sumRoomsseat",
+  "input": {
+    "WHERE": {
+      "GT": {
+        "rooms_seats": 290
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "rooms_seats",
+        "hello",
+        "goodbye"
+      ],
+      "ORDER": {
+        "dir": "UP",
+        "keys": [
+          "goodbye",
+          "hello",
+          "rooms_seats"
+        ]
+      }
+    },
+    "TRANSFORMATIONS": {
+      "GROUP": [
+        "rooms_seats"
+      ],
+      "APPLY": [
+        {
+          "hello": {
+            "COUNT": "rooms_type"
+          }
+        },
+        {
+          "goodbye": {
+            "SUM": "rooms_lat"
+          }
+        }
+      ]
+    }
+  },
+  "errorExpected": false,
+  "with": [
+    {
+      "rooms_seats": 426,
+      "hello": 1,
+      "goodbye": 49.26
+    },
+    {
+      "rooms_seats": 442,
+      "hello": 1,
+      "goodbye": 49.26
+    },
+    {
+      "rooms_seats": 503,
+      "hello": 1,
+      "goodbye": 49.26
+    },
+    {
+      "rooms_seats": 325,
+      "hello": 1,
+      "goodbye": 49.27
+    },
+    {
+      "rooms_seats": 375,
+      "hello": 1,
+      "goodbye": 49.27
+    },
+    {
+      "rooms_seats": 350,
+      "hello": 1,
+      "goodbye": 147.79
+    },
+    {
+      "rooms_seats": 299,
+      "hello": 1,
+      "goodbye": 147.8
+    }
+  ]
+}

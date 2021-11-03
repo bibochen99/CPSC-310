@@ -51,10 +51,11 @@ export default class AddRoom {
 					if (resultDataset.length === 0) {
 						return reject(new InsightError("no valid room"));
 					} else {
+						let data = JSON.stringify(resultDataset);
 						let addData = new Add();
 						addData.addDataToDisk("./data");
 						try {
-							fs.writeFileSync("./data/" + id + ".json", JSON.stringify(resultDataset));
+							fs.writeFileSync("./data/" + id + ".json", data);
 						} catch (err){
 							throw new InsightError("Cannot write to disk");
 						}
@@ -119,7 +120,7 @@ export default class AddRoom {
 							lat = data.lat;
 							lon = data.lon;
 						} else {
-							return resolve({message: "No geolocation for this buildings"});
+							return resolve({message: "No geolocation for this buildings."});
 						}
 					}).then(() =>{
 						let address = roomDetailData.address;
@@ -130,10 +131,10 @@ export default class AddRoom {
 						AddRoom.createRoom(room);
 						return resolve({message: fullName});
 					}).catch((err: any) => {
-						return reject(new InsightError("invalid"));
+						return reject(new InsightError("unable to read the room in the building."));
 					});
 				}).catch((err: any) => {
-					return reject(new InsightError("invalid"));
+					return reject(new InsightError("the file does not exist."));
 				});
 		});
 	}
@@ -185,8 +186,7 @@ export default class AddRoom {
 		for (let element of body.childNodes) {
 			if (element.nodeName === "tr") {
 				let roomsHref =  element.childNodes[1].childNodes[1].attrs[0].value.trim();
-				let roomsNumber =  element.childNodes[1].childNodes[1].
-					childNodes[0].value.trim();
+				let roomsNumber =  element.childNodes[1].childNodes[1].childNodes[0].value.trim();
 				let roomsSeats = element.childNodes[3].childNodes[0].value.trim();
 				let roomsFurniture = element.childNodes[5].childNodes[0].value.trim();
 				let roomsType = element.childNodes[7].childNodes[0].value.trim();
@@ -194,7 +194,7 @@ export default class AddRoom {
 					fullname: fullName, shortname: shortName,
 					number: roomsNumber, name: shortName + "_" + roomsNumber,
 					address: address, lat: lat,
-					lon: lon, seats: Number(roomsSeats),
+					lon: lon, seats: parseInt(roomsSeats,10),
 					type: roomsType, furniture: roomsFurniture,
 					href: roomsHref
 				};

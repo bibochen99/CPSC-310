@@ -127,8 +127,8 @@ export default class ApplyHelper {
 			let tempArr: any = [];
 			for(let nested of value){
 				count += nested[temKey];
-				// let sum = tempArr.reduce((a: any, b: any) => a + b, 0);
-				nested[strApply.concat(applyKey)] = count;
+				let newCount = Number(count.toFixed(2));
+				nested[strApply.concat(applyKey)] = newCount;
 
 			}
 		}
