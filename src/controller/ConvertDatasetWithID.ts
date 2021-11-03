@@ -109,6 +109,9 @@ export default class ConvertDatasetWithID {
 			if(item["href"] !== undefined){
 				renameKey(item,"href",id + "_href");
 			}
+			if(item["name"] !== undefined){
+				renameKey(item,"name",id + "_name");
+			}
 		});
 	}
 }
