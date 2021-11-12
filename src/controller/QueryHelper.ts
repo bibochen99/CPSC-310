@@ -8,6 +8,9 @@ export default class QueryHelper {
 	private addedDataset: any;
 	private temp: any;
 	private filterHelper: FilterHelper;
+	private anyKey: any=["avg", "pass", "fail", "audit", "year", "lat", "lon", "seats",
+		"dept", "id", "instructor", "title", "uuid","fullname","shortname","number","name","address","type","furniture"
+		,"href"];
 
 	constructor(loadedData: any){
 		this.addedDataset = loadedData;
@@ -17,6 +20,9 @@ export default class QueryHelper {
 
 
 	public queryTooLong(result: any) {
+		if(result === undefined){
+			throw new InsightError();
+		}
 		return (result.length > 5000);
 	}
 
@@ -142,6 +148,12 @@ export default class QueryHelper {
 			this.oldSort(resultSoFar, order);
 		}else{
 			this.newSort(resultSoFar, oldOrder,query);
+
+			// if(this.checkNewOrder(query)){
+			// 	this.newSort(resultSoFar, oldOrder,query);
+			// } else{
+			// 	throw new InsightError("order key wrong");
+			// }
 		}
 		return resultSoFar;
 	}
@@ -229,5 +241,33 @@ export default class QueryHelper {
 				}
 			}
 		});
+	}
+
+	private checkNewOrder(query: any) {
+		if(!Object.prototype.hasOwnProperty.call(query.OPTIONS.ORDER, "dir")){
+			return false;
+		}
+		if(!Object.prototype.hasOwnProperty.call(query.OPTIONS.ORDER, "keys")){
+			return false;
+		}
+		if(!Array.isArray(query.OPTIONS.ORDER["keys"])){
+			return false;
+
+		}
+		let tempKeys = query.OPTIONS.ORDER["keys"];
+		let tempApply = query.TRANSFORMATIONS.APPLY;
+		let tempArr1 = [];
+		for(let nestEach of tempApply){
+			let tempObjKey = Object.keys(nestEach)[0];
+			tempArr1.push(tempObjKey);
+
+		}
+		for(let each of tempKeys){
+			if(!(tempArr1.includes(each) || this.anyKey.includes(each))){
+				return false;
+			}
+		}
+
+		return true;
 	}
 }

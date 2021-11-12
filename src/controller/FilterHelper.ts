@@ -176,13 +176,8 @@ export default class FilterHelper {
 				}
 			}
 		}
-		// console.log(result.length);
-
 		this.temp.push(result);
-
-
 		return result;
-
 	}
 
 	public applyNOTFilter(temp: any[]): any [] {
