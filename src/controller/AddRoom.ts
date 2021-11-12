@@ -120,7 +120,7 @@ export default class AddRoom {
 							lat = data.lat;
 							lon = data.lon;
 						} else {
-							return resolve({message: "No geolocation for this buildings"});
+							return resolve({message: "No geolocation for this buildings."});
 						}
 					}).then(() =>{
 						let address = roomDetailData.address;
@@ -131,10 +131,10 @@ export default class AddRoom {
 						AddRoom.createRoom(room);
 						return resolve({message: fullName});
 					}).catch((err: any) => {
-						return reject(new InsightError("invalid"));
+						return reject(new InsightError("unable to read the room in the building."));
 					});
 				}).catch((err: any) => {
-					return reject(new InsightError("invalid"));
+					return reject(new InsightError("the file does not exist."));
 				});
 		});
 	}
@@ -194,7 +194,7 @@ export default class AddRoom {
 					fullname: fullName, shortname: shortName,
 					number: roomsNumber, name: shortName + "_" + roomsNumber,
 					address: address, lat: lat,
-					lon: lon, seats: Number(roomsSeats),
+					lon: lon, seats: parseInt(roomsSeats,10),
 					type: roomsType, furniture: roomsFurniture,
 					href: roomsHref
 				};

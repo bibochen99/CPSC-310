@@ -39,7 +39,7 @@ export default class CheckInvalid {
 	public checkValidInsideWhere(query: any) {
 		let whereQuery = query["WHERE"];
 		if(Object.keys(whereQuery).length === 0){
-			throw (new ResultTooLargeError("More that 5000 results"));
+			return true;
 		}
 		// if(Object.keys(query.WHERE).length === 0){
 		// 	return true;
