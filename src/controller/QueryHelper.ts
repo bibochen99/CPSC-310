@@ -34,6 +34,11 @@ export default class QueryHelper {
 
 	public performQuery(query: any): any[] {
 		let inside = query["WHERE"];
+		if(Object.keys(inside).length === 0){
+			let temResult = [];
+			temResult.push(this.addedDataset);
+			return temResult;
+		}
 		let result: any[] = [];
 		if(Object.prototype.hasOwnProperty.call(inside, "AND")){
 			this.loopIntoWhere(inside.AND, result);

@@ -25,8 +25,16 @@ export default class OptionHelper {
 			throw new InsightError("Col is not array or length problem");
 		}
 
+		if(keep[0].includes("_")){
+			this.id = keep[0].split("_")[0];
+		}else{
+			let tem = query.TRANSFORMATIONS.APPLY;
+			let temKey = Object.keys(tem[0])[0];
+			let temKey2 = Object.keys(tem[0][temKey])[0];
+			let str = tem[0][temKey][temKey2];
+			this.id = str.split("_")[0];
+		}
 
-		this.id = keep[0].split("_")[0];
 		this.checkColumn(query);
 		if (Object.keys(query.OPTIONS).length === 2) {
 			if (!Object.prototype.hasOwnProperty.call(query.OPTIONS, "ORDER")) {
@@ -68,7 +76,7 @@ export default class OptionHelper {
 		}
 		for (let each of tempCol){
 			if(each === ""){
-				throw new InsightError("format incorrect");
+				throw new InsightError("format incorrect1");
 			}
 			if(each.includes("_")){
 				this.containUnderscore(each, checkID,query);
@@ -96,7 +104,7 @@ export default class OptionHelper {
 
 	private containUnderscore(each: any, checkID: any, query: any) {
 		if (!(each.includes("_") && each.split("_").length === 2)) {
-			throw new InsightError("format incorrect");
+			throw new InsightError("format incorrect2");
 		}
 		let tempKey = each.split("_")[1];
 		let tempId = each.split("_")[0];
@@ -151,28 +159,53 @@ export default class OptionHelper {
 			if(!tempCol.includes(tempOrder)){
 				throw new InsightError("order key not in COL");
 			}
-			if (!(tempOrder.includes("_") && tempOrder.split("_").length === 2)) {
-				throw new InsightError("format incorrect");
+			if(tempOrder.includes("_")){
+				if (!(tempOrder.includes("_") && tempOrder.split("_").length === 2)) {
+					throw new InsightError("format incorrect3");
+				}
+				let tempKey = tempOrder.split("_")[1];
+				if (!this.anyKey.includes(tempKey)) {
+					throw new InsightError("no such key");
+				}
+			}else{
+				this.checkApply(query, tempOrder);
 			}
-			let tempKey = tempOrder.split("_")[1];
-			if (!this.anyKey.includes(tempKey)) {
-				throw new InsightError("no such key");
-			}
+
 		}
 
+	}
+
+	private checkApply(query: any, tempOrder: string) {
+		if (!Object.prototype.hasOwnProperty.call(query.TRANSFORMATIONS, "APPLY")) {
+			throw new InsightError("No applykey");
+		} else {
+			let tempApply = query.TRANSFORMATIONS.APPLY;
+			if (!Array.isArray(tempApply)) {
+				throw new InsightError("APPLY is not array");
+			}
+			let tempArr1 = [];
+			for (let nestEach of tempApply) {
+				let tempObjKey = Object.keys(nestEach)[0];
+				tempArr1.push(tempObjKey);
+
+			}
+			if (!tempArr1.includes(tempOrder)) {
+				throw new InsightError("No applykey");
+			}
+		}
 	}
 
 	private orderCheckerHelper(tempOrder: any,query: any) {
 		for (let each of tempOrder.keys) {
 			let checkID: any = [];
 			if (each === "") {
-				throw new InsightError("format incorrect");
+				throw new InsightError("format incorrect4");
 			}
 
 			if (typeof each === "string") {
 				if (each.includes("_")) {
 					if (!(each.includes("_") && each.split("_").length === 2)) {
-						throw new InsightError("format incorrect");
+						throw new InsightError("format incorrect5");
 					}
 					let tempKey = each.split("_")[1];
 					let tempId = each.split("_")[0];

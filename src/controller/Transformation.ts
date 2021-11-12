@@ -48,21 +48,21 @@ export default class Transformation {
 	}
 
 	public startTransformation(): any[]{
+
 		let tempMap: any;
 		if(!this.groupChecker()){
 			throw new InsightError("Group is not valid");
 		}else {
+
 			tempMap = this.groupHelper();
 		//
 		//
 		}
-
 		if(!this.applyChecker()){
 			throw new InsightError("APPLY is not valid");
 		}else{
 			return this.applyHelper(tempMap);
 		}
-
 	}
 
 	private groupHelper() {
