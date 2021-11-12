@@ -155,7 +155,10 @@ export default class InsightFacade implements IInsightFacade {
 			}catch(e){
 				return reject(new InsightError("not valid"));
 			}
-			if (qh.queryTooLong(result[0])){
+			if(result[0] === undefined){
+				resolve(result);
+			}
+			if (qh.queryTooLong(result)){
 				return reject(new ResultTooLargeError("More that 5000 results"));
 			}
 			let newResult: any = converter.addIDtoDataset(result,id,true);

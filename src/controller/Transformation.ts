@@ -24,6 +24,9 @@ export default class Transformation {
 		this.applyKeyArr = [];
 		this.applyRuleArr = [];
 		this.id = id;
+		if(Object.keys(this.queryInTransformation).length !== 2){
+			throw new InsightError("more keys");
+		}
 		if(!Object.prototype.hasOwnProperty.call(this.queryInTransformation, "GROUP")){
 			throw new InsightError("no Group");
 		}else if(!Array.isArray(this.queryInTransformation["GROUP"])){
@@ -74,16 +77,8 @@ export default class Transformation {
 	}
 
 	private groupChecker() {
-		// let keyInCol: any[] = this.query.OPTIONS.COLUMNS;
-		// let idKeyInCol: any[] = [];
-		// for(let each of keyInCol){
-		// 	if(each.includes("_")){
-		// 		idKeyInCol.push(each);
-		// 	}
-		// }
 		let tempID: any[] = [];
 		for(let each of this.groupArr){
-
 			let tempString = each.split("_")[1];
 			let tempStringID = each.split("_")[0];
 			if(!this.anyKey.includes(tempString)){
