@@ -14,25 +14,37 @@ export default class OptionHelper {
 	}
 
 	public check(query: any) {
-		let keep = query["OPTIONS"]["COLUMNS"];
-
 		if (query["OPTIONS"] === undefined) {
 			return false;
 		}
+		if (query.OPTIONS === null) {
+			return false;
+		}
+		let keep = query["OPTIONS"]["COLUMNS"];
 		if (keep === null) {
 			return false;
 		}else if(!(Array.isArray(keep) && keep.length > 0)){
 			throw new InsightError("Col is not array or length problem");
+		}else if(keep[0] === ""){
+			throw new InsightError("empty string problem");
+		}else if(this.checkForColString(keep)){
+			throw new InsightError("wired element inside the col");
 		}
 
 		if(keep[0].includes("_")){
 			this.id = keep[0].split("_")[0];
 		}else{
-			let tem = query.TRANSFORMATIONS.APPLY;
-			let temKey = Object.keys(tem[0])[0];
-			let temKey2 = Object.keys(tem[0][temKey])[0];
-			let str = tem[0][temKey][temKey2];
-			this.id = str.split("_")[0];
+			if(Object.prototype.hasOwnProperty.call(query, "TRANSFORMATIONS")
+			&& Object.prototype.hasOwnProperty.call(query.TRANSFORMATIONS, "APPLY")){
+				let tem = query.TRANSFORMATIONS.APPLY;
+				let temKey = Object.keys(tem[0])[0];
+				let temKey2 = Object.keys(tem[0][temKey])[0];
+				let str = tem[0][temKey][temKey2];
+				this.id = str.split("_")[0];
+			}else {
+				throw new InsightError("cannot find id in transformation");
+			}
+
 		}
 
 		this.checkColumn(query);
@@ -42,16 +54,6 @@ export default class OptionHelper {
 			} else if (query.OPTIONS.ORDER === null) {
 				return false;
 			}
-			// else if (typeof query.OPTIONS.ORDER !== "string") {
-			// 	return false;
-			// } else if (query.OPTIONS.ORDER === "") {
-			// 	return false;
-			// }else if(!query.OPTIONS.COLUMNS.includes(query.OPTIONS.ORDER)) {
-			// 	return false;
-			// }
-			// if(!(query.OPTIONS.ORDER.includes("_") && query.OPTIONS.ORDER.split("_").length === 2)){
-			// 	return false;
-			// }
 			this.checkOrder(query);
 		}
 
@@ -81,10 +83,14 @@ export default class OptionHelper {
 			if(each.includes("_")){
 				this.containUnderscore(each, checkID,query);
 			} else{
-				if(!Object.prototype.hasOwnProperty.call(query.TRANSFORMATIONS, "APPLY")){
+				if(!(Object.prototype.hasOwnProperty.call(query, "TRANSFORMATIONS")
+					&& Object.prototype.hasOwnProperty.call(query.TRANSFORMATIONS, "APPLY"))){
 					throw new InsightError("No applykey");
 				}else{
 					let tempApply = query.TRANSFORMATIONS.APPLY;
+					if(query.TRANSFORMATIONS === null){
+						throw new InsightError("TRANSFORMATIONS is null");
+					}
 					if(!Array.isArray(tempApply)){
 						throw new InsightError("APPLY is not array");
 					}
@@ -119,8 +125,14 @@ export default class OptionHelper {
 			}
 		}
 		if(Object.prototype.hasOwnProperty.call(query, "TRANSFORMATIONS")) {
+			if(query.TRANSFORMATIONS === null){
+				throw new InsightError("null in transformation");
+			}
 			if (Object.prototype.hasOwnProperty.call(query.TRANSFORMATIONS, "GROUP")) {
 				let tempGroup = query.TRANSFORMATIONS.GROUP;
+				if(!Array.isArray(tempGroup)){
+					throw new InsightError("group is {}");
+				}
 				if (!tempGroup.includes(each)) {
 					throw new InsightError("group and col key not match");
 				}
@@ -234,5 +246,14 @@ export default class OptionHelper {
 				throw new InsightError("order keys incorrect");
 			}
 		}
+	}
+
+	private checkForColString(keep: any) {
+		for(let each of keep){
+			if(typeof each !== "string"){
+				return true;
+			}
+		}
+		return false;
 	}
 }

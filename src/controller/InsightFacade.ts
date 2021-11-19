@@ -47,6 +47,7 @@ export default class InsightFacade implements IInsightFacade {
 		this.check = true;
 	}
 
+
 	public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
 		return new Promise<string[]>((resolve, reject) => {
 			if (!(this.addData.validIdCheck(id))) {

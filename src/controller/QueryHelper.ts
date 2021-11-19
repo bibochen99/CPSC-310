@@ -53,6 +53,7 @@ export default class QueryHelper {
 			result.push(otherTemp);
 			this.temp = result;
 		} else if(Object.prototype.hasOwnProperty.call(inside, "IS")){
+
 			this.temp = this.filterHelper.applyISFilter(inside.IS,result);
 		} else if(Object.prototype.hasOwnProperty.call(inside, "NOT")){
 			let cast: any[] = [];
@@ -63,10 +64,13 @@ export default class QueryHelper {
 			result.push(otherTemp);
 			this.temp = result;
 		} else if(Object.prototype.hasOwnProperty.call(inside, "EQ")){
+
 			this.temp = this.filterHelper.applyEQFilter(inside.EQ,result);
 		} else if(Object.prototype.hasOwnProperty.call(inside, "GT")){
+
 			this.temp = this.filterHelper.applyGTFilter(inside.GT,result);
 		} else if(Object.prototype.hasOwnProperty.call(inside, "LT")){
+
 			this.temp = this.filterHelper.applyLTFilter(inside.LT,result);
 		}else{
 			throw new InsightError("not such key.");
@@ -91,6 +95,7 @@ export default class QueryHelper {
 				result.push(otherTemp);
 				this.temp = result;
 			} else if(Object.prototype.hasOwnProperty.call(nestedValue, "IS")){
+
 				this.filterHelper.applyISFilter(nestedValue.IS,result);
 			} else if(Object.prototype.hasOwnProperty.call(nestedValue, "NOT")){
 				let cast: any[] = [];
@@ -101,10 +106,13 @@ export default class QueryHelper {
 				result.push(otherTemp);
 				this.temp = result;
 			} else if(Object.prototype.hasOwnProperty.call(nestedValue, "EQ")){
+
 				this.filterHelper.applyEQFilter(nestedValue.EQ,result);
 			} else if(Object.prototype.hasOwnProperty.call(nestedValue, "GT")){
+
 				this.filterHelper.applyGTFilter(nestedValue.GT,result);
 			} else if(Object.prototype.hasOwnProperty.call(nestedValue, "LT")){
+
 				this.filterHelper.applyLTFilter(nestedValue.LT,result);
 			}else{
 				throw new InsightError("not such key after and/or.");
@@ -275,4 +283,6 @@ export default class QueryHelper {
 
 		return true;
 	}
+
+
 }
