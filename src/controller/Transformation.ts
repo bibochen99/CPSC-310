@@ -27,6 +27,9 @@ export default class Transformation {
 		if(Object.keys(this.queryInTransformation).length !== 2){
 			throw new InsightError("more keys");
 		}
+		if(this.queryInTransformation === null){
+			throw new InsightError("null in the transformation");
+		}
 		if(!Object.prototype.hasOwnProperty.call(this.queryInTransformation, "GROUP")){
 			throw new InsightError("no Group");
 		}else if(!Array.isArray(this.queryInTransformation["GROUP"])){
