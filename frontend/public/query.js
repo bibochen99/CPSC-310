@@ -30,7 +30,7 @@ function queryWhere(kind, tabPanelActive) {
 		tempKey[combine] = tempValue;
 		tempFilter[tempComparator] = tempKey;
 		if (numberField.includes(tempField)) {
-			tempKey[combine] = parseFloat(tempValue);
+			tempValue = Number(tempValue);///
 		}
 		tempKey[combine] = tempValue;
 		tempFilter[tempComparator] = tempKey;
@@ -199,6 +199,7 @@ CampusExplorer.buildQuery = function () {
 	// 		alert('Error');
 	// 	}
 	// });
+	// console.log(query);
 	return query;
 
 
