@@ -12,14 +12,13 @@ export default class Server {
 	public insightFacade: InsightFacade;
 	// private insightFacade: any;
 
-
 	constructor(port: number) {
 		console.info(`Server::<init>( ${port} )`);
 		this.insightFacade = new InsightFacade();
-		this.add  = this.add.bind(this);
-		this.resultQuery  = this.resultQuery.bind(this);
-		this.remove  = this.remove.bind(this);
-		this.listDataset  = this.listDataset.bind(this);
+		this.add = this.add.bind(this);
+		this.resultQuery = this.resultQuery.bind(this);
+		this.remove = this.remove.bind(this);
+		this.listDataset = this.listDataset.bind(this);
 
 		this.port = port;
 		this.express = express();
@@ -43,20 +42,21 @@ export default class Server {
 	 */
 	public start(): Promise<void> {
 		return new Promise((resolve, reject) => {
-
 			console.info("Server::start() - start");
 			if (this.server !== undefined) {
 				console.error("Server::start() - server already listening");
 				reject();
 			} else {
-				this.server = this.express.listen(this.port, () => {
-					console.info(`Server::start() - server listening on port: ${this.port}`);
-					resolve();
-				}).on("error", (err: Error) => {
-					// catches errors in server start
-					console.error(`Server::start() - server ERROR: ${err.message}`);
-					reject(err);
-				});
+				this.server = this.express
+					.listen(this.port, () => {
+						console.info(`Server::start() - server listening on port: ${this.port}`);
+						resolve();
+					})
+					.on("error", (err: Error) => {
+						// catches errors in server start
+						console.error(`Server::start() - server ERROR: ${err.message}`);
+						reject(err);
+					});
 			}
 		});
 	}
@@ -107,8 +107,6 @@ export default class Server {
 		this.express.delete("/dataset/:id", this.remove);
 		this.express.get("/datasets/", this.listDataset);
 		this.express.post("/query", this.resultQuery);
-
-
 	}
 
 	// The next two methods handle the echo service.
@@ -136,47 +134,54 @@ export default class Server {
 		try {
 			// console.log(`Server::echo(..) - params: ${JSON.stringify(req.params)}`);
 			// const response = Server.performEcho(req.params.msg);
-			if((req.params.kind !== InsightDatasetKind.Courses) && (req.params.kind !== InsightDatasetKind.Rooms)){
+			if (req.params.kind !== InsightDatasetKind.Courses && req.params.kind !== InsightDatasetKind.Rooms) {
 				throw new InsightError("InsightDataset Kind is not correct");
 			}
 			let content: string = Buffer.from(req.body).toString("base64");
-			this.insightFacade.addDataset(req.params.id,content,req.params.kind).then((value: string[])=>{
-				console.log(value);
-				res.status(200).json({result: value});
-			}).catch((e: any)=>{
-				console.log(e);
-				res.status(400).json({error: e.message});
-			});
+			this.insightFacade
+				.addDataset(req.params.id, content, req.params.kind)
+				.then((value: string[]) => {
+					console.log(value);
+					res.status(200).json({result: value});
+				})
+				.catch((e: any) => {
+					console.log(e);
+					res.status(400).json({error: e.message});
+				});
 		} catch (err) {
 			console.log(err);
 			res.status(400).json({error: err});
 		}
 	}
 
-	private  remove(req: Request, res: Response) {
-		this.insightFacade.removeDataset(req.params.id).then((value: string)=>{
-			res.status(200).json({result: value});
-		}).catch((e: any)=>{
-			if(e instanceof NotFoundError){
-				res.status(404).json({error: e.message});
-			}
-			res.status(400).json({error: e.message});
-		});
-
+	private remove(req: Request, res: Response) {
+		this.insightFacade
+			.removeDataset(req.params.id)
+			.then((value: string) => {
+				res.status(200).json({result: value});
+			})
+			.catch((e: any) => {
+				if (e instanceof NotFoundError) {
+					res.status(404).json({error: e.message});
+				}
+				res.status(400).json({error: e.message});
+			});
 	}
 
 	private listDataset(req: Request, res: Response) {
-		this.insightFacade.listDatasets().then((value: InsightDataset[])=>{
+		this.insightFacade.listDatasets().then((value: InsightDataset[]) => {
 			res.status(200).json({result: value});
 		});
-
 	}
 
-	private  resultQuery(req: Request, res: Response) {
-		this.insightFacade.performQuery(req.body).then((value: any)=>{
-			res.status(200).json({result: value});
-		}).catch((e: any)=>{
-			res.status(400).json({error: e.message});
-		});
+	private resultQuery(req: Request, res: Response) {
+		this.insightFacade
+			.performQuery(req.body)
+			.then((value: any) => {
+				res.status(200).json({result: value});
+			})
+			.catch((e: any) => {
+				res.status(400).json({error: e.message});
+			});
 	}
 }
