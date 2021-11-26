@@ -6,28 +6,23 @@ import * as fs from "fs-extra";
 import Log from "@ubccpsc310/folder-test/build/Log";
 
 describe("Facade D3", function () {
-
 	let facade: InsightFacade;
 	let server: Server;
 	const datasetsToLoad: {[key: string]: string} = {
 		courses: "./test/resources/archives/courses.zip",
-		rooms: "./test/resources/archives/rooms.zip"
+		rooms: "./test/resources/archives/rooms.zip",
 	};
 	use(chaiHttp);
 	const persistDir = "./data";
 	before(function () {
-		try {
-			if (fs.existsSync(persistDir + "/courses")) {
-				fs.unlinkSync(persistDir + "/courses");
-			}
-			if (fs.existsSync(persistDir + "/rooms")) {
-				fs.unlinkSync(persistDir + "/rooms");
-			}
-			fs.removeSync(persistDir);
-			fs.mkdirSync(persistDir);
-		} catch (err) {
-			console.log(err);
+		if (fs.existsSync(persistDir + "/courses")) {
+			fs.unlinkSync(persistDir + "/courses");
 		}
+		if (fs.existsSync(persistDir + "/rooms")) {
+			fs.unlinkSync(persistDir + "/rooms");
+		}
+		fs.removeSync(persistDir);
+		fs.mkdirSync(persistDir);
 
 		facade = new InsightFacade();
 		server = new Server(4321);
@@ -36,18 +31,15 @@ describe("Facade D3", function () {
 
 	after(function () {
 		// TODO: stop server here once!
-		try {
-			if (fs.existsSync(persistDir + "/courses")) {
-				fs.unlinkSync(persistDir + "/courses");
-			}
-			if (fs.existsSync(persistDir + "/rooms")) {
-				fs.unlinkSync(persistDir + "/rooms");
-			}
-			fs.removeSync(persistDir);
-			fs.mkdirSync(persistDir);
-		} catch (err) {
-			console.log(err);
+
+		if (fs.existsSync(persistDir + "/courses")) {
+			fs.unlinkSync(persistDir + "/courses");
 		}
+		if (fs.existsSync(persistDir + "/rooms")) {
+			fs.unlinkSync(persistDir + "/rooms");
+		}
+		fs.removeSync(persistDir);
+		fs.mkdirSync(persistDir);
 	});
 
 	beforeEach(function () {
@@ -65,7 +57,8 @@ describe("Facade D3", function () {
 		let ENDPOINT_URL = "/dataset/courses/courses";
 		let ZIP_FILE_DATA = datasetsToLoad["courses"];
 		try {
-			return chai.request(SERVER_URL)
+			return chai
+				.request(SERVER_URL)
 				.put(ENDPOINT_URL)
 				.send(ZIP_FILE_DATA)
 				.set("Content-Type", "application/x-zip-compressed")
@@ -86,7 +79,8 @@ describe("Facade D3", function () {
 		let ENDPOINT_URL = "/dataset/courses";
 		let ZIP_FILE_DATA = datasetsToLoad["courses"];
 		try {
-			return chai.request(SERVER_URL)
+			return chai
+				.request(SERVER_URL)
 				.del(ENDPOINT_URL)
 				.then((res) => {
 					// some logging here please!
@@ -105,7 +99,8 @@ describe("Facade D3", function () {
 		let ENDPOINT_URL = "/dataset/coursesd";
 		let ZIP_FILE_DATA = datasetsToLoad["courses"];
 		try {
-			return chai.request(SERVER_URL)
+			return chai
+				.request(SERVER_URL)
 				.del(ENDPOINT_URL)
 				.then((res) => {
 					// some logging here please!
@@ -124,7 +119,8 @@ describe("Facade D3", function () {
 		let ENDPOINT_URL = "/datasets";
 		let ZIP_FILE_DATA = datasetsToLoad["courses"];
 		try {
-			return chai.request(SERVER_URL)
+			return chai
+				.request(SERVER_URL)
 				.get(ENDPOINT_URL)
 				.then((res) => {
 					// some logging here please!
@@ -139,7 +135,6 @@ describe("Facade D3", function () {
 			// and some more logging here!
 		}
 	});
-
 
 	// The other endpoints work similarly. You should be able to find all instructions at the chai-http documentation
 });

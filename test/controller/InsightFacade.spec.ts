@@ -3,7 +3,7 @@ import {
 	InsightDatasetKind,
 	InsightError,
 	NotFoundError,
-	ResultTooLargeError
+	ResultTooLargeError,
 } from "../../src/controller/IInsightFacade";
 import InsightFacade from "../../src/controller/InsightFacade";
 
@@ -22,7 +22,7 @@ describe("InsightFacade_given", function () {
 	// automatically be loaded in the 'before' hook.
 	const datasetsToLoad: {[key: string]: string} = {
 		courses: "./test/resources/archives/courses.zip",
-		rooms: "./test/resources/archives/rooms.zip"
+		rooms: "./test/resources/archives/rooms.zip",
 	};
 
 	before(function () {
@@ -69,7 +69,6 @@ describe("InsightFacade_given", function () {
 		});
 	});
 
-
 	/*
 	 * This test suite dynamically generates tests from the JSON files in test/queries.
 	 * You should not need to modify it; instead, add additional files to the queries directory.
@@ -84,11 +83,8 @@ describe("InsightFacade_given", function () {
 			// Load the datasets specified in datasetsToQuery and add them to InsightFacade.
 			// Will *fail* if there is a problem reading ANY dataset.
 			const loadDatasetPromises = [
-				insightFacade.addDataset("courses", datasetContents.get("courses") ?? "", InsightDatasetKind.Courses),
-				insightFacade.addDataset("courses", datasetContents.get("courses") ?? ""
-					, InsightDatasetKind.Courses),
-				insightFacade.addDataset("rooms", datasetContents.get("rooms") ?? ""
-					, InsightDatasetKind.Rooms)
+        insightFacade.addDataset("courses", datasetContents.get("courses") ?? "", InsightDatasetKind.Courses),
+				insightFacade.addDataset("rooms", datasetContents.get("rooms") ?? "", InsightDatasetKind.Rooms),
 			];
 
 			return Promise.all(loadDatasetPromises);
@@ -108,12 +104,11 @@ describe("InsightFacade_given", function () {
 			{
 				errorValidator: (error): error is PQErrorKind =>
 					error === "ResultTooLargeError" || error === "InsightError",
-				assertOnResult(expected: any[],actual: any,input: any){
+				assertOnResult(expected: any[], actual: any, input: any) {
 					const orderKey = input.OPTIONS.ORDER;
 					expect(actual).to.be.instanceof(Array);
 					expect(actual).to.have.length(expected.length);
 					expect(actual).to.have.deep.members(expected);
-
 				},
 				assertOnError(expected, actual) {
 					if (expected === "ResultTooLargeError") {
