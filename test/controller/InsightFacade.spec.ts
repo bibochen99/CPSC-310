@@ -83,10 +83,11 @@ describe("InsightFacade_given", function () {
 			// Load the datasets specified in datasetsToQuery and add them to InsightFacade.
 			// Will *fail* if there is a problem reading ANY dataset.
 			const loadDatasetPromises = [
+
 				insightFacade.addDataset("courses", datasetContents.get("courses") ?? "",
 					InsightDatasetKind.Courses),
 				insightFacade.addDataset("rooms", datasetContents.get("rooms") ?? "",
-					InsightDatasetKind.Rooms),
+					InsightDatasetKind.Rooms)
 			];
 
 			return Promise.all(loadDatasetPromises);
