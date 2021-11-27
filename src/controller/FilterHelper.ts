@@ -13,7 +13,7 @@ export default class FilterHelper {
 		this.addedDataset = loadedData;
 	}
 
-	public applyISFilter(IS: any,result: any[]) {
+	public applyISFilter(IS: any){
 		let resultSoFar: any[] = [];
 		let string = Object.keys(IS)[0];// course_avg
 		let iS = string.split("_")[1];
@@ -33,9 +33,7 @@ export default class FilterHelper {
 				}
 			}
 		}
-		this.temp.push(resultSoFar);
-		result.push(resultSoFar);
-		return result;
+		return resultSoFar;
 	}
 
 
@@ -78,7 +76,7 @@ export default class FilterHelper {
 		}
 	}
 
-	public applyEQFilter(EQ: any, result: any[]) {
+	public applyEQFilter(EQ: any) {
 		let string = Object.keys(EQ)[0];// courses_avg
 		let eQ = string.split("_")[1];
 		let numValue = EQ[string];
@@ -96,12 +94,10 @@ export default class FilterHelper {
 				}
 			}
 		}
-		this.temp.push(resultSoFar);
-		result.push(resultSoFar);
-		return result;
+		return resultSoFar;
 	}
 
-	public applyGTFilter(GT: any, result: any[]): any[] {
+	public applyGTFilter(GT: any): any[] {
 		let resultSoFar: any[] = [];
 		let string = Object.keys(GT)[0];// course_avg
 		let gT = string.split("_")[1];
@@ -124,14 +120,12 @@ export default class FilterHelper {
 			}
 
 		}
-		this.temp.push(resultSoFar);
-		result.push(resultSoFar);
-		return result;
+		return resultSoFar;
 
 
 	}
 
-	public applyLTFilter(LT: any, result: any[]) {
+	public applyLTFilter(LT: any) {
 		let string = Object.keys(LT)[0];// course_avg
 		let lT = string.split("_")[1];
 		let numValue = LT[string];
@@ -148,9 +142,7 @@ export default class FilterHelper {
 				}
 			}
 		}
-		this.temp.push(resultSoFar);
-		result.push(resultSoFar);
-		return result;
+		return resultSoFar;
 	}
 
 	public applyAndFilter(temp: any[]): any [] {
@@ -161,23 +153,20 @@ export default class FilterHelper {
 				result.push(each);
 			}
 		}
-		for (let i = 0; i < temp.length - 1; i++) {
-			for (let each of temp[i]){
-				for (let j = i + 1; j < temp.length; j++){
-					if (!temp[j].includes(each)){
-						break;
-					}
-					if (j === temp.length - 1){
-						if(!result.includes(each)){
-							result.push(each);
-						}
+		for (let each of temp[0]){
+			for (let j = 1; j < temp.length; j++){
+				if (!temp[j].includes(each)){
+					break;
+				}
+				if (j === temp.length - 1){
+					result.push(each);
 
-					}
 				}
 			}
 		}
-		this.temp.push(result);
+
 		return result;
+
 	}
 
 	public applyNOTFilter(temp: any[]): any [] {
@@ -188,13 +177,6 @@ export default class FilterHelper {
 				holder.push(each);
 			}
 		}
-		// temp = [];
-		// temp.push(temResult);
-		// return temp;
-
-		// console.log(holder.length);
-		temp = [];
-		temp.push(holder);
 		return holder;
 	}
 
@@ -214,9 +196,6 @@ export default class FilterHelper {
 				}
 			}
 		});
-		temp = [];
-		temp.push(longestArr);
-		// temp = longestArr;
 		return longestArr;
 
 

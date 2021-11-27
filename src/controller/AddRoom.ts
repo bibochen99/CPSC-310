@@ -61,7 +61,6 @@ export default class AddRoom {
 						}
 						addData.addNewData(id,InsightDatasetKind.Rooms, resultDataset,dataSets);
 						myMap.set(id,resultDataset);
-						// return keys
 						let keys: string[] = Array.from(myMap.keys());
 						return resolve(keys);
 					}
@@ -80,7 +79,9 @@ export default class AddRoom {
 			if (each.nodeName === "table") {
 				return each.childNodes[3];
 			} else if (each.childNodes !== undefined) {
-				if (this.tableValidation(each) !== undefined) {
+				if (this.tableValidation(each) === undefined) {
+					return undefined;
+				}else{
 					return this.tableValidation(each);
 				}
 			}
@@ -142,7 +143,7 @@ export default class AddRoom {
 	private getGeolocation(address: string): Promise<any> {
 		return new Promise<any>((resolve, reject) => {
 			let url = "http://cs310.students.cs.ubc.ca:11316/api/v1/project_team105/"
-				+ AddRoom.address(address);
+				+ address.replace(/\s/g,"%20");
 			http.get(url, (res) => {
 				const { statusCode } = res;
 				let error;
@@ -173,14 +174,6 @@ export default class AddRoom {
 		});
 	}
 
-
-	private static address(address: string) {
-		let temp = address;
-		while (temp.includes(" ")) {
-			temp = temp.replace(" ", "%20");
-		}
-		return temp;
-	}
 
 	private static createRoom({address, shortName, fullName, resultDataset, body, lat, lon}: Room) {
 		for (let element of body.childNodes) {
