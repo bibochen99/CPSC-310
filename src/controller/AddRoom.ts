@@ -78,11 +78,10 @@ export default class AddRoom {
 		for (let each of table.childNodes) {
 			if (each.nodeName === "table") {
 				return each.childNodes[3];
-			} else if (each.childNodes !== undefined) {
-				if (this.tableValidation(each) === undefined) {
-					return undefined;
-				}else{
-					return this.tableValidation(each);
+			}else if (each.childNodes !== undefined && each.childNodes.length >= 3) {
+				let newEach = this.tableValidation(each);
+				if (newEach !== undefined) {
+					return newEach;
 				}
 			}
 		}
@@ -92,10 +91,10 @@ export default class AddRoom {
 	private createResultDataset(unzip: any, body: any, resultRoomName: any[], resultDataset: any[]) {
 		for (let each of body.childNodes) {
 			if (each.nodeName === "tr") {
-				let shortName = each.childNodes[3].childNodes[0].value.trim();
-				let fullName = each.childNodes[5].childNodes[1].childNodes[0].value.trim();
-				let address = each.childNodes[7].childNodes[0].value.trim();
-				let href = each.childNodes[9].childNodes[1].attrs[0].value.trim();
+				let shortName = each.childNodes[3]?.childNodes[0]?.value.trim();
+				let fullName = each.childNodes[5]?.childNodes[1]?.childNodes[0]?.value.trim();
+				let address = each.childNodes[7]?.childNodes[0]?.value.trim();
+				let href = each.childNodes[9]?.childNodes[1]?.attrs[0]?.value.trim();
 				let detailData: RoomDetailData = {unzip,address,href,shortName,fullName,resultDataset};
 				let roomDetail = this.getRoomDetailData(detailData);
 				resultRoomName.push(roomDetail);
@@ -111,7 +110,7 @@ export default class AddRoom {
 			roomDetailData.unzip.file("rooms/campus/discover/buildings-and-classrooms/" + roomDetailData.shortName).
 				async("string").then((building: string) => {
 					let buildingHtml = parse5.parse(building);
-					body = this.tableValidation(buildingHtml.childNodes[6].childNodes[3]);
+					body = this.tableValidation(buildingHtml.childNodes[6]);
 					if (body === undefined) {
 						return resolve({message: "no such room"});
 					}
@@ -130,12 +129,12 @@ export default class AddRoom {
 						let resultDataset = roomDetailData.resultDataset;
 						let room: Room = {address,shortName,fullName,resultDataset,body,lat,lon};
 						AddRoom.createRoom(room);
-						return resolve({message: fullName});
+						return resolve({message: "Success add the room"});
 					}).catch((err: any) => {
-						return reject(new InsightError("unable to read the room in the building."));
+						return reject(new InsightError("Unable to read the room in the building."));
 					});
 				}).catch((err: any) => {
-					return reject(new InsightError("the file does not exist."));
+					return reject(new InsightError("The file does not exist."));
 				});
 		});
 	}
@@ -178,20 +177,22 @@ export default class AddRoom {
 	private static createRoom({address, shortName, fullName, resultDataset, body, lat, lon}: Room) {
 		for (let element of body.childNodes) {
 			if (element.nodeName === "tr") {
-				let roomsHref =  element.childNodes[1].childNodes[1].attrs[0].value.trim();
-				let roomsNumber =  element.childNodes[1].childNodes[1].childNodes[0].value.trim();
-				let roomsSeats = element.childNodes[3].childNodes[0].value.trim();
-				let roomsFurniture = element.childNodes[5].childNodes[0].value.trim();
-				let roomsType = element.childNodes[7].childNodes[0].value.trim();
-				let room = {
-					fullname: fullName, shortname: shortName,
-					number: roomsNumber, name: shortName + "_" + roomsNumber,
-					address: address, lat: lat,
-					lon: lon, seats: parseInt(roomsSeats,10),
-					type: roomsType, furniture: roomsFurniture,
-					href: roomsHref
-				};
-				resultDataset.push(room);
+				let roomsHref =  element.childNodes[1]?.childNodes[1]?.attrs[0]?.value.trim();
+				let roomsNumber =  element.childNodes[1]?.childNodes[1]?.childNodes[0]?.value.trim();
+				let roomsSeats = element.childNodes[3]?.childNodes[0]?.value.trim();
+				let roomsFurniture = element.childNodes[5]?.childNodes[0]?.value.trim();
+				let roomsType = element.childNodes[7]?.childNodes[0]?.value.trim();
+				if (roomsHref && roomsNumber && roomsSeats && roomsFurniture && roomsType) {
+					let room = {
+						fullname: fullName, shortname: shortName,
+						number: roomsNumber, name: shortName + "_" + roomsNumber,
+						address: address, lat: lat,
+						lon: lon, seats: parseInt(roomsSeats, 10),
+						type: roomsType, furniture: roomsFurniture,
+						href: roomsHref
+					};
+					resultDataset.push(room);
+				}
 			}
 		}
 	}
