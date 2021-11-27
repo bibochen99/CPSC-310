@@ -128,7 +128,9 @@ export default class AddRoom {
 						let fullName = roomDetailData.fullName;
 						let resultDataset = roomDetailData.resultDataset;
 						let room: Room = {address,shortName,fullName,resultDataset,body,lat,lon};
-						AddRoom.createRoom(room);
+						if (address || shortName || fullName || lat || lon) {
+							AddRoom.createRoom(room);
+						}
 						return resolve({message: "Success add the room"});
 					}).catch((err: any) => {
 						return reject(new InsightError("Unable to read the room in the building."));
@@ -182,7 +184,7 @@ export default class AddRoom {
 				let roomsSeats = element.childNodes[3]?.childNodes[0]?.value.trim();
 				let roomsFurniture = element.childNodes[5]?.childNodes[0]?.value.trim();
 				let roomsType = element.childNodes[7]?.childNodes[0]?.value.trim();
-				if (roomsHref && roomsNumber && roomsSeats && roomsFurniture && roomsType) {
+				if (roomsHref || roomsNumber || roomsSeats || roomsFurniture || roomsType) {
 					let room = {
 						fullname: fullName, shortname: shortName,
 						number: roomsNumber, name: shortName + "_" + roomsNumber,
