@@ -6,17 +6,23 @@ import Transformation from "./Transformation";
 export default class QueryHelper {
 	private mKey: string[] = ["avg", "pass", "fail", "audit", "year","lat","lon","seats"];
 	private addedDataset: any;
-	private temp: any;
+	private finalResult: any;
 	private filterHelper: FilterHelper;
+	private anyKey: any=["avg", "pass", "fail", "audit", "year", "lat", "lon", "seats",
+		"dept", "id", "instructor", "title", "uuid","fullname","shortname","number","name","address","type","furniture"
+		,"href"];
 
 	constructor(loadedData: any){
 		this.addedDataset = loadedData;
-		this.temp = [];
-		this.filterHelper = new FilterHelper(this.temp,this.addedDataset);
+		this.finalResult = [];
+		this.filterHelper = new FilterHelper(this.finalResult,this.addedDataset);
 	}
 
 
 	public queryTooLong(result: any) {
+		if(result === undefined){
+			throw new InsightError();
+		}
 		return (result.length > 5000);
 	}
 
@@ -28,77 +34,75 @@ export default class QueryHelper {
 
 	public performQuery(query: any): any[] {
 		let inside = query["WHERE"];
+		if(Object.keys(inside).length === 0){
+			let temResult = [];
+			temResult.push(this.addedDataset);
+			return temResult;
+		}
 		let result: any[] = [];
+		let final: any[];
+		let otherTemp: any[];
 		if(Object.prototype.hasOwnProperty.call(inside, "AND")){
-			this.loopIntoWhere(inside.AND, result);
-			let otherTemp = this.filterHelper.applyAndFilter(this.temp);
-			result = [];
-			result.push(otherTemp);
-			this.temp = result;
+			final = this.loopIntoWhere(inside.AND, result);
+			otherTemp = this.filterHelper.applyAndFilter(final);
+			this.finalResult.push(otherTemp);
 		} else if(Object.prototype.hasOwnProperty.call(inside, "OR")){
-			this.loopIntoWhere(inside.OR, result);
-			let otherTemp = this.filterHelper.applyOrFilter(this.temp);
-			result = [];
-			result.push(otherTemp);
-			this.temp = result;
+			final = this.loopIntoWhere(inside.OR, result);
+			otherTemp = this.filterHelper.applyOrFilter(final);
+			this.finalResult.push(otherTemp);
 		} else if(Object.prototype.hasOwnProperty.call(inside, "IS")){
-			this.temp = this.filterHelper.applyISFilter(inside.IS,result);
+			this.finalResult.push(this.filterHelper.applyISFilter(inside.IS));
 		} else if(Object.prototype.hasOwnProperty.call(inside, "NOT")){
 			let cast: any[] = [];
 			cast.push(inside.NOT);
-			this.loopIntoWhere(cast, result);
-			let otherTemp = this.filterHelper.applyNOTFilter(this.temp);
-			result = [];
-			result.push(otherTemp);
-			this.temp = result;
+			final = this.loopIntoWhere(cast, result);
+			otherTemp = this.filterHelper.applyNOTFilter(final);
+			this.finalResult.push(otherTemp);
 		} else if(Object.prototype.hasOwnProperty.call(inside, "EQ")){
-			this.temp = this.filterHelper.applyEQFilter(inside.EQ,result);
+			this.finalResult.push(this.filterHelper.applyEQFilter(inside.EQ));
 		} else if(Object.prototype.hasOwnProperty.call(inside, "GT")){
-			this.temp = this.filterHelper.applyGTFilter(inside.GT,result);
+			this.finalResult.push(this.filterHelper.applyGTFilter(inside.GT));
 		} else if(Object.prototype.hasOwnProperty.call(inside, "LT")){
-			this.temp = this.filterHelper.applyLTFilter(inside.LT,result);
+
+			this.finalResult.push(this.filterHelper.applyLTFilter(inside.LT));
 		}else{
 			throw new InsightError("not such key.");
 		}
 
-		return this.temp;
+		return this.finalResult;
 	}
 
 
-	public loopIntoWhere(value: any, result: any[]) {
+	public loopIntoWhere(value: any, result: any[]): any []  {
+		let cellResult: any[] = [];
 		for(let nestedValue of value){
+			let otherTemp;
+			let newone;
 			if(Object.prototype.hasOwnProperty.call(nestedValue, "AND")){
-				this.loopIntoWhere(nestedValue.AND, result);
-				let otherTemp = this.filterHelper.applyAndFilter(result);
-				result = [];
-				result.push(otherTemp);
-				this.temp = result;
+				newone = this.loopIntoWhere(nestedValue.AND, result);
+				otherTemp = this.filterHelper.applyAndFilter(newone);
 			} else if(Object.prototype.hasOwnProperty.call(nestedValue, "OR")){
-				this.loopIntoWhere(nestedValue.OR, result);
-				let otherTemp = this.filterHelper.applyOrFilter(result);
-				result = [];
-				result.push(otherTemp);
-				this.temp = result;
+				newone = this.loopIntoWhere(nestedValue.OR, result);
+				otherTemp = this.filterHelper.applyOrFilter(newone);
 			} else if(Object.prototype.hasOwnProperty.call(nestedValue, "IS")){
-				this.filterHelper.applyISFilter(nestedValue.IS,result);
+				otherTemp = this.filterHelper.applyISFilter(nestedValue.IS);
 			} else if(Object.prototype.hasOwnProperty.call(nestedValue, "NOT")){
 				let cast: any[] = [];
 				cast.push(nestedValue.NOT);
-				this.loopIntoWhere(cast, result);
-				let otherTemp = this.filterHelper.applyNOTFilter(this.temp);
-				result = [];
-				result.push(otherTemp);
-				this.temp = result;
+				newone = this.loopIntoWhere(cast, result);
+				otherTemp = this.filterHelper.applyNOTFilter(newone);
 			} else if(Object.prototype.hasOwnProperty.call(nestedValue, "EQ")){
-				this.filterHelper.applyEQFilter(nestedValue.EQ,result);
+				otherTemp = this.filterHelper.applyEQFilter(nestedValue.EQ);
 			} else if(Object.prototype.hasOwnProperty.call(nestedValue, "GT")){
-				this.filterHelper.applyGTFilter(nestedValue.GT,result);
+				otherTemp = this.filterHelper.applyGTFilter(nestedValue.GT);
 			} else if(Object.prototype.hasOwnProperty.call(nestedValue, "LT")){
-				this.filterHelper.applyLTFilter(nestedValue.LT,result);
+				otherTemp = this.filterHelper.applyLTFilter(nestedValue.LT);
 			}else{
 				throw new InsightError("not such key after and/or.");
 			}
+			cellResult.push(otherTemp);
 		}
+		return cellResult;
 	}
 
 
@@ -230,4 +234,34 @@ export default class QueryHelper {
 			}
 		});
 	}
+
+	private checkNewOrder(query: any) {
+		if(!Object.prototype.hasOwnProperty.call(query.OPTIONS.ORDER, "dir")){
+			return false;
+		}
+		if(!Object.prototype.hasOwnProperty.call(query.OPTIONS.ORDER, "keys")){
+			return false;
+		}
+		if(!Array.isArray(query.OPTIONS.ORDER["keys"])){
+			return false;
+
+		}
+		let tempKeys = query.OPTIONS.ORDER["keys"];
+		let tempApply = query.TRANSFORMATIONS.APPLY;
+		let tempArr1 = [];
+		for(let nestEach of tempApply){
+			let tempObjKey = Object.keys(nestEach)[0];
+			tempArr1.push(tempObjKey);
+
+		}
+		for(let each of tempKeys){
+			if(!(tempArr1.includes(each) || this.anyKey.includes(each))){
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+
 }
