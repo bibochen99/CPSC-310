@@ -24,6 +24,12 @@ export default class Transformation {
 		this.applyKeyArr = [];
 		this.applyRuleArr = [];
 		this.id = id;
+		if(Object.keys(this.queryInTransformation).length !== 2){
+			throw new InsightError("more keys");
+		}
+		if(this.queryInTransformation === null){
+			throw new InsightError("null in the transformation");
+		}
 		if(!Object.prototype.hasOwnProperty.call(this.queryInTransformation, "GROUP")){
 			throw new InsightError("no Group");
 		}else if(!Array.isArray(this.queryInTransformation["GROUP"])){
@@ -45,21 +51,21 @@ export default class Transformation {
 	}
 
 	public startTransformation(): any[]{
+
 		let tempMap: any;
 		if(!this.groupChecker()){
 			throw new InsightError("Group is not valid");
 		}else {
+
 			tempMap = this.groupHelper();
 		//
 		//
 		}
-
 		if(!this.applyChecker()){
 			throw new InsightError("APPLY is not valid");
 		}else{
 			return this.applyHelper(tempMap);
 		}
-
 	}
 
 	private groupHelper() {
@@ -74,16 +80,8 @@ export default class Transformation {
 	}
 
 	private groupChecker() {
-		// let keyInCol: any[] = this.query.OPTIONS.COLUMNS;
-		// let idKeyInCol: any[] = [];
-		// for(let each of keyInCol){
-		// 	if(each.includes("_")){
-		// 		idKeyInCol.push(each);
-		// 	}
-		// }
 		let tempID: any[] = [];
 		for(let each of this.groupArr){
-
 			let tempString = each.split("_")[1];
 			let tempStringID = each.split("_")[0];
 			if(!this.anyKey.includes(tempString)){

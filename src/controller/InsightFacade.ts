@@ -47,6 +47,7 @@ export default class InsightFacade implements IInsightFacade {
 		this.check = true;
 	}
 
+
 	public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
 		return new Promise<string[]>((resolve, reject) => {
 			if (!(this.addData.validIdCheck(id))) {
@@ -150,14 +151,16 @@ export default class InsightFacade implements IInsightFacade {
 			}catch(e){
 				return reject(new InsightError(e));
 			}
-			if (qh.queryTooLong(result[0])){
+			try{
+				result = qh.applyOptional(query,result[0],id);
+			}catch(e){
+				return reject(new InsightError("not valid"));
+			}
+			if(result[0] === undefined){
+				resolve(result);
+			}
+			if (qh.queryTooLong(result)){
 				return reject(new ResultTooLargeError("More that 5000 results"));
-			}else {
-				try{
-					result = qh.applyOptional(query,result[0],id);
-				}catch(e){
-					return reject(new InsightError("not valid"));
-				}
 			}
 			let newResult: any = converter.addIDtoDataset(result,id,true);
 			resolve(newResult);

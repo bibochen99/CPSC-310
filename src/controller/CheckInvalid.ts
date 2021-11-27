@@ -1,4 +1,4 @@
-import {ResultTooLargeError} from "./IInsightFacade";
+import {InsightError, ResultTooLargeError} from "./IInsightFacade";
 
 export default class CheckInvalid {
 
@@ -10,11 +10,16 @@ export default class CheckInvalid {
 
 
 	public invalidQuery(query: any) {
+
+		this.checkLengthOfQuery(query);
 		let queryObject = query;
 		if(queryObject.WHERE === undefined){
 			return false;
 		}
 		if(queryObject["WHERE"] === null){
+			return false;
+		}
+		if(Array.isArray(queryObject.WHERE)){
 			return false;
 		}
 
@@ -26,12 +31,13 @@ export default class CheckInvalid {
 		if(query.OPTIONS === undefined){
 			return false;
 		}
-		if (Object.keys(options).length !== 1 && Object.keys(options).length !== 2) {
-			return false;
-		}
 		if(queryObject["OPTIONS"] === null){
 			return false;
 		}
+		if (Object.keys(options).length !== 1 && Object.keys(options).length !== 2) {
+			return false;
+		}
+
 		return queryObject["OPTIONS"] !== undefined;
 
 	}
@@ -39,12 +45,8 @@ export default class CheckInvalid {
 	public checkValidInsideWhere(query: any) {
 		let whereQuery = query["WHERE"];
 		if(Object.keys(whereQuery).length === 0){
-			throw (new ResultTooLargeError("More that 5000 results"));
+			return true;
 		}
-		// if(Object.keys(query.WHERE).length === 0){
-		// 	return true;
-		// }
-		// inside where
 		let insideWhereKey = Object.keys(whereQuery);
 
 		if(Object.keys(query.WHERE).length > 1){
@@ -62,5 +64,29 @@ export default class CheckInvalid {
 		}
 		return filterList.includes(filter);
 
+	}
+
+	private checkLengthOfQuery(query: any) {
+		if(query === null){
+			throw new InsightError("query is null");
+		}
+		if(Object.keys(query).length === 3) {
+			if(Object.prototype.hasOwnProperty.call(query, "WHERE")
+				&& Object.prototype.hasOwnProperty.call(query, "OPTIONS")
+				&& Object.prototype.hasOwnProperty.call(query, "TRANSFORMATIONS")){
+				let temQuery = query;
+			}else{
+				throw new InsightError("length more than 3");
+			}
+		}else if(Object.keys(query).length === 2){
+			if(Object.prototype.hasOwnProperty.call(query, "WHERE")
+				&& Object.prototype.hasOwnProperty.call(query, "OPTIONS")){
+				let temQuery = query;
+			}else{
+				throw new InsightError("query is null");
+			}
+		}else {
+			throw new InsightError("length more than 2");
+		}
 	}
 }
