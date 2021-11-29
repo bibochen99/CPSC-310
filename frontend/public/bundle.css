@@ -395,6 +395,7 @@ span.CodeMirror-selectedtext {
 .nav .tab {
 	display: none;
 }
+/*https://cs310.students.cs.ubc.ca/ui/index.html*/
 body[data-tabs*="courses"] .nav .tab[data-type="courses"],
 body[data-tabs*="plain"] .nav .tab[data-type="plain"],
 body[data-tabs*="rooms"] .nav .tab[data-type="rooms"] {

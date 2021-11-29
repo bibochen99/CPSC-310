@@ -1,0 +1,7 @@
+{
+  "errorMsg": "Missing WHERE",
+  "title": "nothing",
+  "input": {},
+  "errorExpected": true,
+  "with": "InsightError"
+}

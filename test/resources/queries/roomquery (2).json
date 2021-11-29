@@ -1,0 +1,46 @@
+{
+  "errorMsg": "ORDER key must be in COLUMNS",
+  "title": "roomquery",
+  "input": {
+    "WHERE": {},
+    "OPTIONS": {
+      "COLUMNS": [
+        "maxSeats",
+        "maxSeats2",
+        "maxSeats3",
+        "maxSeats4"
+      ],
+      "ORDER": "rooms_fullname"
+    },
+    "TRANSFORMATIONS": {
+      "GROUP": [
+        "rooms_fullname",
+        "rooms_seats"
+      ],
+      "APPLY": [
+        {
+          "maxSeats": {
+            "MAX": "rooms_seats"
+          }
+        },
+        {
+          "maxSeats2": {
+            "COUNT": "rooms_lon"
+          }
+        },
+        {
+          "maxSeats3": {
+            "MIN": "rooms_lat"
+          }
+        },
+        {
+          "maxSeats4": {
+            "COUNT": "rooms_shortname"
+          }
+        }
+      ]
+    }
+  },
+  "errorExpected": true,
+  "with": "InsightError"
+}

@@ -1,0 +1,27 @@
+{
+  "errorMsg": "The result is too big. Only queries with a maximum of 5000 results are supported.",
+  "title": "queryorder",
+  "input": {
+    "WHERE": {
+      "GT": {
+        "courses_avg": 1
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_dept",
+        "courses_avg",
+        "courses_audit"
+      ],
+      "ORDER": {
+        "dir": "DOWN",
+        "keys": [
+          "courses_audit",
+          "courses_avg"
+        ]
+      }
+    }
+  },
+  "errorExpected": true,
+  "with": "ResultTooLargeError"
+}

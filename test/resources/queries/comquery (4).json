@@ -1,0 +1,57 @@
+{
+  "errorMsg": "The result is too big. Only queries with a maximum of 5000 results are supported.",
+  "title": "comquery",
+  "input": {
+    "WHERE": {
+      "NOT": {
+        "AND": [
+          {
+            "OR": [
+              {
+                "IS": {
+                  "courses_dept": "cpsc*"
+                }
+              },
+              {
+                "GT": {
+                  "courses_avg": 70
+                }
+              }
+            ]
+          },
+          {
+            "OR": [
+              {
+                "IS": {
+                  "courses_id": ""
+                }
+              },
+              {
+                "GT": {
+                  "courses_avg": 98
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_dept",
+        "courses_id",
+        "courses_avg"
+      ],
+      "ORDER": {
+        "dir": "DOWN",
+        "keys": [
+          "courses_id",
+          "courses_avg",
+          "courses_dept"
+        ]
+      }
+    }
+  },
+  "errorExpected": true,
+  "with": "ResultTooLargeError"
+}

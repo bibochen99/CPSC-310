@@ -1,0 +1,79 @@
+{
+  "title": "notquery",
+  "input": {
+    "WHERE": {
+      "AND": [
+        {
+          "LT": {
+            "courses_avg": 40
+          }
+        },
+        {
+          "NOT": {
+            "NOT": {
+              "NOT": {
+                "EQ": {
+                  "courses_avg": 1
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_dept",
+        "courses_avg"
+      ],
+      "ORDER": "courses_avg"
+    }
+  },
+  "errorExpected": false,
+  "with": [
+    {
+      "courses_dept": "frst",
+      "courses_avg": 0
+    },
+    {
+      "courses_dept": "lfs",
+      "courses_avg": 0
+    },
+    {
+      "courses_dept": "lfs",
+      "courses_avg": 0
+    },
+    {
+      "courses_dept": "busi",
+      "courses_avg": 4
+    },
+    {
+      "courses_dept": "busi",
+      "courses_avg": 4
+    },
+    {
+      "courses_dept": "fopr",
+      "courses_avg": 4.5
+    },
+    {
+      "courses_dept": "civl",
+      "courses_avg": 33
+    },
+    {
+      "courses_dept": "phil",
+      "courses_avg": 33.2
+    },
+    {
+      "courses_dept": "hist",
+      "courses_avg": 34
+    },
+    {
+      "courses_dept": "educ",
+      "courses_avg": 39.03
+    },
+    {
+      "courses_dept": "educ",
+      "courses_avg": 39.03
+    }
+  ]
+}
