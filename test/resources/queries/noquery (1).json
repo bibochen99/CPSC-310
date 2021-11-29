@@ -1,0 +1,22 @@
+{
+  "errorMsg": "The result is too big. Only queries with a maximum of 5000 results are supported.",
+  "title": "noquery",
+  "input": {
+    "WHERE": {},
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_dept",
+        "courses_id",
+        "courses_avg"
+      ],
+      "ORDER": {
+        "dir": "DOWN",
+        "keys": [
+          "courses_avg"
+        ]
+      }
+    }
+  },
+  "errorExpected": true,
+  "with": "ResultTooLargeError"
+}

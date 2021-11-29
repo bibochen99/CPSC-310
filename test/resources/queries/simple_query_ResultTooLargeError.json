@@ -1,0 +1,31 @@
+
+{
+  "title": "simple_query_insightError_queryProblem.json",
+  "input": {
+
+    "WHERE":{
+
+      "GT":{
+
+        "courses_avg":80
+
+      }
+
+    },
+
+    "OPTIONS":{
+
+      "COLUMNS":[
+
+        "courses_dept",
+        "courses_avg"
+
+      ]
+
+
+    }
+
+  },
+  "errorExpected": true,
+  "with": "ResultTooLargeError"
+}

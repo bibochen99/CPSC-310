@@ -1,0 +1,26 @@
+
+{
+  "title": "simple_query_insightError_queryProblem.json",
+  "input": {
+    "WHERE": {
+      "AND":[    {"LT": {
+        "courses_avg": 50
+      }},
+        {"IS":{
+          "courses_year":2000
+        }}
+      ]
+
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_dept",
+        "courses_avg",
+        "courses_id"
+      ],
+      "ORDER": "courses_avg"
+    }
+  },
+  "errorExpected": true,
+  "with": "InsightError"
+}

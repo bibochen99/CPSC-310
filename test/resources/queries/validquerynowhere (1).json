@@ -1,0 +1,36 @@
+{
+  "errorMsg": "The result is too big. Only queries with a maximum of 5000 results are supported.",
+  "title": "validquerynowhere",
+  "input": {
+    "WHERE": {},
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_avg",
+        "maxSeats",
+        "courses_dept"
+      ],
+      "ORDER": {
+        "dir": "DOWN",
+        "keys": [
+          "courses_avg",
+          "courses_dept"
+        ]
+      }
+    },
+    "TRANSFORMATIONS": {
+      "GROUP": [
+        "courses_avg",
+        "courses_dept"
+      ],
+      "APPLY": [
+        {
+          "maxSeats": {
+            "MAX": "courses_avg"
+          }
+        }
+      ]
+    }
+  },
+  "errorExpected": true,
+  "with": "ResultTooLargeError"
+}

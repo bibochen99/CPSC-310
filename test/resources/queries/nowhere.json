@@ -1,0 +1,15 @@
+{
+  "errorMsg": "Missing WHERE",
+  "title": "nowhere",
+  "input": {
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_id",
+        "courses_audit"
+      ],
+      "ORDER": "courses_audit"
+    }
+  },
+  "errorExpected": true,
+  "with": "InsightError"
+}
