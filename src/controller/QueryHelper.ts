@@ -195,9 +195,8 @@ export default class QueryHelper {
 						return a[temp] > b[temp] ? 1 : -1;
 					}
 				}
-			}else{
-				return a[order] > b[order] ? 1 : -1;
 			}
+			return a[order] > b[order] ? 1 : -1;
 
 		});
 	}
@@ -214,9 +213,8 @@ export default class QueryHelper {
 						return a[temp] < b[temp] ? 1 : -1;
 					}
 				}
-			}else{
-				return a[order] < b[order] ? 1 : -1;
 			}
+			return a[order] < b[order] ? 1 : -1;
 
 		});
 	}
