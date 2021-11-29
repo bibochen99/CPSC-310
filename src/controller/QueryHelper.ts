@@ -172,66 +172,52 @@ export default class QueryHelper {
 		let tempCol = query.OPTIONS.COLUMNS;
 		for(let each of tempKey){
 			if(!tempCol.includes(each)){
-				throw new InsightError();
+				throw new InsightError("No valid column");
 			}
 		}
 		let tempDir = oldOrder["dir"];
-		let i = 0;
 		if(tempDir === "UP"){
-			this.upSortHelper(resultSoFar,i,tempKey);
-		}else{
-			this.downSortHelper(resultSoFar,i,tempKey);
+			this.upSortHelper(resultSoFar,tempKey);
+		}else if(tempDir === "DOWN"){
+			this.downSortHelper(resultSoFar,tempKey);
 		}
-
 	}
 
-	private upSortHelper(resultSoFar: any, i: number, tempKey: any) {
-		let order = tempKey[i];
+	private upSortHelper(resultSoFar: any, tempKey: any) {
 		resultSoFar.sort((a: any, b: any) => {
-			if (this.mKey.includes(order)) {
-				if(a[order] - b[order]  === 0){
+			let i = 0;
+			let order = tempKey[i];
+			if(a[order] === b[order]){
+				while(i < tempKey.length - 1){
 					i++;
-					if(i <= tempKey.length - 1){
-						this.upSortHelper(resultSoFar,i,tempKey);
+					let temp = tempKey[i];
+					if(a[temp] !== b[temp]){
+						return a[temp] > b[temp] ? 1 : -1;
 					}
-				}else{
-					return a[order] - b[order];
 				}
-			} else {
-				if(a[order] - b[order] === 0){
-					i++;
-					if(i <= tempKey.length - 1){
-						this.upSortHelper(resultSoFar,i,tempKey);
-					}
-				}else{
-					return a[order] > b[order] ? 1 : -1;
-				}
+			}else{
+				return a[order] > b[order] ? 1 : -1;
 			}
+
 		});
 	}
 
-	private downSortHelper(resultSoFar: any, i: number, tempKey: any) {
-		let order = tempKey[i];
+	private downSortHelper(resultSoFar: any, tempKey: any) {
 		resultSoFar.sort((a: any, b: any) => {
-			if (this.mKey.includes(order)) {
-				if(a[order] - b[order]  === 0){
+			let i = 0;
+			let order = tempKey[i];
+			if(a[order] === b[order]){
+				while(i < tempKey.length - 1){
 					i++;
-					if(i <= tempKey.length - 1){
-						this.downSortHelper(resultSoFar,i,tempKey);
+					let temp = tempKey[i];
+					if(a[temp] !== b[temp]){
+						return a[temp] < b[temp] ? 1 : -1;
 					}
-				}else{
-					return -(a[order] - b[order]);
 				}
-			} else {
-				if(a[order] - b[order] === 0){
-					i++;
-					if(i <= tempKey.length - 1){
-						this.downSortHelper(resultSoFar,i,tempKey);
-					}
-				}else{
-					return a[order] < b[order] ? 1 : -1;
-				}
+			}else{
+				return a[order] < b[order] ? 1 : -1;
 			}
+
 		});
 	}
 
