@@ -1,0 +1,47 @@
+{
+  "errorMsg": "Missing WHERE",
+  "title": "roomquery",
+  "input": {
+    "wHERE": {},
+    "oPTIONS": {
+      "cOLUMNS": [
+        "maxSeats",
+        "maxSeats2",
+        "maxSeats3",
+        "maxSeats4",
+        "rooms_lon"
+      ],
+      "oRDER": "rooms_lon"
+    },
+    "TRANSFORMATIONS": {
+      "gROUP": [
+        "rooms_seats",
+        "rooms_lon"
+      ],
+      "aPPLY": [
+        {
+          "maxSeats": {
+            "MAX": "rooms_seats"
+          }
+        },
+        {
+          "maxSeats2": {
+            "COUNT": "rooms_lon"
+          }
+        },
+        {
+          "maxSeats3": {
+            "MIN": "rooms_lat"
+          }
+        },
+        {
+          "maxSeats4": {
+            "COUNT": "rooms_shortname"
+          }
+        }
+      ]
+    }
+  },
+  "errorExpected": true,
+  "with": "InsightError"
+}

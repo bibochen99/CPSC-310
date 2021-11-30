@@ -1,0 +1,56 @@
+{
+  "title": "comquery",
+  "input": {
+    "WHERE": {
+      "NOT": {
+        "OR": [
+          {
+            "OR": [
+              {
+                "IS": {
+                  "courses_dept": "cpsc*"
+                }
+              },
+              {
+                "GT": {
+                  "courses_avg": 70
+                }
+              }
+            ]
+          },
+          {
+            "OR": [
+              {
+                "IS": {
+                  "courses_id": "*"
+                }
+              },
+              {
+                "GT": {
+                  "courses_avg": 98
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_dept",
+        "courses_id",
+        "courses_avg"
+      ],
+      "ORDER": {
+        "dir": "DOWN",
+        "keys": [
+          "courses_id",
+          "courses_avg",
+          "courses_dept"
+        ]
+      }
+    }
+  },
+  "errorExpected": false,
+  "with": []
+}

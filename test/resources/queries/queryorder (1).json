@@ -1,0 +1,27 @@
+{
+  "errorMsg": "Invalid value type in GT, should be number",
+  "title": "queryorder",
+  "input": {
+    "WHERE": {
+      "GT": {
+        "courses_avg": null
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_dept",
+        "courses_avg",
+        "courses_audit"
+      ],
+      "ORDER": {
+        "dir": "DOWN",
+        "keys": [
+          "courses_audit",
+          "courses_avg"
+        ]
+      }
+    }
+  },
+  "errorExpected": true,
+  "with": "InsightError"
+}
