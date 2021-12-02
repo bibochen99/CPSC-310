@@ -137,7 +137,7 @@ export default class Server {
 			if (req.params.kind !== InsightDatasetKind.Courses && req.params.kind !== InsightDatasetKind.Rooms) {
 				throw new InsightError("InsightDataset Kind is not correct");
 			}
-			let content: string = Buffer.from(req.body).toString("base64");
+			let content: string = req.body.toString("base64");
 			this.insightFacade
 				.addDataset(req.params.id, content, req.params.kind)
 				.then((value: string[]) => {
