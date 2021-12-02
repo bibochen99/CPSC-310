@@ -148,9 +148,9 @@ export default class Server {
 					console.log(e);
 					res.status(400).json({error: e.message});
 				});
-		} catch (err) {
+		} catch (err: any) {
 			console.log(err);
-			res.status(400).json({error: err});
+			res.status(400).json({error: err.message});
 		}
 	}
 
