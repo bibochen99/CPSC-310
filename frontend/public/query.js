@@ -185,19 +185,5 @@ CampusExplorer.buildQuery = function () {
 		let apply = queryApply(kind, tabPanelActive);
 		query["TRANSFORMATIONS"] = {GROUP: group, APPLY: apply};
 	}
-	// $.ajax({
-	// 	type: "POST",
-	// 	url: "your url with method that accpects the data",
-	// 	dataType: "json",
-	// 	data: query,
-	// 	success: function (data) {
-	// 		alert('Success');
-	//
-	// 	},
-	// 	error: function () {
-	// 		alert('Error');
-	// 	}
-	// });
-	// console.log(query);
 	return query;
 };

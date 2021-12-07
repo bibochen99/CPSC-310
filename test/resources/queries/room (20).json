@@ -1,0 +1,76 @@
+{
+  "errorMsg": "All ORDER keys must be in COLUMNS",
+  "title": "room",
+  "input": {
+    "WHERE": {
+      "AND": [
+        {
+          "IS": {
+            "rooms_furniture": "*"
+          }
+        },
+        {
+          "GT": {
+            "rooms_seats": 30
+          }
+        }
+      ]
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "rooms_shortname",
+        "rooms_fullname",
+        "rooms_number",
+        "rooms_name",
+        "rooms_address",
+        "rooms_seats",
+        "rooms_type",
+        "rooms_href",
+        "maxSeats",
+        "maxSeats1"
+      ],
+      "ORDER": {
+        "dir": "UP",
+        "keys": [
+          "rooms_seats",
+          "maxSeats",
+          "maxSeats1",
+          "rooms_shortname",
+          "rooms_fullname",
+          "rooms_type",
+          "rooms_furniture",
+          "rooms_href",
+          "rooms_number",
+          "rooms_name",
+          "rooms_address"
+        ]
+      }
+    },
+    "TRANSFORMATIONS": {
+      "GROUP": [
+        "rooms_shortname",
+        "rooms_fullname",
+        "rooms_number",
+        "rooms_name",
+        "rooms_address",
+        "rooms_seats",
+        "rooms_type",
+        "rooms_href"
+      ],
+      "APPLY": [
+        {
+          "maxSeats": {
+            "MIN": "rooms_seats"
+          }
+        },
+        {
+          "maxSeats1": {
+            "COUNT": "rooms_address"
+          }
+        }
+      ]
+    }
+  },
+  "errorExpected": true,
+  "with": "InsightError"
+}

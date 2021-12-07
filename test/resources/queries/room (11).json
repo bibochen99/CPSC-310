@@ -1,0 +1,77 @@
+{
+  "errorMsg": "Invalid key maxSeats in GROUP",
+  "title": "room",
+  "input": {
+    "WHERE": {
+      "AND": [
+        {
+          "IS": {
+            "rooms_furniture": "*"
+          }
+        },
+        {
+          "GT": {
+            "rooms_seats": 30
+          }
+        }
+      ]
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "rooms_shortname",
+        "rooms_fullname",
+        "rooms_number",
+        "rooms_name",
+        "rooms_address",
+        "rooms_seats",
+        "rooms_type",
+        "rooms_furniture",
+        "rooms_href",
+        "maxSeats"
+      ],
+      "ORDER": {
+        "dir": "DOWN",
+        "keys": [
+          "maxSeats",
+          "rooms_shortname",
+          "rooms_fullname",
+          "rooms_type",
+          "rooms_furniture",
+          "rooms_href",
+          "rooms_number",
+          "rooms_name",
+          "rooms_address",
+          "rooms_seats"
+        ]
+      }
+    },
+    "TRANSFORMATIONS": {
+      "GROUP": [
+        "rooms_shortname",
+        "rooms_fullname",
+        "rooms_number",
+        "rooms_name",
+        "rooms_address",
+        "rooms_seats",
+        "rooms_type",
+        "rooms_furniture",
+        "rooms_href",
+        "maxSeats"
+      ],
+      "APPLY": [
+        {
+          "maxSeats": {
+            "MIN": "rooms_seats"
+          }
+        },
+        {
+          "maxSeats1": {
+            "MAX": "rooms_number"
+          }
+        }
+      ]
+    }
+  },
+  "errorExpected": true,
+  "with": "InsightError"
+}
